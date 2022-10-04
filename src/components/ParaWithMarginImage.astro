@@ -1,0 +1,14 @@
+---
+const { src, alt, caption } = Astro.props;
+
+import ImageWithCaption from "./ImageWithCaption.astro";
+---
+
+<div>
+  <div class="flex flex-col-reverse lg:flex-row">
+    <div class="lg:-ml-48">
+      <ImageWithCaption src={src} alt={alt} caption={caption} />
+    </div>
+    <slot />
+  </div>
+</div>
