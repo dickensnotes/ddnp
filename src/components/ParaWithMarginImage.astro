@@ -5,8 +5,9 @@ import ImageWithCaption from "./ImageWithCaption.astro";
 ---
 
 <div>
-  <div class="flex flex-col-reverse lg:flex-row">
-    <div class="lg:-ml-48">
+  <!-- <div class="flex flex-col lg:flex-row-reverse"> -->
+  <div>
+    <div class="lg:-ml-80 lg:max-w-xs lg:pr-4 lg:float-left">
       <ImageWithCaption src={src} alt={alt} caption={caption} />
     </div>
     <slot />
