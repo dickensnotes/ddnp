@@ -6,21 +6,19 @@ import Footer from "../components/Footer";
 const { content } = Astro.props;
 ---
 
-<html lang={content.lang || 'en' }>
-
-<head>
+<html lang={content.lang || "en"}>
+  <head>
     <MainHead title={content.title} description={content.description} />
-</head>
+  </head>
 
-<body class="container mx-auto">
+  <body class="container mx-auto">
     <Nav client:load />
     <div class="prose px-4 sm:px-6 mx-auto">
-        <h1 class="prose text-4xl mt-6">{content.title}</h1>
-        <div class="prose mt-6">
-            <slot />
-        </div>
+      <h1 class="prose text-4xl mt-6">{content.title}</h1>
+      <div class="prose mt-6">
+        <slot />
+      </div>
     </div>
     <Footer />
-</body>
-
+  </body>
 </html>
