@@ -9,16 +9,21 @@ manifest: "https://dickensnotes.github.io/dickens-annotations/img/derivatives/ii
 
 import ImageWithCaption from "/src/components/ImageWithCaption.astro";
 import TOC from "/src/components/TOC.astro";
+import MiradorCard from "/src/components/MiradorCard.astro";
+import NotesHead from "/src/components/NotesHead.astro";
 
-{/* prettier-ignore */}
-<TOC>
-  - [The Compositional Context of _Bleak House_](#the-composition-context-of-bleak-house)
-  - [The Critical and Popular Reception of _Bleak House_](#the-critical-and-popular-reception-of-bleak-house)
-  - [The Working Notes for _Bleak House_](#the-working-notes-for-bleak-house)
-  - [Works Cited](#works-cited)
-</TOC>
+<NotesHead>
+  {/* prettier-ignore */}
+  <TOC slot="toc">
+    - [The Compositional Context of _Bleak House_](#the-composition-context-of-bleak-house)
+    - [The Critical and Popular Reception of _Bleak House_](#the-critical-and-popular-reception-of-bleak-house)
+    - [The Working Notes for _Bleak House_](#the-working-notes-for-bleak-house)
+    - [Works Cited](#works-cited)
+  </TOC>
 
-[Link to Mirador](/notes/bleak-house/mirador)
+<MiradorCard link="/notes/bleak-house/mirador" slot="mirador" />
+
+</NotesHead>
 
 ## The Compositional Context of _Bleak House_
 
@@ -38,8 +43,9 @@ As with his previous novel _David Copperfield_ (1849-50)—as well as the earlie
   caption="One of ten sheets where Dickens tested titles for Bleak House, © Victoria & Albert Museum, London"
 />
 
-That Dickens would eventually settle on “House” as part of the title is perhaps not surprising, given that late 1851 found him preoccupied with his move to Tavistock House in Bloomsbury, located a few kilometers north of Chancery Lane and the novel’s famous opening portrait of Holborn Hill. Dickens had secured a lease of the premises in July 1851, but oversaw extensive refurbishments before moving in (the family would live there until 1860). In October, Dickens was “wild to begin a new book” (Letters 6.506), but “the whirling of the story through one’s mind, escorted by workmen” (6.510) proved distracting. As he wrote to Burdett Coutts on the 8th of October (6.513): 
->_I have no news—except that I am three parts distracted and the fourth part wretched, in the agonies of getting into a new house—Tavistock House, Tavistock Square. Pending which desirable consummation of my troubles, I_ can not _work at my new book—having all my notions of order turned completely topsy-turvy."_
+That Dickens would eventually settle on “House” as part of the title is perhaps not surprising, given that late 1851 found him preoccupied with his move to Tavistock House in Bloomsbury, located a few kilometers north of Chancery Lane and the novel’s famous opening portrait of Holborn Hill. Dickens had secured a lease of the premises in July 1851, but oversaw extensive refurbishments before moving in (the family would live there until 1860). In October, Dickens was “wild to begin a new book” (Letters 6.506), but “the whirling of the story through one’s mind, escorted by workmen” (6.510) proved distracting. As he wrote to Burdett Coutts on the 8th of October (6.513):
+
+> _I have no news—except that I am three parts distracted and the fourth part wretched, in the agonies of getting into a new house—Tavistock House, Tavistock Square. Pending which desirable consummation of my troubles, I_ can not _work at my new book—having all my notions of order turned completely topsy-turvy."_
 
 <ImageWithCaption
   src="https://upload.wikimedia.org/wikipedia/commons/4/46/1851-60_Charles_Dickens_novelist_lived_in_Tavistock_House_near_this_site.jpg"
@@ -62,7 +68,8 @@ Building on the reputation Dickens had established with _David Copperfield_, _Bl
 
 The immediate critical response to _Bleak House_ was, however, more mixed. As scholars have suggested, the turn in Dickens’s critical reception after mid-century may have followed from his “wide-sweeping criticism of society” that “alienated liberal and conservative alike” (Patten 162). Regardless, initial reviews of _Bleak House_ found merit in passages and parts of the novel, with Inspector Bucket and Jo drawing particular praise. On the whole, though, reviewers found the novel lacking in coherence and plot. An unsigned review in the _Illustrated London News_ (24 September 1853) claimed that “Mr Dickens fails in the construction of a plot” (Collins 281). Similarly, George Brimley, in an unsigned review in the _Spectator_ (24 September 1853), wrote that the novel was “chargeable with not simply faults, but absolute want of construction” (283). Many reviewers cited Dickens’s “tendency to disagreeable exaggeration” in the novel’s characters (287) as well as its “entire absence of humour” (288). An unsigned review in _Bentley’s Miscellany_ (October 1853) captures the tension between the novel’s commercial and critical reception: “Everybody reads—everybody admires—everybody is delighted—everybody loves—and yet almost everybody finds something to censure, something to condemn” (Collins 289).
 
-While these assessments generally appeared at the conclusion of the novel’s serial run, elements of the novel also elicited immediate response. One such element was the death of Krook by Spontaneous Combustion at the novel’s mid-point in No. X. In particular, George Henry Lewes criticized Dickens and his departure from scientific possibility in an article in _The Leader_ on December 11, 1852. Dickens bolstered his defense of the death’s plausibility with a “heavy-handed” (Slater 349) description of the inquest in chapter 33 at the start of the next number (No. XI). This prompted further responses from Lewes in _The Leader_ on the 5th and 12th of February, where he insisted that “the evidence in favour of the notion is worthless; that the theories in explanation are absurd; and that, according to all known chemical and physiological laws, Spontaneous Combustion is an _impossibility_” (Collins 275). Meanwhile, Dickens had consulted his friend Dr. John Elliotson, responding to him on the 7th of February (Letters 7.22): 
+While these assessments generally appeared at the conclusion of the novel’s serial run, elements of the novel also elicited immediate response. One such element was the death of Krook by Spontaneous Combustion at the novel’s mid-point in No. X. In particular, George Henry Lewes criticized Dickens and his departure from scientific possibility in an article in _The Leader_ on December 11, 1852. Dickens bolstered his defense of the death’s plausibility with a “heavy-handed” (Slater 349) description of the inquest in chapter 33 at the start of the next number (No. XI). This prompted further responses from Lewes in _The Leader_ on the 5th and 12th of February, where he insisted that “the evidence in favour of the notion is worthless; that the theories in explanation are absurd; and that, according to all known chemical and physiological laws, Spontaneous Combustion is an _impossibility_” (Collins 275). Meanwhile, Dickens had consulted his friend Dr. John Elliotson, responding to him on the 7th of February (Letters 7.22):
+
 > _I am very truly obliged to you for the loan of your remarkable and learned lecture on Spontaneous Combustion; and I am not a little pleased to find myself fortified by such high authority. Before writing that chapter of Bleak House, I had looked up all the more famous cases you quote (as I dare say you divined in reading the description); but three or four of those you incidentally mention—two of them in 1820—are new to me. And your explanation is so beautifully clear, that I could particularly desire to refer to it several times before I come to the last No. and the Preface._
 
 Dickens then responded at length in private letters to Lewes later in the month, and while he did not revisit the evidence within the novel itself, he did address the issue again–with direct reference to Lewes’s criticism–in the novel’s Preface (written at the end of its serialization) (see P. Denman, Haight).
@@ -94,7 +101,7 @@ While Dickens’s handling of the novel’s two modes of narration was largely a
 - —--. _The Letters of Charles Dickens: The Pilgrim Edition_, 12 volumes, edited by Madeline House, Graham Storey, and Kathleen Tillotson, Oxford UP, 1982-2002.
 - Hack, Daniel. “Literary Paupers and Professional Authors: The Guild of Literature and Art.” _Studies in English Literature_, 1500-1900, vol. 39, no. 4, 1999, pp. 691-713.
 - Haight, Gordon. “Dickens and Lewes on Spontaneous Combustion.” _Nineteenth-Century Fiction_, vol. 10, no. 1, 1955, pp. 53-63.
-- Parker, David. “Dickens, the Inns of Court, and the Inns of Chancery.” _Literary London: Interdisciplinary Studies in the Representation of London_, vol. 8, No. 1, March 2010. [http://www.literarylondon.org/london-journal/march2010/parker.html](http://www.literarylondon.org/london-journal/march2010/parker.html). Accessed on 26/10/2022. 
+- Parker, David. “Dickens, the Inns of Court, and the Inns of Chancery.” _Literary London: Interdisciplinary Studies in the Representation of London_, vol. 8, No. 1, March 2010. [http://www.literarylondon.org/london-journal/march2010/parker.html](http://www.literarylondon.org/london-journal/march2010/parker.html). Accessed on 26/10/2022.
 - Patten, Robert. _Charles Dickens and His Publishers_, 2nd ed. Oxford UP, (1978) 2017.
 - Slater, Michael. _Charles Dickens_. Yale UP, 2009.
 - Stone, Harry. “Charles Dickens and Harriet Beecher Stowe.” _Nineteenth-Century Fiction_, vol 12, no. 3, 1957, pp. 188-202.
