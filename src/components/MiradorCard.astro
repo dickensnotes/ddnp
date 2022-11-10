@@ -1,5 +1,5 @@
 ---
-const { link } = Astro.props;
+const { link, title } = Astro.props;
 ---
 
 <!-- Code adapated from https://tailwindcomponents.com/component/cta-cards/ -->
@@ -8,9 +8,10 @@ const { link } = Astro.props;
 >
   <div class="flex flex-col items-center h-full rounded-xl">
     <div class="w-2/3">
-      <p class="w-full text-2xl font-semibold">Read the Working Notes</p>
+      <p class="w-full text-2xl font-semibold">Explore the Working Notes</p>
       <p class="w-full text-md tracking-wide leading-tight">
-        See Dickens' Notes and ...
+        View Dickens's Notes for <span class="italic">{title}</span> and read our
+        Editorial Annotations in Mirador.
       </p>
       <a href={link}>
         <button class="rounded">
@@ -20,7 +21,7 @@ const { link } = Astro.props;
             <p
               class="m-auto inset-0 text-md font-bold leading-normal text-center"
             >
-              Go to Mirador
+              Open Viewer
             </p>
           </div>
         </button>
