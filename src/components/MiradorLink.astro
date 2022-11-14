@@ -4,14 +4,14 @@ const { link, title } = Astro.props;
 
 <!-- Code adapated from https://tailwindcomponents.com/component/cta-cards/ -->
 <div
-  class="max-w-screen mx-auto rounded-md bg-ddnpblue/10 border border-ddnpblue mb-[3em] shadow-lg"
+  class="max-w-screen mx-auto rounded-md bg-ddnpgreen/10 border border-ddnpgreen mb-[3em] shadow-lg"
 >
   <div
-    class="flex flex-col sm:flex-row space-y-2 sm:space-x-2 justify-center h-full px-2 bg-ddnpblue/10 rounded-md"
+    class="flex flex-col sm:flex-row space-y-2 sm:space-x-2 justify-center h-full px-2 bg-ddnpgreen/10 rounded-md text-center"
   >
     <div class="w-full sm:w-1/2">
       <p class="w-full text-2xl font-semibold text-gray-800">
-        Explore the Working Notes
+        Explore the Notes
       </p>
       <p
         class="w-full text-sm tracking-wide leading-tight text-gray-800 md:pb-4"
@@ -22,10 +22,10 @@ const { link, title } = Astro.props;
       <a href={link}>
         <button class="rounded">
           <div
-            class="opacity-95 border rounded-md border-ddnpblue bg-ddnpblue/90 px-4 shadow-md"
+            class="border rounded-md border-ddnpgreen bg-ddnpgreen/100 px-4 shadow-md"
           >
             <p
-              class="m-auto inset-0 text-md font-semibold uppercase antialiased leading-normal text-center text-white py-2"
+              class="m-auto inset-0 text-md font-semibold uppercase antialiased leading-normal text-center text-gray-800 py-2"
             >
               Open Viewer
             </p>
