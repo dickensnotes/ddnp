@@ -18,6 +18,7 @@ dickensurl = ""
 	], 
 	'fuzzysearchfields' => [],
 	'displayfields' => [{'field': 'title', 'headerfield': true, 'highlight': false},
+		{'field': 'url', 'headerfield': true, 'urlfield': true, 'highlight': false},
 		{'field': 'tags', 'label': 'Tags'},{'field': 'type', 'label': 'Type'}
 	],
 	'atozsortfield' => 'title'
