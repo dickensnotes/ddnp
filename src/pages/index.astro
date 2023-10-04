@@ -9,14 +9,32 @@ import MainHead from "../components/MainHead.astro";
 const novels = [
   {
     title: "David Copperfield (1849-50)",
-    description: "Access transcriptions of the Working Notes, editorial annotations, and a critical introduction.",
+    description:
+      "Access transcriptions of the Working Notes, editorial annotations, and a critical introduction.",
     href: "/notes/david-copperfield",
     img: "/images/home/david-copperfield-wn-7-card.webp",
     alt: "David Copperfield Working Notes",
   },
   {
     title: "Bleak House (1852-53)",
-    description: "Access transcriptions of the Working Notes, editorial annotations, and a critical introduction.",
+    description:
+      "Access transcriptions of the Working Notes, editorial annotations, and a critical introduction.",
+    href: "/notes/bleak-house",
+    img: "/images/home/bleak-house-wn-15-card.webp",
+    alt: "Bleak House Working Notes",
+  },
+  {
+    title: "Hard Times (ADD-DATE)",
+    description:
+      "Access transcriptions of the Working Notes, editorial annotations, and a critical introduction.",
+    href: "/notes/bleak-house",
+    img: "/images/home/bleak-house-wn-15-card.webp",
+    alt: "Bleak House Working Notes",
+  },
+  {
+    title: "Little Dorrit (ADD-DATE)",
+    description:
+      "Access transcriptions of the Working Notes, editorial annotations, and a critical introduction.",
     href: "/notes/bleak-house",
     img: "/images/home/bleak-house-wn-15-card.webp",
     alt: "Bleak House Working Notes",
@@ -30,17 +48,19 @@ const novels = [
       title="Digital Dickens Notes Project"
       description="The Digital Dickens Notes Project explores serial form with Charles Dickens's Working Notes"
     />
-  </head>
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-T6K5MX5Y23"
+    ></script><script>
+      window.dataLayer = window.dataLayer || [];
+      function gtag() {
+        dataLayer.push(arguments);
+      }
+      gtag("js", new Date());
+
+      gtag("config", "G-T6K5MX5Y23");
+    </script></head
+  >
 
   <!-- Google tag (gtag.js) -->
-<script async src="https://www.googletagmanager.com/gtag/js?id=G-T6K5MX5Y23"></script>
-<script>
-  window.dataLayer = window.dataLayer || [];
-  function gtag(){dataLayer.push(arguments);}
-  gtag('js', new Date());
-
-  gtag('config', 'G-T6K5MX5Y23');
-</script>
 
   <body class="container mx-auto">
     <Header />
