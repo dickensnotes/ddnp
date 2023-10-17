@@ -58,10 +58,10 @@ Dir['textfiles/**/*.*'].each do |page|
 		url = "/notes/bleak-house/mirador?canvas=https://dickensnotes.github.io/dickens-annotations/canvas/img/derivatives/iiif/bleakhousetranscriptions/#{filename.gsub('_', '')}.json"
 	elsif page.include?('HT')
 		contenttype = 'Working Notes: Hard Times'
-		url = "/notes/hard-times/mirador?canvas=https://dickensnotes.github.io/dickens-annotations/canvas/img/derivatives/iiif/HardTimesTranscriptions/#{filename.gsub('_', '')}.json"
+		url = "/notes/hard-times/mirador?canvas=https://dickensnotes.github.io/dickens-annotations/canvas/img/derivatives/iiif/HardTimesTranscription/#{filename.gsub('_', '')}.json"
 	elsif page.include?('LD')
 		contenttype = 'Working Notes: Little Dorrit'
-		url = "/notes/little-dorrit/mirador?canvas=https://dickensnotes.github.io/dickens-annotations/canvas/img/derivatives/iiif/LittleDorritTranscriptions/#{filename.gsub('_', '')}.json"
+		url = "/notes/little-dorrit/mirador?canvas=https://dickensnotes.github.io/dickens-annotations/canvas/img/derivatives/iiif/littledorrittranscription/#{filename.gsub('_', '')}.json"
 	else
 		contenttype = 'Working Notes: David Copperfield '
 		url = "/notes/david-copperfield/mirador?canvas=https://dickensnotes.github.io/dickens-annotations/canvas/img/derivatives/iiif/davidcopperfieldtranscription/#{filename.gsub('_', '')}.json"
