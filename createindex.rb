@@ -56,16 +56,19 @@ Dir['textfiles/**/*.*'].each do |page|
 	if page.include?('BH')
 		contenttype = 'Working Notes: Bleak House'
 		url = "/notes/bleak-house/mirador?canvas=https://dickensnotes.github.io/dickens-annotations/canvas/img/derivatives/iiif/bleakhousetranscriptions/#{filename.gsub('_', '')}.json"
+	elsif page.include?('HT')
+		contenttype = 'Working Notes: Hard Times'
+		url = "/notes/hard-times/mirador?canvas=https://dickensnotes.github.io/dickens-annotations/canvas/img/derivatives/iiif/HardTimesTranscriptions/#{filename.gsub('_', '')}.json"
 	else
 		contenttype = 'Working Notes: David Copperfield '
 		url = "/notes/david-copperfield/mirador?canvas=https://dickensnotes.github.io/dickens-annotations/canvas/img/derivatives/iiif/davidcopperfieldtranscription/#{filename.gsub('_', '')}.json"
 	end
-	title = filename.gsub('BH', 'Bleak House').gsub('DC', 'David Copperfield').gsub('WN', 'Working Notes').gsub('_', ' ')
+	title = filename.gsub('BH', 'Bleak House').gsub('HT', 'Hard Times').gsub('DC', 'David Copperfield').gsub('WN', 'Working Notes').gsub('_', ' ')
 	#puts content.inspect
 	docs[filename] = {'url' => url, 'content' => content, 'title' => title, 'type' => contenttype}
 end
 docs.each do |key, doc|
-	doc['content'] = doc['content'].gsub(/<\/?[^>]*>/, "").gsub('\\n', ' ')
+	doc['content'] = doc['content'].encode!('UTF-8', 'binary', invalid: :replace, undef: :replace, replace: '').gsub(/<\/?[^>]*>/, "").gsub('\\n', ' ')
 	doc['id'] = key
 	doc['slug'] = key
 	doc['title'] = doc['title'] ? doc['title'] : doc['content'].gsub(/<\/?[^>]*>/, "").split("\n")[0].strip()
