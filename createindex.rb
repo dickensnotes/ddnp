@@ -59,11 +59,14 @@ Dir['textfiles/**/*.*'].each do |page|
 	elsif page.include?('HT')
 		contenttype = 'Working Notes: Hard Times'
 		url = "/notes/hard-times/mirador?canvas=https://dickensnotes.github.io/dickens-annotations/canvas/img/derivatives/iiif/HardTimesTranscriptions/#{filename.gsub('_', '')}.json"
+	elsif page.include?('LD')
+		contenttype = 'Working Notes: Little Dorrit'
+		url = "/notes/little-dorrit/mirador?canvas=https://dickensnotes.github.io/dickens-annotations/canvas/img/derivatives/iiif/LittleDorritTranscriptions/#{filename.gsub('_', '')}.json"
 	else
 		contenttype = 'Working Notes: David Copperfield '
 		url = "/notes/david-copperfield/mirador?canvas=https://dickensnotes.github.io/dickens-annotations/canvas/img/derivatives/iiif/davidcopperfieldtranscription/#{filename.gsub('_', '')}.json"
 	end
-	title = filename.gsub('BH', 'Bleak House').gsub('HT', 'Hard Times').gsub('DC', 'David Copperfield').gsub('WN', 'Working Notes').gsub('_', ' ')
+	title = filename.gsub('BH', 'Bleak House').gsub('HT', 'Hard Times').gsub('LD', 'Little Dorrit').gsub('DC', 'David Copperfield').gsub('WN', 'Working Notes').gsub('_', ' ')
 	#puts content.inspect
 	docs[filename] = {'url' => url, 'content' => content, 'title' => title, 'type' => contenttype}
 end
