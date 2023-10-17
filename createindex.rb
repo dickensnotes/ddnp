@@ -82,6 +82,6 @@ index_js << '});'
 filename = File.join(js_dir, 'index.js')
 ctx = ExecJS.compile(index_js)
 index = ctx.eval('idx')
-total = "var docs = #{docs.to_json}\nvar index = #{index}\nvar baseurl = '#{dickensurl}'\nvar lunr_settings = #{@lunr_config.to_json}"
+total = "var docs = #{docs.to_json}\nvar index = #{index.to_json}\nvar baseurl = '#{dickensurl}'\nvar lunr_settings = #{@lunr_config.to_json}"
 
 File.open(filename, "w") { |f| f.write(total) }
