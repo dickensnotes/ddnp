@@ -56,10 +56,15 @@ export default function NavPopover({ title, options }) {
                           className="align-middle"
                         />
                       </div>
-                      <div className="ml-4 text-left">
-                        <p className="text-base font-medium text-gray-900">
-                          {item.name}
-                        </p>
+                      <div className="ml-4 text-left w-full">
+                        <div className="flex w-full justify-between">
+                          <span className="text-base font-medium text-gray-900">
+                            {item.name}
+                          </span>
+                          <span className="text-base font-medium text-gray-700">
+                            {item.date}
+                          </span>
+                        </div>
                         <p className="mt-1 text-sm text-gray-700">
                           {item.description}
                         </p>
