@@ -70,12 +70,15 @@ def main():
 			jsoncontent = items['json']
 			searchfields = get_search(jsoncontent)
 			canvas =jsoncontent['on'][0]['full']
-			if 'bleakhousetranscriptions' in canvas:
-				url =  "/notes/bleak-house/mirador"
-				contenttype = 'Annotations: Bleak House'
-			else:
-				url = "/notes/david-copperfield/mirador/"
-				contenttype = 'Annotations: David Copperfield'
+			canvasname = canvas.split('/iiif/')[-1].split('/')[0]
+			name = {'bleakhousetranscriptions': {'url': "/notes/bleak-house/mirador", 'label': 'Bleak House'},
+			'davidcopperfieldtranscription': {'url': "/notes/david-copperfield/mirador", 'label': 'David Copperfield'},
+			'HardTimesTranscription': {'url': "/notes/hard-times/mirador", 'label': 'Hard Times'},
+			'littledorrittranscription': {'url': "/notes/little-dorrit/mirador", 'label': 'Little Dorrit'},
+			}
+			getinfo = name[canvasname]
+			url = getinfo['url']
+			contenttype = "Annotations: {}".format(getinfo['label'])
 			url += '?canvas={}'.format(canvas)
 			url += '&annotationid={}'.format(jsoncontent['@id'])
 			searchfields['searchfields']['url'] = url

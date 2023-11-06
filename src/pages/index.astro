@@ -8,18 +8,36 @@ import MainHead from "../components/MainHead.astro";
 
 const novels = [
   {
-    title: "David Copperfield (1849-50)",
-    description: "Access transcriptions of the Working Notes, editorial annotations, and a critical introduction.",
+    title: "David Copperfield Working Notes (1849-50)",
+    description:
+      "Immerse yourself in the composition of Dickens's most autobiographical novel through our introduction and annotations to these Notes.",
     href: "/notes/david-copperfield",
     img: "/images/home/david-copperfield-wn-7-card.webp",
     alt: "David Copperfield Working Notes",
   },
   {
-    title: "Bleak House (1852-53)",
-    description: "Access transcriptions of the Working Notes, editorial annotations, and a critical introduction.",
+    title: "Bleak House Working Notes (1852-53)",
+    description:
+      "Explore Dickens's management of the novel's dual narrators with our introduction and annotations to these Notes.",
     href: "/notes/bleak-house",
     img: "/images/home/bleak-house-wn-15-card.webp",
     alt: "Bleak House Working Notes",
+  },
+  {
+    title: "Hard Times Working Notes (1854)",
+    description:
+      "Follow Dickens's difficulties navigating a weekly serial with our introduction and annotations to these Notes.",
+    href: "/notes/hard-times",
+    img: "/images/home/hard-times-wn-02-card.webp",
+    alt: "Hard Times Working Notes",
+  },
+  {
+    title: "Little Dorrit Working Notes (1855-57)",
+    description:
+      "Discover how Dickens's idea for 'Nobody's Fault' transformed into 'Little Dorrit' through our introduction and annotations to these Notes",
+    href: "/notes/little-dorrit",
+    img: "/images/home/little-dorrit-wn-04-card.webp",
+    alt: "Little Dorrit Working Notes",
   },
 ];
 ---
@@ -30,17 +48,19 @@ const novels = [
       title="Digital Dickens Notes Project"
       description="The Digital Dickens Notes Project explores serial form with Charles Dickens's Working Notes"
     />
-  </head>
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-T6K5MX5Y23"
+    ></script><script>
+      window.dataLayer = window.dataLayer || [];
+      function gtag() {
+        dataLayer.push(arguments);
+      }
+      gtag("js", new Date());
+
+      gtag("config", "G-T6K5MX5Y23");
+    </script></head
+  >
 
   <!-- Google tag (gtag.js) -->
-<script async src="https://www.googletagmanager.com/gtag/js?id=G-T6K5MX5Y23"></script>
-<script>
-  window.dataLayer = window.dataLayer || [];
-  function gtag(){dataLayer.push(arguments);}
-  gtag('js', new Date());
-
-  gtag('config', 'G-T6K5MX5Y23');
-</script>
 
   <body class="container mx-auto">
     <Header />

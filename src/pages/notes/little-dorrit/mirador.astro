@@ -1,0 +1,11 @@
+---
+import MiradorFullScreenLayout from "../../../layouts/mirador-full-screen-layout.astro";
+import Mirador from "../../../components/Mirador";
+
+const manifest =
+  "https://dickensnotes.github.io/dickens-annotations/img/derivatives/iiif/littledorrittranscription/manifest.json";
+---
+
+<MiradorFullScreenLayout title="Little Dorrit Mirador viewer" description="Transcriptions of Charles Dickens's Working Notes for Little Dorrit viewed in Mirador">
+  <Mirador client:only="react" loadedManifest={manifest} />
+</MiradorFullScreenLayout>
