@@ -4,6 +4,8 @@ title: "Search the DDNP"
 description: "Users can search the Working Notes, annotations, and content of the Digital Dickens Notes Project."
 ---
 
+The DDNP's search tool will display results for keywords found in the Working Notes, in the Annotations for each set of Notes, and in the Site Content. Search results can be filtered according to these categories, and by the relevant novel, using the "Type" list on the left of the results page. Results include a snippet of the text in which the result is found, with hyperlinks to the relevant page.
+
 <form role="search">
 <div class="search-control mb-6">
     <input type="search" id="person-serarch" name="query"
