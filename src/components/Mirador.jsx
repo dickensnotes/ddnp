@@ -1,7 +1,5 @@
 import React, { useEffect } from "react";
 import mirador from "mirador";
-import annotationPlugins from "mirador-annotations/es/index";
-import LocalStorageAdapter from "mirador-annotations/es/LocalStorageAdapter";
 
 export default function Mirador(props) {
   const queryString = window.location.search;
@@ -10,19 +8,11 @@ export default function Mirador(props) {
   const annotationid = urlParams.get('annotationid');
   const config = {
     id: "mirador",
-    annotation: {
-      adapter: (canvasId) =>
-        new LocalStorageAdapter(`localStorage://?canvasId=${canvasId}`),
-      exportLocalStorageAnnotations: false, // display annotation JSON export button,
-    },
-    annotations: {
-      htmlSanitizationRuleSet: "mirador2",
-    },
+    // Note: Annotations functionality temporarily disabled due to mirador-annotations v0.5.0 
+    // incompatibility with Mirador v4. Will need to find alternative or wait for compatible version.
     window: {
-      defaultSideBarPanel: "annotations",
+      defaultSideBarPanel: "info",
       sideBarOpenByDefault: true,
-      highlightAllAnnotations: true,
-      forceDrawAnnotations: true,
     },
     thumbnailNavigation: {
       defaultPosition: "far-right",
@@ -41,15 +31,16 @@ export default function Mirador(props) {
     ],
   };
 
-  const plugins = [...annotationPlugins];
+  const plugins = [];
 
   useEffect(() => {
-    mirador.viewer(config);
-    if (annotationid){
-      setTimeout(() => {
-        document.querySelector(`[annotationid="${annotationid}"]`).click();
-      }, "2000");
-    }
+    mirador.viewer(config, plugins);
+    // Note: Annotation ID functionality disabled - requires mirador-annotations
+    // if (annotationid){
+    //   setTimeout(() => {
+    //     document.querySelector(`[annotationid="${annotationid}"]`).click();
+    //   }, "2000");
+    // }
   });
 
   return <div id="mirador" />;

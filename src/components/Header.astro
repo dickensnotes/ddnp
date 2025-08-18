@@ -1,6 +1,6 @@
 ---
-import { Icon } from "astro-icon";
-import NavPopover from "./NavPopover";
+import { Icon } from "astro-icon/components";
+import NavPopover from "./NavPopover.jsx";
 import {
   faGears,
   faFeatherPointed,
@@ -183,7 +183,6 @@ const links = [
             >
               <span class="sr-only">Open main menu</span>
               <Icon
-                pack="heroicons-outline"
                 name="menu"
                 size={24}
                 aria-hidden="true"
