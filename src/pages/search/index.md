@@ -8,9 +8,9 @@ The DDNP's search tool will display results for keywords found in the Working No
 
 <form role="search">
 <div class="search-control mb-6">
-    <input type="search" id="person-serarch" name="query"
+    <input type="search" id="keyword-search" name="query"
            placeholder="Keyword Search"
-           aria-label="Search people using keyword"
+           aria-label="Search using keywords"
            class="p-2 border border-gray-300 outline-offset-0 rounded-md">
     <button class="custom_button border border-ddnpblue rounded-md p-2 hover:bg-ddnpblue/5 font-medium shadow-sm">Search</button>
 </div>
