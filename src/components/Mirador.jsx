@@ -1,7 +1,5 @@
 import React, { useEffect } from "react";
 import mirador from "mirador";
-import annotationPlugins from "mirador-annotations/es/index";
-import LocalStorageAdapter from "mirador-annotations/es/LocalStorageAdapter";
 
 export default function Mirador(props) {
   const queryString = window.location.search;
@@ -10,19 +8,13 @@ export default function Mirador(props) {
   const annotationid = urlParams.get('annotationid');
   const config = {
     id: "mirador",
-    annotation: {
-      adapter: (canvasId) =>
-        new LocalStorageAdapter(`localStorage://?canvasId=${canvasId}`),
-      exportLocalStorageAnnotations: false, // display annotation JSON export button,
-    },
     annotations: {
-      htmlSanitizationRuleSet: "mirador2",
+      displayAll: true,
+      displayAllDisabled: false,
     },
     window: {
       defaultSideBarPanel: "annotations",
       sideBarOpenByDefault: true,
-      highlightAllAnnotations: true,
-      forceDrawAnnotations: true,
     },
     thumbnailNavigation: {
       defaultPosition: "far-right",
@@ -41,10 +33,10 @@ export default function Mirador(props) {
     ],
   };
 
-  const plugins = [...annotationPlugins];
+  const plugins = [];
 
   useEffect(() => {
-    mirador.viewer(config);
+    mirador.viewer(config, plugins);
     if (annotationid){
       setTimeout(() => {
         document.querySelector(`[annotationid="${annotationid}"]`).click();

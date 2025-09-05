@@ -2,14 +2,14 @@
 
 import { Fragment } from "react";
 import { Popover, Transition } from "@headlessui/react";
-import { ChevronDownIcon } from "@heroicons/react/solid/index.js";
+import { ChevronDownIcon } from "@heroicons/react/20/solid";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 
 function classNames(...classes) {
   return classes.filter(Boolean).join(" ");
 }
 
-export default function NavPopover({ title, options }) {
+export default function NavPopover({ title, options = [] }) {
   return (
     <Popover className="relative">
       {({ open }) => (
@@ -41,7 +41,7 @@ export default function NavPopover({ title, options }) {
             <Popover.Panel className="absolute z-20 left-1/2 transform -translate-x-1/2 mt-3 px-2 w-screen max-w-md sm:px-0 bg-white/100">
               <div className="rounded-lg shadow-lg ring-1 ring-black ring-opacity-5 overflow-hidden">
                 <div className="relative grid gap-6 px-5 py-6 sm:gap-8 sm:p-8">
-                  {options.map((item) => (
+                  {options && options.length > 0 && options.map((item) => (
                     <a
                       key={item.name}
                       href={item.href}

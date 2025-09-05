@@ -3,12 +3,17 @@ import preact from "@astrojs/preact";
 import react from "@astrojs/react";
 import tailwind from "@astrojs/tailwind";
 import mdx from "@astrojs/mdx";
-
-import image from "@astrojs/image";
+import icon from "astro-icon";
 
 // https://astro.build/config
 export default defineConfig({
-  integrations: [preact(), react(), tailwind(), mdx(), image()],
+  integrations: [
+    preact({ include: ["**/preact/*"] }),
+    react({ include: ["**/components/*", "**/pages/*"] }),
+    tailwind(),
+    mdx(),
+    icon()
+  ],
   vite: {
     // define: {
     //   global: 'window',

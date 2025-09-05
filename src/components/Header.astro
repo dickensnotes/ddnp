@@ -1,6 +1,6 @@
 ---
-import { Icon } from "astro-icon";
-import NavPopover from "./NavPopover";
+import { Icon } from "astro-icon/components";
+import NavPopover from "./NavPopover.jsx";
 import {
   faGears,
   faFeatherPointed,
@@ -12,6 +12,9 @@ import {
   faPersonChalkboard,
   faMagnifyingGlass,
 } from "@fortawesome/free-solid-svg-icons";
+
+import { Image } from "astro:assets";
+import dickensLogo from "../icons/DickensNotesSide.svg";
 
 const introductionOptions = [
   {
@@ -58,29 +61,25 @@ const aboutOptions = [
 const bookOptions = [
   {
     name: "David Copperfield (1849-50)",
-    description:
-      "",
+    description: "",
     href: "/notes/david-copperfield",
     icon: faFeatherPointed,
   },
   {
     name: "Bleak House (1852-53)",
-    description:
-      "",
+    description: "",
     href: "/notes/bleak-house",
     icon: faFeatherPointed,
   },
   {
     name: "Hard Times (1854)",
-    description:
-      "",
+    description: "",
     href: "/notes/hard-times",
     icon: faFeatherPointed,
   },
   {
     name: "Little Dorrit (1855-57)",
-    description:
-      "",
+    description: "",
     href: "/notes/little-dorrit",
     icon: faFeatherPointed,
   },
@@ -166,12 +165,18 @@ const links = [
             class="flex gap-x-1 text-gray-900 font-semibold text-xl"
             id="navlogo"
           >
-            <Icon
+            <!-- <Icon
               name="DickensNotesSide"
               height={32}
               class="-mb-1 md:h-auto md:w-36"
               aria-hidden="true"
-            />
+            /> -->
+            <div class="=mb-1 md:h-auto md:w-36">
+              <Image
+                src={dickensLogo}
+                alt="Digitial Dickens Notes Project logo"
+              />
+            </div>
             <span class="sr-only">Digital Dickens Notes Project</span>
           </a>
           <div class="-mr-2 sm:-mr-6 flex items-center md:hidden">
@@ -182,12 +187,7 @@ const links = [
               aria-expanded="false"
             >
               <span class="sr-only">Open main menu</span>
-              <Icon
-                pack="heroicons-outline"
-                name="menu"
-                size={24}
-                aria-hidden="true"
-              />
+              <Icon name="menu" size={24} aria-hidden="true" />
             </button>
           </div>
         </div>
@@ -204,15 +204,15 @@ const links = [
       </div>
     </nav>
   </div>
-</header>
 
-<style>
-  @media (max-width: 768px) {
-    header:not(.open) :is(#menu) {
-      @apply hidden;
+  <style>
+    @media (max-width: 768px) {
+      header:not(.open) :is(#menu) {
+        @apply hidden;
+      }
+      header.open {
+        @apply bg-white;
+      }
     }
-    header.open {
-      @apply bg-white;
-    }
-  }
-</style>
+  </style>
+</header>
