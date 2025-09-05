@@ -8,10 +8,12 @@ export default function Mirador(props) {
   const annotationid = urlParams.get('annotationid');
   const config = {
     id: "mirador",
-    // Note: Annotations functionality temporarily disabled due to mirador-annotations v0.5.0 
-    // incompatibility with Mirador v4. Will need to find alternative or wait for compatible version.
+    annotations: {
+      displayAll: true,
+      displayAllDisabled: false,
+    },
     window: {
-      defaultSideBarPanel: "info",
+      defaultSideBarPanel: "annotations",
       sideBarOpenByDefault: true,
     },
     thumbnailNavigation: {
@@ -35,12 +37,11 @@ export default function Mirador(props) {
 
   useEffect(() => {
     mirador.viewer(config, plugins);
-    // Note: Annotation ID functionality disabled - requires mirador-annotations
-    // if (annotationid){
-    //   setTimeout(() => {
-    //     document.querySelector(`[annotationid="${annotationid}"]`).click();
-    //   }, "2000");
-    // }
+    if (annotationid){
+      setTimeout(() => {
+        document.querySelector(`[annotationid="${annotationid}"]`).click();
+      }, "2000");
+    }
   });
 
   return <div id="mirador" />;
