@@ -1,0 +1,83 @@
+{
+  "@context": "http://iiif.io/api/presentation/3/context.json",
+  "id": "http://localhost:4321/test-iiif/manifest.json",
+  "type": "Manifest",
+  "label": {
+    "en": ["Bleak House Working Notes No. 5 - Multi-Layer Test"]
+  },
+  "summary": {
+    "en": ["Testing multi-layer IIIF with manuscript photo and transcription overlay"]
+  },
+  "rights": "https://creativecommons.org/licenses/by-nc-sa/4.0/",
+  "requiredStatement": {
+    "label": {
+      "en": ["Attribution"]
+    },
+    "value": {
+      "en": ["© Digital Dickens Notes Project (DDNP) 2022 - Multi-layer test"]
+    }
+  },
+  "items": [
+    {
+      "id": "https://dickensnotes.github.io/dickens-annotations/canvas/img/derivatives/iiif/bleakhousetranscriptions/BHWN05.json",
+      "type": "Canvas",
+      "label": {
+        "en": ["BH Working Notes No. 5"]
+      },
+      "height": 2100,
+      "width": 2700,
+      "items": [
+        {
+          "id": "http://localhost:4321/test-iiif/page/bhwn05/1",
+          "type": "AnnotationPage",
+          "items": [
+            {
+              "id": "http://localhost:4321/test-iiif/annotation/bhwn05-manuscript",
+              "type": "Annotation",
+              "motivation": "painting",
+              "label": {
+                "en": ["Manuscript Photo"]
+              },
+              "body": {
+                "id": "http://localhost:4321/test-iiif/BH_WN_05_manuscript.jpg",
+                "type": "Image",
+                "format": "image/jpeg",
+                "height": 2100,
+                "width": 2700,
+                "label": {
+                  "en": ["Manuscript Layer"]
+                }
+              },
+              "target": "https://dickensnotes.github.io/dickens-annotations/canvas/img/derivatives/iiif/bleakhousetranscriptions/BHWN05.json"
+            },
+            {
+              "id": "http://localhost:4321/test-iiif/annotation/bhwn05-transcription",
+              "type": "Annotation",
+              "motivation": "painting",
+              "label": {
+                "en": ["Transcription Overlay"]
+              },
+              "body": {
+                "id": "http://localhost:4321/test-iiif/BHWN05_transcription.jpg",
+                "type": "Image",
+                "format": "image/jpeg",
+                "height": 2100,
+                "width": 2700,
+                "label": {
+                  "en": ["Transcription Layer"]
+                }
+              },
+              "target": "https://dickensnotes.github.io/dickens-annotations/canvas/img/derivatives/iiif/bleakhousetranscriptions/BHWN05.json"
+            }
+          ]
+        }
+      ],
+      "annotations": [
+        {
+          "id": "https://dickensnotes.github.io/dickens-annotations/annotations/bhwn05-list.json",
+          "type": "AnnotationPage"
+        }
+      ]
+    }
+  ]
+}

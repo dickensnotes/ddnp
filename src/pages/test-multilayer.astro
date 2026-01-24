@@ -1,0 +1,24 @@
+---
+import MiradorFullScreenLayout from "../layouts/mirador-full-screen-layout.astro";
+import Mirador from "../components/Mirador";
+
+// Test manifest URLs for multi-layer IIIF images
+const manifests = {
+  local: "/test-iiif/manifest.json",
+  composition: "https://iiif.io/api/cookbook/recipe/0036-composition-from-multiple-images/manifest.json",
+  coin: "https://gist.githubusercontent.com/hadro/c499d26943c45bf38eacfaed07b0a8ea/raw/0962500ab9d0d220d7177c5155ef9eccd0095f40/coin-before.json"
+};
+
+// Get manifest from URL parameter, default to local test
+const queryString = Astro.url.search;
+const urlParams = new URLSearchParams(queryString);
+const manifestType = urlParams.get("manifest") || "local";
+const manifest = manifests[manifestType] || manifests.local;
+---
+
+<MiradorFullScreenLayout
+  title="Multi-Layer IIIF Test - Mirador viewer"
+  description="Testing multi-layer IIIF image support in Mirador"
+>
+  <Mirador client:only="react" loadedManifest={manifest} />
+</MiradorFullScreenLayout>

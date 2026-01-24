@@ -1,0 +1,77 @@
+{
+  "@context": "http://iiif.io/api/presentation/3/context.json",
+  "id": "http://localhost:8000/test-images/manifest.json",
+  "type": "Manifest",
+  "label": {
+    "en": ["Bleak House Working Notes No. 5 - Multi-Layer Test"]
+  },
+  "summary": {
+    "en": ["Testing multi-layer IIIF with manuscript photo and transcription overlay"]
+  },
+  "rights": "https://creativecommons.org/licenses/by-nc-sa/4.0/",
+  "requiredStatement": {
+    "label": {
+      "en": ["Attribution"]
+    },
+    "value": {
+      "en": ["© Digital Dickens Notes Project (DDNP) 2022 - Multi-layer test"]
+    }
+  },
+  "items": [
+    {
+      "id": "http://localhost:8000/test-images/canvas/bhwn05",
+      "type": "Canvas",
+      "label": {
+        "en": ["BH Working Notes No. 5"]
+      },
+      "height": 2100,
+      "width": 2700,
+      "items": [
+        {
+          "id": "http://localhost:8000/test-images/page/bhwn05/1",
+          "type": "AnnotationPage",
+          "items": [
+            {
+              "id": "http://localhost:8000/test-images/annotation/bhwn05-manuscript",
+              "type": "Annotation",
+              "motivation": "painting",
+              "label": {
+                "en": ["Manuscript Photo"]
+              },
+              "body": {
+                "id": "http://localhost:8000/test-images/BH_WN_05_manuscript.jpg",
+                "type": "Image",
+                "format": "image/jpeg",
+                "height": 2100,
+                "width": 2700,
+                "label": {
+                  "en": ["Manuscript Layer"]
+                }
+              },
+              "target": "http://localhost:8000/test-images/canvas/bhwn05"
+            },
+            {
+              "id": "http://localhost:8000/test-images/annotation/bhwn05-transcription",
+              "type": "Annotation",
+              "motivation": "painting",
+              "label": {
+                "en": ["Transcription Overlay"]
+              },
+              "body": {
+                "id": "http://localhost:8000/test-images/BHWN05_transcription.jpg",
+                "type": "Image",
+                "format": "image/jpeg",
+                "height": 2100,
+                "width": 2700,
+                "label": {
+                  "en": ["Transcription Layer"]
+                }
+              },
+              "target": "http://localhost:8000/test-images/canvas/bhwn05"
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}
