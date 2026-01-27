@@ -1,6 +1,6 @@
 {
   "@context": "http://iiif.io/api/presentation/3/context.json",
-  "id": "http://localhost:4321/test-iiif/manifest.json",
+  "id": "/test-iiif/manifest.json",
   "type": "Manifest",
   "label": {
     "en": ["Bleak House Working Notes No. 5 - Multi-Layer Test"]
@@ -28,18 +28,18 @@
       "width": 2700,
       "items": [
         {
-          "id": "http://localhost:4321/test-iiif/page/bhwn05/1",
+          "id": "/test-iiif/page/bhwn05/1",
           "type": "AnnotationPage",
           "items": [
             {
-              "id": "http://localhost:4321/test-iiif/annotation/bhwn05-manuscript",
+              "id": "/test-iiif/annotation/bhwn05-manuscript",
               "type": "Annotation",
               "motivation": "painting",
               "label": {
                 "en": ["Manuscript Photo"]
               },
               "body": {
-                "id": "http://localhost:4321/test-iiif/BH_WN_05_manuscript.jpg",
+                "id": "/test-iiif/BH_WN_05_manuscript.jpg",
                 "type": "Image",
                 "format": "image/jpeg",
                 "height": 2100,
@@ -51,14 +51,14 @@
               "target": "https://dickensnotes.github.io/dickens-annotations/canvas/img/derivatives/iiif/bleakhousetranscriptions/BHWN05.json"
             },
             {
-              "id": "http://localhost:4321/test-iiif/annotation/bhwn05-transcription",
+              "id": "/test-iiif/annotation/bhwn05-transcription",
               "type": "Annotation",
               "motivation": "painting",
               "label": {
                 "en": ["Transcription Overlay"]
               },
               "body": {
-                "id": "http://localhost:4321/test-iiif/BHWN05_transcription.jpg",
+                "id": "/test-iiif/BHWN05_transcription.jpg",
                 "type": "Image",
                 "format": "image/jpeg",
                 "height": 2100,
