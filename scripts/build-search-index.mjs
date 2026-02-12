@@ -229,22 +229,45 @@ function processAnnotations(annotationDocs) {
   Object.entries(annotationDocs).forEach(([key, doc]) => {
     const novel = extractNovel(doc.type);
 
-    // Clean content
-    const cleanedContent = (doc.content || '')
+    // Clean content - preserve actual newlines initially
+    let rawContent = (doc.content || '')
       .replace(/<\/?[^>]*>/g, '') // Remove HTML tags
-      .replace(/\\n/g, ' ')        // Replace literal \n with spaces
+      .replace(/\\n/g, '\n')       // Convert literal \n to actual newlines
       .trim();
+
+    // Try to split on double newlines to separate title from body
+    // Common patterns: \n\n, \r\n\r\n, or multiple newlines
+    const parts = rawContent.split(/\n\s*\n+/);
+
+    let title, bodyText, excerpt;
+
+    if (parts.length > 1) {
+      // First part is likely the title
+      title = parts[0].trim();
+      // Remaining parts are the body
+      bodyText = parts.slice(1).join('\n\n').trim();
+      // Use body for excerpt (not title)
+      excerpt = bodyText.substring(0, 300);
+    } else {
+      // No clear separation - fall back to substring
+      title = rawContent.substring(0, 100);
+      bodyText = rawContent;
+      excerpt = rawContent.substring(0, 300);
+    }
+
+    // Clean final content (normalize whitespace for search)
+    const cleanedContent = rawContent.replace(/\s+/g, ' ').trim();
 
     processed[key] = {
       id: key,
       slug: key,
       url: doc.url || '',
-      title: doc.title || cleanedContent.substring(0, 100),
+      title: doc.title || title,
       content: cleanedContent,
       type: doc.type || 'Annotation',
       novel: novel,
       tags: doc.tags || '',
-      excerpt: cleanedContent.substring(0, 300),
+      excerpt: excerpt || '',
     };
   });
 
