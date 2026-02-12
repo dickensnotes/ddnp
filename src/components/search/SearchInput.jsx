@@ -18,7 +18,7 @@ export default function SearchInput({ query, onQueryChange, onSearch, onReset, h
   return (
     <form onSubmit={handleSubmit} className="mb-6">
       <div className="flex gap-6">
-        <div className="flex-1 relative">
+        <div className="flex-1 relative mr-4">
           <input
             type="text"
             value={query}
@@ -40,7 +40,7 @@ export default function SearchInput({ query, onQueryChange, onSearch, onReset, h
         </div>
         <button
           type="submit"
-          className="px-6 py-3 bg-ddnpblue text-white rounded-md hover:bg-ddnpblue/90 transition-colors flex items-center gap-2"
+          className="px-6 py-3 bg-ddnpblue text-white rounded-md hover:bg-ddnpblue/90 transition-colors flex items-center gap-2 flex-shrink-0"
           aria-label="Submit search"
         >
           <FontAwesomeIcon icon={faMagnifyingGlass} aria-hidden="true" />
