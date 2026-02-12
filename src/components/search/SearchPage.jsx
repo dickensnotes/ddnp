@@ -6,11 +6,18 @@ import SearchControls from "./SearchControls.jsx";
 import SearchFilters from "./SearchFilters.jsx";
 import SearchResults from "./SearchResults.jsx";
 
+// Helper function to categorize document types
+function getCategory(type) {
+  if (type.startsWith("Annotations:")) return "Annotations";
+  if (type.startsWith("Working Notes:")) return "Working Notes";
+  return "Site Content";
+}
+
 export default function SearchPage() {
   const [query, setQuery] = useState("");
   const [results, setResults] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
-  const [activeTypes, setActiveTypes] = useState([]);
+  const [activeCategories, setActiveCategories] = useState([]);
   const [sortBy, setSortBy] = useState("relevance");
   const [currentPage, setCurrentPage] = useState(1);
   const [isSearchInitialized, setIsSearchInitialized] = useState(false);
@@ -27,12 +34,12 @@ export default function SearchPage() {
         // Read query from URL
         const params = new URLSearchParams(window.location.search);
         const urlQuery = params.get("query") || "";
-        const urlTypes = params.get("type") ? params.get("type").split(",") : [];
+        const urlCategories = params.get("category") ? params.get("category").split(",") : [];
         const urlSort = params.get("sort") || "relevance";
         const urlPage = parseInt(params.get("page")) || 1;
 
         setQuery(urlQuery);
-        setActiveTypes(urlTypes);
+        setActiveCategories(urlCategories);
         setSortBy(urlSort);
         setCurrentPage(urlPage);
 
@@ -56,7 +63,7 @@ export default function SearchPage() {
 
     const params = new URLSearchParams();
     if (query) params.set("query", query);
-    if (activeTypes.length > 0) params.set("type", activeTypes.join(","));
+    if (activeCategories.length > 0) params.set("category", activeCategories.join(","));
     if (sortBy !== "relevance") params.set("sort", sortBy);
     if (currentPage > 1) params.set("page", currentPage.toString());
 
@@ -65,19 +72,19 @@ export default function SearchPage() {
       : window.location.pathname;
 
     window.history.pushState({}, "", newUrl);
-  }, [activeTypes, sortBy, currentPage, isSearchInitialized, hasSearched, query]);
+  }, [activeCategories, sortBy, currentPage, isSearchInitialized, hasSearched, query]);
 
   // Handle browser back/forward buttons
   useEffect(() => {
     const handlePopState = () => {
       const params = new URLSearchParams(window.location.search);
       const urlQuery = params.get("query") || "";
-      const urlTypes = params.get("type") ? params.get("type").split(",") : [];
+      const urlCategories = params.get("category") ? params.get("category").split(",") : [];
       const urlSort = params.get("sort") || "relevance";
       const urlPage = parseInt(params.get("page")) || 1;
 
       setQuery(urlQuery);
-      setActiveTypes(urlTypes);
+      setActiveCategories(urlCategories);
       setSortBy(urlSort);
       setCurrentPage(urlPage);
 
@@ -128,7 +135,7 @@ export default function SearchPage() {
   const handleReset = () => {
     setQuery("");
     setResults([]);
-    setActiveTypes([]);
+    setActiveCategories([]);
     setSortBy("relevance");
     setCurrentPage(1);
     setHasSearched(false);
@@ -137,9 +144,12 @@ export default function SearchPage() {
 
   // Apply filters to results
   const filteredResults = useMemo(() => {
-    if (activeTypes.length === 0) return results;
-    return results.filter((result) => activeTypes.includes(result.type));
-  }, [results, activeTypes]);
+    if (activeCategories.length === 0) return results;
+    return results.filter((result) => {
+      const category = getCategory(result.type);
+      return activeCategories.includes(category);
+    });
+  }, [results, activeCategories]);
 
   // Apply sorting to filtered results
   const sortedResults = useMemo(() => {
@@ -158,22 +168,23 @@ export default function SearchPage() {
   // Calculate facet counts from ALL documents (not filtered results)
   const facetCounts = useMemo(() => {
     const allDocs = getAllDocs();
-    const types = {};
+    const categories = {};
 
     Object.values(allDocs).forEach((doc) => {
-      types[doc.type] = (types[doc.type] || 0) + 1;
+      const category = getCategory(doc.type);
+      categories[category] = (categories[category] || 0) + 1;
     });
 
-    return { types };
+    return { categories };
   }, [isSearchInitialized]);
 
   // Handle filter toggle
-  const handleToggleType = (type) => {
-    setActiveTypes((prev) => {
-      if (prev.includes(type)) {
-        return prev.filter((t) => t !== type);
+  const handleToggleCategory = (category) => {
+    setActiveCategories((prev) => {
+      if (prev.includes(category)) {
+        return prev.filter((c) => c !== category);
       } else {
-        return [...prev, type];
+        return [...prev, category];
       }
     });
     setCurrentPage(1); // Reset to first page when filters change
@@ -218,8 +229,8 @@ export default function SearchPage() {
       <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
         <SearchFilters
           facetCounts={facetCounts}
-          activeTypes={activeTypes}
-          onToggleType={handleToggleType}
+          activeCategories={activeCategories}
+          onToggleCategory={handleToggleCategory}
         />
 
         <SearchResults
