@@ -17,7 +17,7 @@ export default function SearchInput({ query, onQueryChange, onSearch, onReset, h
 
   return (
     <form onSubmit={handleSubmit} className="mb-6">
-      <div className="flex gap-2">
+      <div className="flex gap-3">
         <div className="flex-1 relative">
           <input
             type="text"
