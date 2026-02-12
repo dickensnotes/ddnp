@@ -1,0 +1,4 @@
+# Python dependencies for search index builder
+beautifulsoup4
+requests
+pyyaml

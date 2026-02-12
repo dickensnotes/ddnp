@@ -44,9 +44,13 @@ The Digital Dickens Notes Project is a digital humanities project providing scho
 │   └── Little Dorrit/
 ├── public/
 │   └── assets/javascript/ # Search index and libraries
+├── scripts/               # Build scripts
+│   └── build-search-index.mjs  # MiniSearch index builder (Node.js)
 ├── docs/                  # Project documentation (migration plans, etc.)
-├── createindex.rb         # Ruby script for building Lunr search index (legacy)
+├── createindex.rb         # Ruby script for Lunr index (legacy, will be removed)
 ├── createindex-parseannotations.py  # Fetches IIIF annotations from remote API
+├── pyproject.toml         # Python project config (uv)
+├── .python-version        # Python version for uv
 └── astro.config.mjs       # Astro configuration
 ```
 
@@ -56,9 +60,11 @@ The Digital Dickens Notes Project is a digital humanities project providing scho
 
 | Command | Action |
 |---------|--------|
-| `pnpm install` | Install dependencies |
+| `pnpm install` | Install JavaScript dependencies |
+| `uv sync` | Install Python dependencies (for search indexing) |
 | `pnpm run dev` | Start dev server at `localhost:4321` |
-| `pnpm run build` | Build production site to `./dist/` |
+| `pnpm run build:index` | Build search index (fetches annotations, indexes content) |
+| `pnpm run build` | Build search index + production site to `./dist/` |
 | `pnpm run preview` | Preview production build locally |
 
 ## Content Sources
@@ -145,22 +151,36 @@ Include before the Mirador component.
 
 ## Search System
 
-**Current state:** Lunr.js v2.3.6 (unmaintained, 5+ years old)
-**Migration in progress:** Moving to MiniSearch
+**Migration Status:** Phase 1 in progress (Lunr → MiniSearch)
 **See:** `docs/search-migration-plan.md` for full implementation plan
 
-### Current Search Pipeline
-1. Python script fetches annotations from remote API
-2. Ruby script (`createindex.rb`) builds Lunr index from:
-   - Annotation JSON (from Python)
-   - Text files (`textfiles/`)
-   - MDX pages (`src/pages/`)
-3. Output: `public/assets/javascript/index.js` (11 MB)
+### Current State (Transition Period)
+The project is mid-migration from Lunr.js to MiniSearch:
 
-### Search Migration Notes
-- Do NOT add new features to the Lunr implementation
-- Refer to `docs/search-migration-plan.md` for migration steps
-- New search work should target MiniSearch architecture
+**NEW (MiniSearch) — Build pipeline complete ✅**
+- Node.js script (`scripts/build-search-index.mjs`) builds MiniSearch index
+- Python script (via uv) fetches annotations from remote API
+- Indexes: Working Notes (65), Annotations (1,041), Site pages (15)
+- Output: `public/assets/javascript/search-data.json` (4 MB)
+- Run: `pnpm run build:index`
+
+**OLD (Lunr) — Still in use on frontend ⚠️**
+- Search page: `src/pages/search/index.md` (uses external CDN)
+- Old index: `public/assets/javascript/index.js` (11 MB, deprecated)
+- Ruby script: `createindex.rb` (will be removed after migration)
+
+### Migration Checklist
+- ✅ **Step 1.1:** MiniSearch build script created
+- ⏳ **Step 1.2:** Create MiniSearch client module
+- ⏳ **Step 1.3:** Rebuild search page UI
+- ⏳ **Step 1.4:** Clean up legacy files
+- ⏳ **Step 1.5:** Validation and testing
+
+### Working with Search During Migration
+- Do NOT add features to the old Lunr implementation
+- New search development should target MiniSearch architecture
+- Both indexes coexist during transition
+- After Step 1.3, the old Lunr system will be removed
 
 ## Deployment
 
@@ -202,9 +222,10 @@ Edit `src/components/Header.astro`:
 - Include `name`, `description`, `href`, and FontAwesome `icon`
 
 ### Work with Search
-- **Before migrating:** Run `ruby createindex.rb` to rebuild search index
-- **After migrating:** Run `node scripts/build-search-index.mjs` (or `pnpm run build:index`)
-- Python 3 + BeautifulSoup must be installed
+- **Current (MiniSearch):** Run `pnpm run build:index` to rebuild search index
+- **Legacy (Lunr):** Run `ruby createindex.rb` (will be removed after migration)
+- **Requirements:** Python 3.14 via uv (`uv sync` to install dependencies)
+- **Output:** `public/assets/javascript/search-data.json` (4 MB)
 
 ### Debug Mirador Issues
 1. Check that `window.global = window` shim is present
@@ -217,18 +238,25 @@ Edit `src/components/Header.astro`:
 ### System Requirements
 - **Node.js** (v18+, check `.tool-versions` for exact version)
 - **pnpm** (v8+)
-- **Python 3** (for annotation parsing)
-- **Ruby** (for legacy search index builder — will be removed after migration)
+- **Python 3.14** (managed via uv)
+- **uv** (Python package manager) — [Install guide](https://docs.astral.sh/uv/)
+- **Ruby** (for legacy Lunr index builder — will be removed after search migration)
 
-### Python Dependencies
+### Python Dependencies (via uv)
 ```bash
-pip install beautifulsoup4 requests
+uv sync  # Installs all dependencies from pyproject.toml
 ```
 
-### Ruby Dependencies (Legacy)
+Dependencies managed by uv:
+- `beautifulsoup4` — HTML parsing for annotations
+- `requests` — Fetching annotations from remote API
+- `pyyaml` — YAML parsing
+
+### Ruby Dependencies (Legacy — temporary)
 ```bash
 gem install execjs redcarpet json
 ```
+**Note:** Ruby dependencies will be removed after search migration is complete.
 
 ## Known Issues & Quirks
 
