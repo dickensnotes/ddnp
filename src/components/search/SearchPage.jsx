@@ -14,6 +14,7 @@ export default function SearchPage() {
   const [sortBy, setSortBy] = useState("relevance");
   const [currentPage, setCurrentPage] = useState(1);
   const [isSearchInitialized, setIsSearchInitialized] = useState(false);
+  const [hasSearched, setHasSearched] = useState(false);
   const resultsPerPage = 20;
 
   // Initialize search index on mount
@@ -37,10 +38,7 @@ export default function SearchPage() {
 
         if (urlQuery) {
           performSearch(urlQuery);
-        } else {
-          // Show all documents if no query
-          const allDocs = getAllDocs();
-          setResults(Object.values(allDocs));
+          setHasSearched(true);
         }
       } catch (error) {
         console.error("Failed to initialize search:", error);
@@ -52,9 +50,9 @@ export default function SearchPage() {
     init();
   }, []);
 
-  // Update URL when state changes
+  // Update URL when state changes (but not query - only on search submission)
   useEffect(() => {
-    if (!isSearchInitialized) return;
+    if (!isSearchInitialized || !hasSearched) return;
 
     const params = new URLSearchParams();
     if (query) params.set("query", query);
@@ -67,7 +65,7 @@ export default function SearchPage() {
       : window.location.pathname;
 
     window.history.pushState({}, "", newUrl);
-  }, [query, activeTypes, sortBy, currentPage, isSearchInitialized]);
+  }, [activeTypes, sortBy, currentPage, isSearchInitialized, hasSearched, query]);
 
   // Handle browser back/forward buttons
   useEffect(() => {
@@ -85,9 +83,10 @@ export default function SearchPage() {
 
       if (urlQuery) {
         performSearch(urlQuery);
+        setHasSearched(true);
       } else {
-        const allDocs = getAllDocs();
-        setResults(Object.values(allDocs));
+        setResults([]);
+        setHasSearched(false);
       }
     };
 
@@ -98,8 +97,9 @@ export default function SearchPage() {
   // Perform search
   const performSearch = (searchQuery) => {
     if (!searchQuery.trim()) {
-      const allDocs = getAllDocs();
-      setResults(Object.values(allDocs));
+      // Clear search results
+      setResults([]);
+      setHasSearched(false);
       return;
     }
 
@@ -112,6 +112,7 @@ export default function SearchPage() {
 
       setResults(rawResults);
       setCurrentPage(1); // Reset to first page on new search
+      setHasSearched(true);
     } catch (error) {
       console.error("Search error:", error);
       setResults([]);
@@ -121,6 +122,17 @@ export default function SearchPage() {
   // Handle search submission
   const handleSearch = () => {
     performSearch(query);
+  };
+
+  // Handle reset/clear
+  const handleReset = () => {
+    setQuery("");
+    setResults([]);
+    setActiveTypes([]);
+    setSortBy("relevance");
+    setCurrentPage(1);
+    setHasSearched(false);
+    window.history.pushState({}, "", window.location.pathname);
   };
 
   // Apply filters to results
@@ -186,9 +198,15 @@ export default function SearchPage() {
 
   return (
     <div className="space-y-6">
-      <SearchInput query={query} onQueryChange={setQuery} onSearch={handleSearch} />
+      <SearchInput
+        query={query}
+        onQueryChange={setQuery}
+        onSearch={handleSearch}
+        onReset={handleReset}
+        hasQuery={query.length > 0}
+      />
 
-      {sortedResults.length > 0 && (
+      {hasSearched && (
         <SearchControls
           resultCount={sortedResults.length}
           query={query}
@@ -209,6 +227,7 @@ export default function SearchPage() {
           currentPage={currentPage}
           resultsPerPage={resultsPerPage}
           onPageChange={handlePageChange}
+          hasSearched={hasSearched}
         />
       </div>
     </div>
