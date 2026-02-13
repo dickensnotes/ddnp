@@ -53,6 +53,9 @@ All commands are run from the root of the project, from a terminal:
 | `pnpm run build:index` | Builds search index from annotations, notes, and pages    |
 | `pnpm run build`       | Builds search index + production site to `./dist/`        |
 | `pnpm run preview`     | Preview your build locally, before deploying              |
+| `pnpm test`            | Runs test suite (build + search functionality tests)      |
+| `pnpm test:watch`      | Runs tests in watch mode (re-runs on file changes)        |
+| `pnpm test:ui`         | Opens interactive test UI in browser                      |
 
 Feel free to check [the Astro documentation](https://docs.astro.build) or jump into their [Discord server](https://astro.build/chat) for help with Astro.
 
@@ -70,6 +73,34 @@ The search index is built automatically during `pnpm run build`, or can be built
 4. Generates `public/assets/javascript/search-data.json` (~4 MB)
 
 **Note:** The search index builder requires Python 3 and uv. Install Python dependencies with `uv sync`.
+
+## Testing
+
+The DDNP includes an automated test suite built with [Vitest](https://vitest.dev/) to ensure search functionality works correctly and prevent regressions.
+
+### Test Coverage
+
+**Build Pipeline Tests** (`tests/build-index.test.js`)
+- Validates search index structure and content
+- Verifies document counts (1121 total: 1041 annotations, 65 working notes, 15 site content)
+- Checks correct breakdown by novel and content type
+- Validates URL structure for all result types
+
+**Search Functionality Tests** (`tests/search.test.js`)
+- Tests search initialization and document retrieval
+- Validates query execution with known terms
+- Checks result structure and relevance sorting
+- Tests prefix and fuzzy matching features
+
+### Running Tests
+
+```bash
+pnpm test          # Run all tests once
+pnpm test:watch    # Run tests in watch mode (auto-reruns on changes)
+pnpm test:ui       # Open interactive test UI in browser
+```
+
+All tests must pass before merging changes to the search functionality.
 
 ## Global/window shim
 
