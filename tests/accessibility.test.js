@@ -218,6 +218,65 @@ describe('Mobile menu ARIA', () => {
   });
 });
 
+describe('Page titles', () => {
+  it('every page has a non-empty <title>', () => {
+    const missing = [];
+    for (const file of htmlFiles) {
+      const html = readFileSync(file, 'utf-8');
+      const doc = parse(html);
+      const titleEl = doc.querySelector('title');
+      if (!titleEl || !titleEl.text.trim()) {
+        missing.push(relativePath(file, DIST_DIR));
+      }
+    }
+    expect(missing, `Pages missing <title>:\n${missing.join('\n')}`).toHaveLength(0);
+  });
+
+  it('every page title includes "Digital Dickens Notes Project"', () => {
+    const wrong = [];
+    for (const file of htmlFiles) {
+      const html = readFileSync(file, 'utf-8');
+      const doc = parse(html);
+      const titleEl = doc.querySelector('title');
+      const text = titleEl?.text.trim() ?? '';
+      if (!text.includes('Digital Dickens Notes Project')) {
+        wrong.push(`${relativePath(file, DIST_DIR)}: "${text}"`);
+      }
+    }
+    expect(wrong, `Pages whose title lacks site name:\n${wrong.join('\n')}`).toHaveLength(0);
+  });
+
+  it('non-homepage titles are formatted as "Page - Digital Dickens Notes Project"', () => {
+    const wrong = [];
+    for (const file of htmlFiles) {
+      if (file === join(DIST_DIR, 'index.html')) continue; // homepage is exempt
+      const html = readFileSync(file, 'utf-8');
+      const doc = parse(html);
+      const titleEl = doc.querySelector('title');
+      const text = titleEl?.text.trim() ?? '';
+      if (!text.includes(' - Digital Dickens Notes Project')) {
+        wrong.push(`${relativePath(file, DIST_DIR)}: "${text}"`);
+      }
+    }
+    expect(wrong, `Pages with wrong title format:\n${wrong.join('\n')}`).toHaveLength(0);
+  });
+});
+
+describe('No placeholder links', () => {
+  it('no rendered <a> elements have href="#"', () => {
+    const found = [];
+    for (const file of htmlFiles) {
+      const html = readFileSync(file, 'utf-8');
+      const doc = parse(html);
+      const placeholders = doc.querySelectorAll('a[href="#"]');
+      if (placeholders.length > 0) {
+        found.push(`${relativePath(file, DIST_DIR)}: ${placeholders.length} instance(s)`);
+      }
+    }
+    expect(found, `Pages with href="#" links:\n${found.join('\n')}`).toHaveLength(0);
+  });
+});
+
 describe('Page coverage', () => {
   it('at least 20 pages are included in the test run', () => {
     // Guards against the dist/ directory being empty or stale

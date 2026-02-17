@@ -113,6 +113,9 @@ const instructionOptions = [
   },
 ];
 
+// Note: href values here are not currently used — NavPopover receives only
+// title and options, rendering a <button> (not an <a>) for each top-level item.
+// URLs are kept as documentation of intent and to avoid placeholder links.
 const links = [
   {
     href: "/introduction/general",
@@ -120,7 +123,7 @@ const links = [
     options: introductionOptions,
   },
   {
-    href: "#",
+    href: "/usage/guide",
     text: "Using the DDNP",
     options: instructionOptions,
   },
@@ -130,7 +133,7 @@ const links = [
     options: bookOptions,
   },
   {
-    href: "#",
+    href: "/about/team",
     text: "About the Project",
     options: aboutOptions,
   },

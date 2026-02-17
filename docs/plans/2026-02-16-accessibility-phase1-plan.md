@@ -306,7 +306,7 @@ The implementation follows a bottom-up approach: fix shared layout components fi
 
 ### Phase 1F: Page Titles
 
-- [ ] **Task 11: Create page title utility pattern**
+- [x] **Task 11: Create page title utility pattern**
   Files: Documentation/comment in `src/components/MainHead.astro`
 
   Document the page title pattern:
@@ -337,7 +337,7 @@ The implementation follows a bottom-up approach: fix shared layout components fi
 
 ---
 
-- [ ] **Task 12: Verify page titles throughout site**
+- [x] **Task 12: Verify page titles throughout site**
   Files: All .mdx and .astro page files
 
   Audit task (can be done with grep):
@@ -357,7 +357,7 @@ The implementation follows a bottom-up approach: fix shared layout components fi
 
 ### Phase 1G: Placeholder Link Fixes
 
-- [ ] **Task 13: Audit and document placeholder links**
+- [x] **Task 13: Audit and document placeholder links**
   Files: `src/components/Header.astro`, Documentation
 
   Find all href="#" instances:
@@ -377,7 +377,7 @@ The implementation follows a bottom-up approach: fix shared layout components fi
 
 ---
 
-- [ ] **Task 14: Replace or remove placeholder links in Header**
+- [x] **Task 14: Replace or remove placeholder links in Header**
   Depends on: Task 13
   Files: `src/components/Header.astro`
 
