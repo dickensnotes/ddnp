@@ -285,7 +285,7 @@ The implementation follows a bottom-up approach: fix shared layout components fi
 
 ### Phase 1E: Hero Section Color Contrast
 
-- [ ] **Task 10: Increase hero overlay opacity for better contrast**
+- [x] **Task 10: Increase hero overlay opacity for better contrast**
   Files: `src/components/Hero.astro`
 
   Increase background overlay opacity to ensure WCAG AA contrast:
