@@ -5,6 +5,7 @@ import Footer from "../components/Footer.astro";
 import Header from "../components/Header.astro";
 import Hero from "../components/Hero.astro";
 import MainHead from "../components/MainHead.astro";
+import SkipLink from "../components/SkipLink.astro";
 
 const novels = [
   {
@@ -63,22 +64,25 @@ const novels = [
   <!-- Google tag (gtag.js) -->
 
   <body class="container mx-auto">
+    <SkipLink />
     <Header />
-    <Hero />
-    <section class="mt-12 grid grid-cols-1 sm:grid-cols-2 gap-4 space-between">
-      {
-        novels.map((novel, index) => (
-          <Card
-            key={index}
-            title={novel.title}
-            description={novel.description}
-            href={novel.href}
-            img={novel.img}
-            alt={novel.alt}
-          />
-        ))
-      }
-    </section>
+    <main id="main-content">
+      <Hero />
+      <section class="mt-12 grid grid-cols-1 sm:grid-cols-2 gap-4 space-between">
+        {
+          novels.map((novel, index) => (
+            <Card
+              key={index}
+              title={novel.title}
+              description={novel.description}
+              href={novel.href}
+              img={novel.img}
+              alt={novel.alt}
+            />
+          ))
+        }
+      </section>
+    </main>
     <Footer />
   </body>
 </html>

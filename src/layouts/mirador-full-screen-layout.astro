@@ -1,6 +1,7 @@
 ---
 import Header from "../components/Header.astro";
 import MainHead from "../components/MainHead.astro";
+import SkipLink from "../components/SkipLink.astro";
 
 const { title, description } = Astro.props;
 ---
@@ -24,9 +25,12 @@ const { title, description } = Astro.props;
 </script>
 
   <body class="h-full">
+    <SkipLink />
     <Header />
-    <div class="relative h-[90vh]">
-      <slot />
-    </div>
+    <main id="main-content" class="h-[90vh]">
+      <div class="relative h-full">
+        <slot />
+      </div>
+    </main>
   </body>
 </html>

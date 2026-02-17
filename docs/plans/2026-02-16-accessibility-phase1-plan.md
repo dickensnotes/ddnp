@@ -95,7 +95,7 @@ The implementation follows a bottom-up approach: fix shared layout components fi
 
 ---
 
-- [ ] **Task 4: Add main landmark to mirador-full-screen-layout.astro**
+- [x] **Task 4: Add main landmark to mirador-full-screen-layout.astro**
   Depends on: Task 1
   Files: `src/layouts/mirador-full-screen-layout.astro`
 
@@ -133,7 +133,7 @@ The implementation follows a bottom-up approach: fix shared layout components fi
 
 ---
 
-- [ ] **Task 5: Add main landmark to index.astro**
+- [x] **Task 5: Add main landmark to index.astro**
   Depends on: Task 1
   Files: `src/pages/index.astro`
 
