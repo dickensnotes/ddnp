@@ -133,6 +133,91 @@ describe('Main landmark', () => {
   });
 });
 
+describe('Language attribute', () => {
+  it('every page has a lang attribute on the <html> element', () => {
+    const missing = [];
+    for (const file of htmlFiles) {
+      const html = readFileSync(file, 'utf-8');
+      const doc = parse(html);
+      const htmlEl = doc.querySelector('html');
+      if (!htmlEl || !htmlEl.getAttribute('lang')) {
+        missing.push(relativePath(file, DIST_DIR));
+      }
+    }
+    expect(missing, `Pages missing lang attribute on <html>:\n${missing.join('\n')}`).toHaveLength(0);
+  });
+});
+
+describe('Image alt text', () => {
+  it('logo image inside the nav link is decorative (alt="")', () => {
+    // Logo is inside a link (#navlogo) that has sr-only text, so the image is decorative
+    const wrong = [];
+    for (const file of htmlFiles) {
+      const html = readFileSync(file, 'utf-8');
+      const doc = parse(html);
+      const logoLink = doc.querySelector('#navlogo');
+      if (!logoLink) continue;
+      const logoImg = logoLink.querySelector('img');
+      if (!logoImg) continue;
+      const alt = logoImg.getAttribute('alt');
+      if (alt !== '') {
+        wrong.push(`${relativePath(file, DIST_DIR)}: alt="${alt}"`);
+      }
+    }
+    expect(wrong, `Pages where logo image has non-empty alt:\n${wrong.join('\n')}`).toHaveLength(0);
+  });
+
+  it('homepage card images are decorative (alt="") since their links contain text', () => {
+    // Card images are inside <a> elements that already have <h2> title and <p> description,
+    // so the images are decorative and should use alt=""
+    const indexFile = join(DIST_DIR, 'index.html');
+    expect(indexFile, 'Homepage index.html not found in dist/').toBeDefined();
+    const html = readFileSync(indexFile, 'utf-8');
+    const doc = parse(html);
+    const cardImages = doc.querySelectorAll('#main-content section a img');
+    expect(cardImages.length, 'Expected at least one card image on homepage').toBeGreaterThan(0);
+    const wrong = [];
+    for (const img of cardImages) {
+      const alt = img.getAttribute('alt');
+      if (alt !== '') wrong.push(`alt="${alt}"`);
+    }
+    expect(wrong, `Card images with non-empty alt:\n${wrong.join('\n')}`).toHaveLength(0);
+  });
+});
+
+describe('Mobile menu ARIA', () => {
+  it('mobile menu button has aria-expanded="false" in initial HTML', () => {
+    // JavaScript toggles this dynamically; the static HTML must set the initial state
+    const wrong = [];
+    for (const file of htmlFiles) {
+      const html = readFileSync(file, 'utf-8');
+      const doc = parse(html);
+      const menuBtn = doc.querySelector('#menubtn');
+      if (!menuBtn) continue;
+      const expanded = menuBtn.getAttribute('aria-expanded');
+      if (expanded !== 'false') {
+        wrong.push(`${relativePath(file, DIST_DIR)}: aria-expanded="${expanded}"`);
+      }
+    }
+    expect(wrong, `Pages where #menubtn aria-expanded is not "false":\n${wrong.join('\n')}`).toHaveLength(0);
+  });
+
+  it('mobile menu button has aria-controls linking to the menu element', () => {
+    const wrong = [];
+    for (const file of htmlFiles) {
+      const html = readFileSync(file, 'utf-8');
+      const doc = parse(html);
+      const menuBtn = doc.querySelector('#menubtn');
+      if (!menuBtn) continue;
+      const controls = menuBtn.getAttribute('aria-controls');
+      if (controls !== 'menu') {
+        wrong.push(`${relativePath(file, DIST_DIR)}: aria-controls="${controls}"`);
+      }
+    }
+    expect(wrong, `Pages where #menubtn aria-controls is not "menu":\n${wrong.join('\n')}`).toHaveLength(0);
+  });
+});
+
 describe('Page coverage', () => {
   it('at least 20 pages are included in the test run', () => {
     // Guards against the dist/ directory being empty or stale
