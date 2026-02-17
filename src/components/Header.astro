@@ -141,7 +141,11 @@ const links = [
   const header = document.getElementById("navheader");
   const menuBtn = document.getElementById("menubtn");
   const logo = document.getElementById("navlogo");
-  menuBtn.onclick = () => header.classList.toggle("open");
+  menuBtn.onclick = () => {
+    const isOpen = header.classList.toggle("open");
+    menuBtn.setAttribute("aria-expanded", isOpen.toString());
+    menuBtn.querySelector(".sr-only").textContent = isOpen ? "Close main menu" : "Open main menu";
+  };
   if (matchMedia("(pointer:fine)").matches) {
     logo.addEventListener("contextmenu", (event) => {
       event.preventDefault();
@@ -174,7 +178,7 @@ const links = [
             <div class="=mb-1 md:h-auto md:w-36">
               <Image
                 src={dickensLogo}
-                alt="Digitial Dickens Notes Project logo"
+                alt=""
               />
             </div>
             <span class="sr-only">Digital Dickens Notes Project</span>
@@ -185,6 +189,7 @@ const links = [
               id="menubtn"
               class="rounded-md p-2 inline-flex items-center justify-center hover:bg-white hover:text-gray-900 focus:outline-none focus:ring-2 focus-ring-inset focus:ring-neutral-50"
               aria-expanded="false"
+              aria-controls="menu"
             >
               <span class="sr-only">Open main menu</span>
               <Icon name="menu" size={24} aria-hidden="true" />

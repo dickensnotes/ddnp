@@ -176,7 +176,7 @@ The implementation follows a bottom-up approach: fix shared layout components fi
 
 ### Phase 1B: Mobile Navigation ARIA
 
-- [ ] **Task 6: Add dynamic aria-expanded to mobile menu button**
+- [x] **Task 6: Add dynamic aria-expanded to mobile menu button**
   Files: `src/components/Header.astro`
 
   Update the mobile menu button script and markup:
@@ -223,7 +223,7 @@ The implementation follows a bottom-up approach: fix shared layout components fi
 
 ### Phase 1C: Image Alt Text
 
-- [ ] **Task 7: Fix logo alt text typo and improve description**
+- [x] **Task 7: Fix logo alt text typo and improve description**
   Files: `src/components/Header.astro`
 
   Update line 177:
@@ -270,7 +270,7 @@ The implementation follows a bottom-up approach: fix shared layout components fi
 
 ### Phase 1D: Language Attributes
 
-- [ ] **Task 9: Add lang attribute to mirador-full-screen-layout.astro**
+- [x] **Task 9: Add lang attribute to mirador-full-screen-layout.astro**
   Files: `src/layouts/mirador-full-screen-layout.astro`
 
   Add lang attribute to html element (line 8):
