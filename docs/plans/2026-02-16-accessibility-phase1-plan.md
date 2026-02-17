@@ -244,7 +244,7 @@ The implementation follows a bottom-up approach: fix shared layout components fi
 
 ---
 
-- [ ] **Task 8: Verify and document Card image alt text pattern**
+- [x] **Task 8: Verify and document Card image alt text pattern**
   Files: `src/pages/index.astro`, Documentation
 
   Review current Card usage (lines 70-80) in index.astro:
