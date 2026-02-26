@@ -179,7 +179,14 @@ const links = [
             </div>
             <span class="sr-only">Digital Dickens Notes Project</span>
           </a>
-          <div class="-mr-2 sm:-mr-6 flex items-center md:hidden">
+          <div class="-mr-2 sm:-mr-6 flex items-center gap-1 md:hidden">
+            <a
+              href="/search"
+              class="rounded-md p-2 inline-flex items-center justify-center text-gray-600 hover:text-ddnpblue transition-colors focus:outline-none focus:ring-2 focus:ring-inset focus:ring-neutral-50"
+              aria-label="Search the DDNP"
+            >
+              <Icon name="search" size={20} aria-hidden="true" />
+            </a>
             <button
               type="button"
               id="menubtn"
@@ -191,15 +198,24 @@ const links = [
             </button>
           </div>
         </div>
-        <div
-          id="menu"
-          class="flex flex-col sm:flex-row gap-x-8 gap-y-4 sm:ml-10 text-center sm:text-left sm:pb-0"
-        >
-          {
-            links.map(({ text, options }) => (
-              <NavPopover title={text} options={options} client:load />
-            ))
-          }
+        <div class="flex items-center gap-4">
+          <div
+            id="menu"
+            class="flex flex-col sm:flex-row gap-x-8 gap-y-4 sm:ml-10 text-center sm:text-left sm:pb-0"
+          >
+            {
+              links.map(({ text, options }) => (
+                <NavPopover title={text} options={options} client:load />
+              ))
+            }
+          </div>
+          <a
+            href="/search"
+            class="hidden md:flex items-center p-2 text-gray-600 hover:text-ddnpblue transition-colors rounded-md focus:outline-none focus:ring-2 focus:ring-inset focus:ring-neutral-50"
+            aria-label="Search the DDNP"
+          >
+            <Icon name="search" size={20} aria-hidden="true" />
+          </a>
         </div>
       </div>
     </nav>
