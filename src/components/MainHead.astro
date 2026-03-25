@@ -1,4 +1,7 @@
 ---
+// Page title format: "Specific Page Name - Digital Dickens Notes Project"
+// The homepage uses just "Digital Dickens Notes Project" (no suffix).
+// All other pages get the site name appended automatically below.
 import "../styles/global.scss";
 const {
   title = "Digital Dickens Notes Project",
@@ -13,7 +16,7 @@ const {
 <meta charset="UTF-8" />
 <meta name="description" content={description} />
 <meta name="viewport" content="width=device-width" />
-<title>{title}</title>
+<title>{title.includes("Digital Dickens Notes Project") ? title : `${title} - Digital Dickens Notes Project`}</title>
 
 <link rel="preconnect" href="https://fonts.googleapis.com" />
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />

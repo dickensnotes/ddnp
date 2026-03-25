@@ -5,7 +5,14 @@ import Footer from "../components/Footer.astro";
 import Header from "../components/Header.astro";
 import Hero from "../components/Hero.astro";
 import MainHead from "../components/MainHead.astro";
+import SkipLink from "../components/SkipLink.astro";
 
+// Alt text pattern for Card images: use alt="" (empty/decorative).
+// Each card image is inside a link that already has a title (<h2>) and
+// description (<p>), so the image is decorative in context. Using a
+// descriptive alt would cause screen readers to announce the image text
+// and then immediately re-read the link text — a redundant double-announcement.
+// See WCAG technique H67 and the Card.astro component for the full link structure.
 const novels = [
   {
     title: "David Copperfield Working Notes (1849-50)",
@@ -13,7 +20,7 @@ const novels = [
       "Immerse yourself in the composition of Dickens's most autobiographical novel through our introduction and annotations to these Notes.",
     href: "/notes/david-copperfield",
     img: "/images/home/david-copperfield-wn-7-card.webp",
-    alt: "David Copperfield Working Notes",
+    alt: "",
   },
   {
     title: "Bleak House Working Notes (1852-53)",
@@ -21,7 +28,7 @@ const novels = [
       "Explore Dickens's management of the novel's dual narrators with our introduction and annotations to these Notes.",
     href: "/notes/bleak-house",
     img: "/images/home/bleak-house-wn-15-card.webp",
-    alt: "Bleak House Working Notes",
+    alt: "",
   },
   {
     title: "Hard Times Working Notes (1854)",
@@ -29,7 +36,7 @@ const novels = [
       "Follow Dickens's difficulties navigating a weekly serial with our introduction and annotations to these Notes.",
     href: "/notes/hard-times",
     img: "/images/home/hard-times-wn-02-card.webp",
-    alt: "Hard Times Working Notes",
+    alt: "",
   },
   {
     title: "Little Dorrit Working Notes (1855-57)",
@@ -37,7 +44,7 @@ const novels = [
       "Discover how Dickens's idea for 'Nobody's Fault' transformed into 'Little Dorrit' through our introduction and annotations to these Notes",
     href: "/notes/little-dorrit",
     img: "/images/home/little-dorrit-wn-04-card.webp",
-    alt: "Little Dorrit Working Notes",
+    alt: "",
   },
 ];
 ---
@@ -63,22 +70,25 @@ const novels = [
   <!-- Google tag (gtag.js) -->
 
   <body class="container mx-auto">
+    <SkipLink />
     <Header />
-    <Hero />
-    <section class="mt-12 grid grid-cols-1 sm:grid-cols-2 gap-4 space-between">
-      {
-        novels.map((novel, index) => (
-          <Card
-            key={index}
-            title={novel.title}
-            description={novel.description}
-            href={novel.href}
-            img={novel.img}
-            alt={novel.alt}
-          />
-        ))
-      }
-    </section>
+    <main id="main-content">
+      <Hero />
+      <section class="mt-12 grid grid-cols-1 sm:grid-cols-2 gap-4 space-between">
+        {
+          novels.map((novel, index) => (
+            <Card
+              key={index}
+              title={novel.title}
+              description={novel.description}
+              href={novel.href}
+              img={novel.img}
+              alt={novel.alt}
+            />
+          ))
+        }
+      </section>
+    </main>
     <Footer />
   </body>
 </html>

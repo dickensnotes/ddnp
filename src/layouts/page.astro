@@ -2,6 +2,7 @@
 import MainHead from "../components/MainHead.astro";
 import Header from "../components/Header.astro";
 import Footer from "../components/Footer.astro";
+import SkipLink from "../components/SkipLink.astro";
 
 const { content } = Astro.props;
 ---
@@ -24,15 +25,17 @@ const { content } = Astro.props;
   <!-- Google tag (gtag.js) -->
 
   <body class="container mx-auto flex flex-col h-screen justify-between">
+    <SkipLink />
     <Header />
-    <div
+    <main
+      id="main-content"
       class="prose px-4 sm:px-6 prose-a:underline prose-a:decoration-ddnpblue prose-a:underline-offset-4 mx-auto flex-auto"
     >
       <h1 class="prose text-4xl mt-6">{content.title}</h1>
       <div class="prose mt-6">
         <slot />
       </div>
-    </div>
+    </main>
     <Footer />
   </body>
 </html>
