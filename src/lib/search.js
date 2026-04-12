@@ -43,6 +43,22 @@ export async function initSearch() {
 }
 
 /**
+ * Parse a query string, extracting quoted phrases and remaining terms.
+ * @param {string} query - Raw query string
+ * @returns {{ phrases: string[], remainder: string }}
+ */
+function parseQuery(query) {
+  const phrases = [];
+  const phraseRegex = /"([^"]+)"/g;
+  let match;
+  while ((match = phraseRegex.exec(query))) {
+    phrases.push(match[1]);
+  }
+  const remainder = query.replace(phraseRegex, '').trim();
+  return { phrases, remainder };
+}
+
+/**
  * Search the index
  * @param {string} query - Search query string
  * @param {Object} options - Search options (passed to MiniSearch)
@@ -53,17 +69,42 @@ export function search(query, options = {}) {
     throw new Error('Search not initialized. Call initSearch() first.');
   }
 
-  // Default search options matching the build configuration
+  const { phrases, remainder } = parseQuery(query);
+
+  // Build search terms: use remainder if present, otherwise use phrase words
+  const searchTerms = remainder || phrases.join(' ');
+
+  if (!searchTerms.trim()) return [];
+
   const defaultOptions = {
     boost: { title: 20, content: 10, tags: 10 },
-    prefix: true,
-    fuzzy: 0.2,
+    prefix: (term) => term.length >= 4,
+    fuzzy: (term) => {
+      if (term.length <= 4) return false;
+      if (term.length <= 6) return 1;
+      return 2;
+    },
+    combineWith: 'AND',
   };
 
-  return searchInstance.search(query, {
+  let results = searchInstance.search(searchTerms, {
     ...defaultOptions,
     ...options,
   });
+
+  // Post-filter for exact phrase matches
+  if (phrases.length > 0) {
+    results = results.filter(result => {
+      const doc = docs[result.id];
+      if (!doc) return false;
+      const content = (doc.content || '').toLowerCase();
+      const title = (doc.title || '').toLowerCase();
+      const searchable = title + ' ' + content;
+      return phrases.every(phrase => searchable.includes(phrase.toLowerCase()));
+    });
+  }
+
+  return results;
 }
 
 /**

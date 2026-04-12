@@ -51,63 +51,13 @@ describe('Search Module', () => {
   });
 
   describe('search()', () => {
-    it('should throw error if search not initialized', () => {
-      // This test would need to be run in isolation
-      // Skipping for now since we initialize in beforeAll
-    });
-
-    it('should return results for "Esther"', () => {
-      const results = search('Esther', {
-        boost: { title: 20, content: 10, tags: 10 },
-        prefix: true,
-        fuzzy: 0.2,
-      });
-
-      expect(Array.isArray(results)).toBe(true);
-      expect(results.length).toBeGreaterThan(0);
-      expect(results.length).toBe(117);
-    });
-
-    it('should return results for "fog"', () => {
-      const results = search('fog', {
-        boost: { title: 20, content: 10, tags: 10 },
-        prefix: true,
-        fuzzy: 0.2,
-      });
-
-      expect(results.length).toBeGreaterThan(0);
-      expect(results.length).toBe(673);
-    });
-
-    it('should return results for "Dora"', () => {
-      const results = search('Dora', {
-        boost: { title: 20, content: 10, tags: 10 },
-        prefix: true,
-        fuzzy: 0.2,
-      });
-
-      expect(results.length).toBeGreaterThan(0);
-      expect(results.length).toBe(53);
-    });
-
     it('should return results for "Gradgrind"', () => {
-      const results = search('Gradgrind', {
-        boost: { title: 20, content: 10, tags: 10 },
-        prefix: true,
-        fuzzy: 0.2,
-      });
-
-      expect(results.length).toBeGreaterThan(0);
+      const results = search('Gradgrind');
       expect(results.length).toBe(31);
     });
 
     it('should return empty array for nonsense query', () => {
-      const results = search('xyzabc123notfound', {
-        boost: { title: 20, content: 10, tags: 10 },
-        prefix: true,
-        fuzzy: 0.2,
-      });
-
+      const results = search('xyzabc123notfound');
       expect(results.length).toBe(0);
     });
 
@@ -135,18 +85,116 @@ describe('Search Module', () => {
       }
     });
 
-    it('should support prefix matching', () => {
-      const exactResults = search('Est', { prefix: false });
-      const prefixResults = search('Est', { prefix: true });
+    it('should support prefix matching for longer terms', () => {
+      const exactResults = search('Esth', { prefix: false });
+      const prefixResults = search('Esth', { prefix: true });
 
       // Prefix search should return more results
       expect(prefixResults.length).toBeGreaterThan(exactResults.length);
     });
 
-    it('should support fuzzy matching', () => {
-      // "Esther" with typo "Esthar"
-      const results = search('Esthar', { fuzzy: 0.2 });
+    it('should support fuzzy matching for longer terms', () => {
+      // "Esthar" is 6 chars, 1 edit from "Esther" — within 2-edit max
+      const results = search('Esthar', { fuzzy: 2 });
+      expect(results.length).toBeGreaterThan(0);
+    });
+  });
 
+  describe('Fuzzy matching behavior', () => {
+    it('"fog" should only match documents containing "fog"', () => {
+      const results = search('fog');
+      const docs = getAllDocs();
+      results.forEach(r => {
+        const doc = docs[r.id];
+        const text = ((doc?.title || '') + ' ' + (doc?.content || '')).toLowerCase();
+        expect(text).toContain('fog');
+      });
+    });
+
+    it('"fog" should return far fewer results than the old 673', () => {
+      const results = search('fog');
+      expect(results.length).toBeLessThan(100);
+    });
+
+    it('"Jo" should return far fewer results than the old 124', () => {
+      const results = search('Jo');
+      expect(results.length).toBeLessThan(50);
+    });
+
+    it('"shadow" should return results (matches "shadows" via prefix)', () => {
+      const results = search('shadow');
+      expect(results.length).toBeGreaterThan(0);
+    });
+
+    it('"Gradgrind" should return exactly 31 results', () => {
+      const results = search('Gradgrind');
+      expect(results.length).toBe(31);
+    });
+
+    it('"Boythorn" should return results', () => {
+      const results = search('Boythorn');
+      expect(results.length).toBeGreaterThan(0);
+    });
+
+    it('"Merdle" results should mostly contain "merdle"', () => {
+      const results = search('Merdle');
+      expect(results.length).toBeGreaterThan(0);
+      const docs = getAllDocs();
+      const merdleResults = results.filter(r => {
+        const doc = docs[r.id];
+        const text = ((doc?.title || '') + ' ' + (doc?.content || '')).toLowerCase();
+        return text.includes('merdle');
+      });
+      expect(merdleResults.length).toBeGreaterThan(results.length * 0.5);
+    });
+
+    it('"pave" results should all contain "pave"', () => {
+      const results = search('pave');
+      const docs = getAllDocs();
+      results.forEach(r => {
+        const doc = docs[r.id];
+        const text = ((doc?.title || '') + ' ' + (doc?.content || '')).toLowerCase();
+        expect(text).toMatch(/pave/);
+      });
+    });
+  });
+
+  describe('Phrase search', () => {
+    it('quoted phrase should only return exact phrase matches', () => {
+      const results = search('"pave the way"');
+      expect(results.length).toBeLessThan(20);
+      const docs = getAllDocs();
+      results.forEach(r => {
+        const doc = docs[r.id];
+        const text = ((doc?.title || '') + ' ' + (doc?.content || '')).toLowerCase();
+        expect(text).toContain('pave the way');
+      });
+    });
+
+    it('unquoted multi-word query should use AND logic (fewer results)', () => {
+      const results = search('pave the way');
+      expect(results.length).toBeLessThan(100);
+    });
+
+    it('empty quotes should not break search', () => {
+      const results = search('""');
+      expect(Array.isArray(results)).toBe(true);
+    });
+
+    it('unclosed quote should be treated as regular search', () => {
+      const results = search('"shadow');
+      expect(Array.isArray(results)).toBe(true);
+    });
+  });
+
+  describe('Prefix matching behavior', () => {
+    it('short terms (<=3 chars) should NOT prefix match broadly', () => {
+      const results = search('Jo');
+      expect(results.length).toBeLessThan(50);
+    });
+
+    it('longer terms (>=4 chars) should prefix match', () => {
+      const results = search('Esth');
       expect(results.length).toBeGreaterThan(0);
     });
   });

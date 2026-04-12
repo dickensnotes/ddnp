@@ -104,11 +104,7 @@ export default function SearchPage() {
     }
 
     try {
-      const rawResults = search(searchQuery, {
-        boost: { title: 20, content: 10, tags: 10 },
-        prefix: true,
-        fuzzy: 0.2,
-      });
+      const rawResults = search(searchQuery);
 
       setResults(rawResults);
       setCurrentPage(1); // Reset to first page on new search
