@@ -198,4 +198,56 @@ describe('Search Module', () => {
       expect(results.length).toBeGreaterThan(0);
     });
   });
+
+  describe('Facet counts from search results', () => {
+    // Helper to compute facet counts the same way SearchPage.jsx does
+    function computeFacetCounts(results) {
+      const types = {};
+      results.forEach((result) => {
+        const type = result.type;
+        if (type) {
+          types[type] = (types[type] || 0) + 1;
+        }
+      });
+      return types;
+    }
+
+    it('should only include types present in search results', () => {
+      const results = search('Gradgrind');
+      const counts = computeFacetCounts(results);
+
+      // Gradgrind is only in Hard Times
+      expect(Object.keys(counts)).toEqual(
+        expect.arrayContaining(['Annotations: Hard Times', 'Working Notes: Hard Times'])
+      );
+      // Should NOT include other novels or Site Content
+      expect(counts['Annotations: Bleak House']).toBeUndefined();
+      expect(counts['Annotations: David Copperfield']).toBeUndefined();
+      expect(counts['Annotations: Little Dorrit']).toBeUndefined();
+      expect(counts['Site Content']).toBeUndefined();
+    });
+
+    it('facet counts should sum to total result count', () => {
+      const results = search('Esther');
+      const counts = computeFacetCounts(results);
+      const sum = Object.values(counts).reduce((a, b) => a + b, 0);
+      expect(sum).toBe(results.length);
+    });
+
+    it('should return empty counts when there are no results', () => {
+      const results = search('xyzabc123notfound');
+      const counts = computeFacetCounts(results);
+      expect(Object.keys(counts).length).toBe(0);
+    });
+
+    it('Boythorn facets should only show Bleak House categories', () => {
+      const results = search('Boythorn');
+      const counts = computeFacetCounts(results);
+
+      expect(Object.keys(counts).sort()).toEqual(
+        ['Annotations: Bleak House', 'Working Notes: Bleak House']
+      );
+      expect(counts['Annotations: Bleak House'] + counts['Working Notes: Bleak House']).toBe(results.length);
+    });
+  });
 });
