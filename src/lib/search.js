@@ -80,8 +80,8 @@ export function search(query, options = {}) {
     boost: { title: 20, content: 10, tags: 10 },
     prefix: (term) => term.length >= 4,
     fuzzy: (term) => {
-      if (term.length <= 4) return false;
-      if (term.length <= 6) return 1;
+      if (term.length <= 6) return false;
+      if (term.length <= 8) return 1;
       return 2;
     },
     combineWith: 'AND',

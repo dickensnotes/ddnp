@@ -94,8 +94,8 @@ describe('Search Module', () => {
     });
 
     it('should support fuzzy matching for longer terms', () => {
-      // "Esthar" is 6 chars, 1 edit from "Esther" — within 2-edit max
-      const results = search('Esthar', { fuzzy: 2 });
+      // "Peggoty" is 7 chars, 1 edit from "Peggotty" — within 1-edit max for 7-8 char words
+      const results = search('Peggoty');
       expect(results.length).toBeGreaterThan(0);
     });
   });
