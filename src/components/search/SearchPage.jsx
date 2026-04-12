@@ -1,5 +1,5 @@
 import { useState, useEffect, useMemo } from "react";
-import { initSearch, search, getAllDocs } from "../../lib/search.js";
+import { initSearch, search } from "../../lib/search.js";
 import LoadingSpinner from "./LoadingSpinner.jsx";
 import SearchInput from "./SearchInput.jsx";
 import SearchControls from "./SearchControls.jsx";
@@ -151,17 +151,19 @@ export default function SearchPage() {
     return sorted;
   }, [filteredResults, sortBy]);
 
-  // Calculate facet counts from ALL documents (not filtered results)
+  // Calculate facet counts from current search results
   const facetCounts = useMemo(() => {
-    const allDocs = getAllDocs();
     const types = {};
 
-    Object.values(allDocs).forEach((doc) => {
-      types[doc.type] = (types[doc.type] || 0) + 1;
+    results.forEach((result) => {
+      const type = result.type;
+      if (type) {
+        types[type] = (types[type] || 0) + 1;
+      }
     });
 
     return { types };
-  }, [isSearchInitialized]);
+  }, [results]);
 
   // Handle filter toggle
   const handleToggleType = (type) => {
