@@ -199,6 +199,72 @@ describe('Search Module', () => {
     });
   });
 
+  describe('Result type ordering', () => {
+    // Replicates the type-priority sort from SearchPage.jsx
+    function sortByTypePriority(results) {
+      const typePriority = (type) => {
+        if (type?.startsWith("Working Notes:")) return 0;
+        if (type?.startsWith("Annotations:")) return 1;
+        return 2;
+      };
+      return [...results].sort((a, b) => {
+        const priorityDiff = typePriority(a.type) - typePriority(b.type);
+        if (priorityDiff !== 0) return priorityDiff;
+        return b.score - a.score;
+      });
+    }
+
+    it('Working Notes should come before Annotations in sorted results', () => {
+      const results = search('Esther');
+      const sorted = sortByTypePriority(results);
+
+      // Find the last Working Notes index and first Annotations index
+      let lastWN = -1;
+      let firstAnn = sorted.length;
+      sorted.forEach((r, i) => {
+        if (r.type.startsWith('Working Notes:')) lastWN = i;
+        if (r.type.startsWith('Annotations:') && i < firstAnn) firstAnn = i;
+      });
+
+      if (lastWN >= 0 && firstAnn < sorted.length) {
+        expect(lastWN).toBeLessThan(firstAnn);
+      }
+    });
+
+    it('Annotations should come before Site Content in sorted results', () => {
+      const results = search('Esther');
+      const sorted = sortByTypePriority(results);
+
+      let lastAnn = -1;
+      let firstSite = sorted.length;
+      sorted.forEach((r, i) => {
+        if (r.type.startsWith('Annotations:')) lastAnn = i;
+        if (r.type === 'Site Content' && i < firstSite) firstSite = i;
+      });
+
+      if (lastAnn >= 0 && firstSite < sorted.length) {
+        expect(lastAnn).toBeLessThan(firstSite);
+      }
+    });
+
+    it('should preserve relevance order within the same type group', () => {
+      const results = search('Esther');
+      const sorted = sortByTypePriority(results);
+
+      // Check that scores are descending within each type group
+      let prevType = null;
+      let prevScore = Infinity;
+      sorted.forEach(r => {
+        if (r.type !== prevType) {
+          prevScore = Infinity;
+          prevType = r.type;
+        }
+        expect(r.score).toBeLessThanOrEqual(prevScore);
+        prevScore = r.score;
+      });
+    });
+  });
+
   describe('Facet counts from search results', () => {
     // Helper to compute facet counts the same way SearchPage.jsx does
     function computeFacetCounts(results) {

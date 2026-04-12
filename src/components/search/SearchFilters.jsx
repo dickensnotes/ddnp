@@ -40,8 +40,8 @@ export default function SearchFilters({ facetCounts, activeTypes, onToggleType }
     });
   });
 
-  // Sort categories in logical order
-  const categoryOrder = ["Annotations", "Working Notes", "Site Content"];
+  // Sort categories in logical order (Working Notes first)
+  const categoryOrder = ["Working Notes", "Annotations", "Site Content"];
   const sortedCategories = categoryOrder.filter(cat => groupedTypes[cat]);
 
   // Count active filters

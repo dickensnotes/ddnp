@@ -146,7 +146,20 @@ export default function SearchPage() {
     } else if (sortBy === "ztoa") {
       sorted.sort((a, b) => b.title.localeCompare(a.title));
     }
-    // For 'relevance', keep the order from search results
+    // For 'relevance', group by type priority then sort by score within each group
+    // Working Notes first, then Annotations, then Site Content
+    if (sortBy === "relevance") {
+      const typePriority = (type) => {
+        if (type?.startsWith("Working Notes:")) return 0;
+        if (type?.startsWith("Annotations:")) return 1;
+        return 2;
+      };
+      sorted.sort((a, b) => {
+        const priorityDiff = typePriority(a.type) - typePriority(b.type);
+        if (priorityDiff !== 0) return priorityDiff;
+        return b.score - a.score;
+      });
+    }
 
     return sorted;
   }, [filteredResults, sortBy]);
