@@ -31,11 +31,11 @@ const FIELD_BOOSTS = {
 const SEARCH_FIELDS = ['title', 'content', 'tags'];
 const STORE_FIELDS = ['title', 'url', 'type', 'tags', 'excerpt', 'novel'];
 
-// Custom tokenizer matching Lunr config: /[\s,.;:/?!()]+/
+// Custom tokenizer: split on whitespace, punctuation, and quotation marks
 function tokenize(text) {
   if (!text) return [];
   return text
-    .split(/[\s,.;:/?!()]+/)
+    .split(/[\s,.;:/?!()\[\]{}"'\u2018\u2019\u201C\u201D\u2013\u2014]+/)
     .filter(token => token.length > 0);
 }
 

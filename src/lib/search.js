@@ -34,7 +34,7 @@ export async function initSearch() {
     storeFields: ['title', 'url', 'type', 'tags', 'excerpt', 'novel'],
     tokenize: (text) => {
       if (!text) return [];
-      return text.split(/[\s,.;:/?!()]+/).filter(token => token.length > 0);
+      return text.split(/[\s,.;:/?!()\[\]{}"'\u2018\u2019\u201C\u201D\u2013\u2014]+/).filter(token => token.length > 0);
     },
     processTerm: (term) => term.toLowerCase(),
   });

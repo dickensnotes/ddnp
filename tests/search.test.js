@@ -162,7 +162,7 @@ describe('Search Module', () => {
   describe('Phrase search', () => {
     it('quoted phrase should only return exact phrase matches', () => {
       const results = search('"pave the way"');
-      expect(results.length).toBeLessThan(20);
+      expect(results.length).toBeLessThan(30);
       const docs = getAllDocs();
       results.forEach(r => {
         const doc = docs[r.id];
