@@ -35,22 +35,72 @@ It also leverages [pnpm](https://pnpm.js.org/) to manage JS dependencies.
 To run locally:
 
 1. Ensure you have [Node](https://nodejs.org/) and [pnpm](https://pnpm.js.org/) installed.
-2. Clone the repository.
-3. Run `pnpm install` at the root of the repository to install dependencies.
-4. Run `pnpm run dev` at the root of the repository to run the application.
+2. Ensure you have [Python 3](https://www.python.org/) and [uv](https://docs.astral.sh/uv/) installed (required for search index building).
+3. Clone the repository.
+4. Run `pnpm install` at the root of the repository to install JavaScript dependencies.
+5. Run `uv sync` to install Python dependencies (BeautifulSoup, requests, PyYAML).
+6. Run `pnpm run dev` at the root of the repository to run the application.
 
-## Astro Commands
+## Commands
 
 All commands are run from the root of the project, from a terminal:
 
-| Command            | Action                                       |
-| :----------------- | :------------------------------------------- |
-| `pnpm install`     | Installs dependencies                        |
-| `pnpm run dev`     | Starts local dev server at `localhost:3000`  |
-| `pnpm run build`   | Build your production site to `./dist/`      |
-| `pnpm run preview` | Preview your build locally, before deploying |
+| Command                | Action                                                    |
+| :--------------------- | :-------------------------------------------------------- |
+| `pnpm install`         | Installs JavaScript dependencies                          |
+| `uv sync`              | Installs Python dependencies (for search indexing)        |
+| `pnpm run dev`         | Starts local dev server at `localhost:4321`               |
+| `pnpm run build:index` | Builds search index from annotations, notes, and pages    |
+| `pnpm run build`       | Builds search index + production site to `./dist/`        |
+| `pnpm run preview`     | Preview your build locally, before deploying              |
+| `pnpm test`            | Runs test suite (build + search functionality tests)      |
+| `pnpm test:watch`      | Runs tests in watch mode (re-runs on file changes)        |
+| `pnpm test:ui`         | Opens interactive test UI in browser                      |
 
 Feel free to check [the Astro documentation](https://docs.astro.build) or jump into their [Discord server](https://astro.build/chat) for help with Astro.
+
+## Search Index
+
+The DDNP uses [MiniSearch](https://lucaong.github.io/minisearch/) to index and search across three types of content:
+- **Working Notes** (65 text files from 4 novels)
+- **Annotations** (fetched from remote IIIF API)
+- **Site Content** (MDX pages)
+
+The search index is built automatically during `pnpm run build`, or can be built manually with `pnpm run build:index`. The build process:
+1. Fetches annotations from the remote API using Python
+2. Indexes Working Notes text files
+3. Indexes site content pages
+4. Generates `public/assets/javascript/search-data.json` (~4 MB)
+
+**Note:** The search index builder requires Python 3 and uv. Install Python dependencies with `uv sync`.
+
+## Testing
+
+The DDNP includes an automated test suite built with [Vitest](https://vitest.dev/) to ensure search functionality works correctly and prevent regressions.
+
+### Test Coverage
+
+**Build Pipeline Tests** (`tests/build-index.test.js`)
+- Validates search index structure and content
+- Verifies document counts (1121 total: 1041 annotations, 65 working notes, 15 site content)
+- Checks correct breakdown by novel and content type
+- Validates URL structure for all result types
+
+**Search Functionality Tests** (`tests/search.test.js`)
+- Tests search initialization and document retrieval
+- Validates query execution with known terms
+- Checks result structure and relevance sorting
+- Tests prefix and fuzzy matching features
+
+### Running Tests
+
+```bash
+pnpm test          # Run all tests once
+pnpm test:watch    # Run tests in watch mode (auto-reruns on changes)
+pnpm test:ui       # Open interactive test UI in browser
+```
+
+All tests must pass before merging changes to the search functionality.
 
 ## Global/window shim
 
