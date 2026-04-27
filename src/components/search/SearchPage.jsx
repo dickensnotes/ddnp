@@ -1,6 +1,5 @@
 import { useState, useEffect, useMemo } from "react";
 import { initSearch, search } from "../../lib/search.js";
-import LoadingSpinner from "./LoadingSpinner.jsx";
 import SearchInput from "./SearchInput.jsx";
 import SearchControls from "./SearchControls.jsx";
 import SearchFilters from "./SearchFilters.jsx";
@@ -203,18 +202,19 @@ export default function SearchPage() {
     window.scrollTo({ top: 0, behavior: "smooth" });
   };
 
-  if (isLoading) {
-    return <LoadingSpinner />;
-  }
-
   return (
     <div className="space-y-6">
+      <p className="sr-only" aria-live="polite">
+        {isLoading ? "Loading search index..." : ""}
+      </p>
+
       <SearchInput
         query={query}
         onQueryChange={setQuery}
         onSearch={handleSearch}
         onReset={handleReset}
         hasQuery={query.length > 0}
+        isLoading={isLoading}
       />
 
       {hasSearched && (
@@ -226,21 +226,23 @@ export default function SearchPage() {
         />
       )}
 
-      <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
-        <SearchFilters
-          facetCounts={facetCounts}
-          activeTypes={activeTypes}
-          onToggleType={handleToggleType}
-        />
+      {!isLoading && (
+        <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
+          <SearchFilters
+            facetCounts={facetCounts}
+            activeTypes={activeTypes}
+            onToggleType={handleToggleType}
+          />
 
-        <SearchResults
-          results={sortedResults}
-          currentPage={currentPage}
-          resultsPerPage={resultsPerPage}
-          onPageChange={handlePageChange}
-          hasSearched={hasSearched}
-        />
-      </div>
+          <SearchResults
+            results={sortedResults}
+            currentPage={currentPage}
+            resultsPerPage={resultsPerPage}
+            onPageChange={handlePageChange}
+            hasSearched={hasSearched}
+          />
+        </div>
+      )}
     </div>
   );
 }

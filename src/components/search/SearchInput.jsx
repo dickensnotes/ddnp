@@ -1,7 +1,7 @@
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faMagnifyingGlass, faXmark } from "@fortawesome/free-solid-svg-icons";
+import { faMagnifyingGlass, faSpinner, faXmark } from "@fortawesome/free-solid-svg-icons";
 
-export default function SearchInput({ query, onQueryChange, onSearch, onReset, hasQuery }) {
+export default function SearchInput({ query, onQueryChange, onSearch, onReset, hasQuery, isLoading = false }) {
   const handleSubmit = (e) => {
     e.preventDefault();
     onSearch();
@@ -24,8 +24,9 @@ export default function SearchInput({ query, onQueryChange, onSearch, onReset, h
             value={query}
             onChange={handleChange}
             placeholder="Search the Working Notes, annotations, and content..."
-            className="w-full p-3 pr-10 border border-gray-300 rounded-md focus:ring-2 focus:ring-ddnpblue focus:border-ddnpblue outline-none"
+            className="w-full p-3 pr-10 border border-gray-300 rounded-md focus:ring-2 focus:ring-ddnpblue focus:border-ddnpblue outline-none disabled:opacity-50 disabled:cursor-not-allowed"
             aria-label="Search using keywords"
+            disabled={isLoading}
           />
           {hasQuery && (
             <button
@@ -40,10 +41,16 @@ export default function SearchInput({ query, onQueryChange, onSearch, onReset, h
         </div>
         <button
           type="submit"
-          className="px-6 py-3 bg-ddnpblue text-white rounded-md hover:bg-ddnpblue/90 transition-colors flex items-center gap-2 flex-shrink-0"
+          className="px-6 py-3 bg-ddnpblue text-white rounded-md hover:bg-ddnpblue/90 transition-colors flex items-center gap-2 flex-shrink-0 disabled:opacity-50 disabled:cursor-not-allowed"
           aria-label="Submit search"
+          aria-busy={isLoading}
+          disabled={isLoading}
         >
-          <FontAwesomeIcon icon={faMagnifyingGlass} aria-hidden="true" />
+          <FontAwesomeIcon
+            icon={isLoading ? faSpinner : faMagnifyingGlass}
+            className={isLoading ? "animate-spin" : ""}
+            aria-hidden="true"
+          />
           <span>Search</span>
         </button>
       </div>
