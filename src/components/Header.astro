@@ -10,7 +10,6 @@ import {
   faPenToSquare,
   faBookOpen,
   faPersonChalkboard,
-  faMagnifyingGlass,
 } from "@fortawesome/free-solid-svg-icons";
 
 import { Image } from "astro:assets";
@@ -104,13 +103,6 @@ const instructionOptions = [
     href: "/usage/teaching",
     icon: faPersonChalkboard,
   },
-  {
-    name: "Search the DDNP",
-    description:
-      "Search the annotations, transcriptions, and pages of the DDNP",
-    href: "/search",
-    icon: faMagnifyingGlass,
-  },
 ];
 
 // Note: href values here are not currently used — NavPopover receives only
@@ -186,7 +178,16 @@ const links = [
             </div>
             <span class="sr-only">Digital Dickens Notes Project</span>
           </a>
-          <div class="-mr-2 sm:-mr-6 flex items-center md:hidden">
+          <div class="-mr-2 sm:-mr-6 flex items-center gap-x-1 md:hidden">
+            <a
+              href="/search"
+              aria-label="Search"
+              class="rounded-md p-2 inline-flex items-center justify-center text-gray-700 hover:text-gray-900 focus:outline-none focus:ring-2 focus:ring-inset focus:ring-ddnpblue"
+            >
+              <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" width="24" height="24" aria-hidden="true">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M21 21l-5.197-5.197m0 0A7.5 7.5 0 1 0 5.197 5.197a7.5 7.5 0 0 0 10.606 10.606z" />
+              </svg>
+            </a>
             <button
               type="button"
               id="menubtn"
@@ -208,6 +209,17 @@ const links = [
               <NavPopover title={text} options={options} client:load />
             ))
           }
+          <a
+            href="/search"
+            aria-label="Search"
+            aria-current={Astro.url.pathname === "/search" ? "page" : undefined}
+            class="hidden md:inline-flex group rounded-md items-center gap-x-1 text-base font-medium text-gray-700 hover:text-gray-900 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-ddnpblue"
+          >
+            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" width="20" height="20" aria-hidden="true">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M21 21l-5.197-5.197m0 0A7.5 7.5 0 1 0 5.197 5.197a7.5 7.5 0 0 0 10.606 10.606z" />
+            </svg>
+            <span>Search</span>
+          </a>
         </div>
       </div>
     </nav>
