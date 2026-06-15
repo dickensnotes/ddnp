@@ -1,12 +1,12 @@
-# The Digital Dickens Notes Project
+# The Dickens Notes project
 
-The Digital Dickens Notes Project allows users to explore and interpret the ‘Working Notes’ Charles Dickens kept for his novels. Dickens composed and published all of his fifteen novels in monthly or weekly installments, and for many novels he used these Working Notes–one sheet of paper for each installment–to consider character combinations and plot developments; to record titles, events, and key phrases; and to document decisions made or deferred to subsequent numbers.
+The Dickens Notes project allows users to explore and interpret the ‘working notes’ Charles Dickens kept for his novels. Dickens composed and published all of his fifteen novels in monthly or weekly installments, and for many novels he used these working notes–-one sheet of paper for each installment–-to consider character combinations and plot developments; to record titles, events, and key phrases; and to document decisions made or deferred to subsequent numbers.
 
-The DDNP pairs accurate transcriptions of the Working Notes with scholarly introductions and annotations that illuminate their significance for understanding the dynamics of Dickens’s creative process and Victorian serial form.
+Dickens Notes pairs accurate transcriptions of the working notes with scholarly introductions and annotations that illuminate their significance for understanding the dynamics of Dickens’s creative process and Victorian serial form.
 
 ## Adding or editing text content
 
-In the DDNP, most pages are written in markdown, in `.md` or `.mdx` files found in `src/pages`. Each page is one file, and the URL follows the file path. To edit the General Introduction at `/introduction/general` in the browser, you'd edit the file `src/pages/introduction/general.mdx`.
+In Dickens Notes, most pages are written in markdown, in `.md` or `.mdx` files found in `src/pages`. Each page is one file, and the URL follows the file path. To edit the General Introduction at `/introduction/general` in the browser, you'd edit the file `src/pages/introduction/general.mdx`.
 
 If you aren't familiar with markdown, Github's [docs](https://docs.github.com/en/get-started/writing-on-github/getting-started-with-writing-and-formatting-on-github/basic-writing-and-formatting-syntax) on writing in markdown are a great start.
 
@@ -28,7 +28,7 @@ For example:
 
 ## Running the DDNP locally
 
-The DDNP is built on [Astro](https://astro.build/), uses [TailwindCSS](https://tailwindcss.com/) for styling, and several [React](https://reactjs.org/) libraries, including [Mirador](https://projectmirador.org/).
+Dickens Notes is built on [Astro](https://astro.build/), uses [TailwindCSS](https://tailwindcss.com/) for styling, and several [React](https://reactjs.org/) libraries, including [Mirador](https://projectmirador.org/).
 
 It also leverages [pnpm](https://pnpm.js.org/) to manage JS dependencies.
 
@@ -61,14 +61,14 @@ Feel free to check [the Astro documentation](https://docs.astro.build) or jump i
 
 ## Search Index
 
-The DDNP uses [MiniSearch](https://lucaong.github.io/minisearch/) to index and search across three types of content:
+Dickens Notes uses [MiniSearch](https://lucaong.github.io/minisearch/) to index and search across three types of content:
 - **Working Notes** (65 text files from 4 novels)
 - **Annotations** (fetched from remote IIIF API)
 - **Site Content** (MDX pages)
 
 The search index is built automatically during `pnpm run build`, or can be built manually with `pnpm run build:index`. The build process:
 1. Fetches annotations from the remote API using Python
-2. Indexes Working Notes text files
+2. Indexes working notes text files
 3. Indexes site content pages
 4. Generates `public/assets/javascript/search-data.json` (~4 MB)
 
@@ -76,7 +76,7 @@ The search index is built automatically during `pnpm run build`, or can be built
 
 ## Testing
 
-The DDNP includes an automated test suite built with [Vitest](https://vitest.dev/) to ensure search functionality works correctly and prevent regressions.
+The project includes an automated test suite built with [Vitest](https://vitest.dev/) to ensure search functionality works correctly and prevent regressions.
 
 ### Test Coverage
 
