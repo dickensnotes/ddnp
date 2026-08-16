@@ -3,28 +3,18 @@ import TeachingActivityCard from "./TeachingActivityCard.astro";
 
 // Cards for the teaching assignments/activities subpages.
 // Descriptions are kept verbatim from the contributors' submissions.
-// Order follows GitHub issue #272.
-//
-// Images: set each `img` to the provided file once available, e.g.
-//   img: "/images/teaching/assignments-gibson.webp"
-// While `img` is null the card shows an "image to come" placeholder.
+// Order is alphabetical by contributor surname (Andersen, Flynn, Gibson,
+// Grener, Hessell), per the team's request when the thumbnail images were
+// added — this differs from the GitHub issue #272 order the cards originally
+// shipped with.
 const activities = [
   {
-    title: "ASSIGNMENT: Annotating the Working Notes",
-    contributor: "Anna Gibson",
+    title: "ASSIGNMENT: Responding to Serial Narratives Over Time",
+    contributor: "Kirsten Andersen",
     description:
-      "This assignment guides students to select a single installment, annotate its respective working note, and develop an essay to synthesize their insights.",
-    href: "/usage/teaching/assignments-gibson",
-    img: null,
-    alt: "",
-  },
-  {
-    title: "ASSIGNMENT: Keeping “Reading Notes” for a Novel",
-    contributor: "Adam Grener",
-    description:
-      "This assignment provides students with a format for keeping “reading notes” that document and analyze each serial installment of a novel.",
-    href: "/usage/teaching/assignments-grener",
-    img: null,
+      "Students engage with serial narratives in this semester-long assignment with creative, critical, and contextual responses.",
+    href: "/usage/teaching/assignments-andersen",
+    img: "/images/assignments/andersen_assignment_thumbnail.webp",
     alt: "",
   },
   {
@@ -33,16 +23,25 @@ const activities = [
     description:
       "The working notes for <em>David Copperfield</em> help students grasp Alex Woloch’s concept of “character-spaces” in this classroom activity.",
     href: "/usage/teaching/assignments-flynn",
-    img: null,
+    img: "/images/assignments/flynn_assignment_thumbnail.webp",
     alt: "",
   },
   {
-    title: "ASSIGNMENT: Responding to Serial Narratives Over Time",
-    contributor: "Kirsten Andersen",
+    title: "ASSIGNMENT: Annotating the Working Notes",
+    contributor: "Anna Gibson",
     description:
-      "Students engage with serial narratives in this semester-long assignment with creative, critical, and contextual responses.",
-    href: "/usage/teaching/assignments-andersen",
-    img: null,
+      "This assignment guides students to select a single installment, annotate its respective working note, and develop an essay to synthesize their insights.",
+    href: "/usage/teaching/assignments-gibson",
+    img: "/images/assignments/gibson_assignment_thumbnail.webp",
+    alt: "",
+  },
+  {
+    title: "ASSIGNMENT: Keeping “Reading Notes” for a Novel",
+    contributor: "Adam Grener",
+    description:
+      "This assignment provides students with a format for keeping “reading notes” that document and analyze each serial installment of a novel.",
+    href: "/usage/teaching/assignments-grener",
+    img: "/images/assignments/grener_assignment_thumbnail.webp",
     alt: "",
   },
   {
@@ -51,7 +50,7 @@ const activities = [
     description:
       "In this short assignment, students examine a weekly serial installment to reflect on the relationship between literature and journalism.",
     href: "/usage/teaching/assignments-hessell",
-    img: null,
+    img: "/images/assignments/hessell_assignment_thumbnail.webp",
     alt: "",
   },
 ];
