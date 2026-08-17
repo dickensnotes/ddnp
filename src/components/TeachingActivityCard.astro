@@ -1,0 +1,44 @@
+---
+// A horizontal card linking to a teaching assignment/activity subpage.
+// Layout: small thumbnail on the left, text (title, contributor, description)
+// on the right. Styled with the site's ddnpblue brand color to match the rest
+// of the site (see MiradorCard.astro for the same bg-ddnpblue/10 treatment).
+//
+// Accessibility: the whole card is a single link whose heading + description
+// already convey its purpose, so the thumbnail is decorative (alt=""). This
+// mirrors the H67 rationale documented in src/pages/index.astro.
+//
+// `description` is rendered with set:html so novel titles can be italicized
+// (e.g. <em>David Copperfield</em>). Content is static and author-controlled.
+const { href, img, alt = "", title, contributor, description } = Astro.props;
+---
+
+<a
+  href={href}
+  class="group flex items-start gap-4 sm:gap-5 rounded-md border border-ddnpblue bg-ddnpblue/10 p-4 sm:p-5 no-underline transition hover:bg-ddnpblue/20 hover:shadow-md focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ddnpblue"
+>
+  <div class="shrink-0">
+    {
+      img ? (
+        <img
+          src={img}
+          alt={alt}
+          class="h-24 w-24 rounded-md border border-ddnpblue/40 object-cover sm:h-32 sm:w-32"
+        />
+      ) : (
+        <div class="flex h-24 w-24 items-center justify-center rounded-md border border-dashed border-ddnpblue/50 bg-white/50 px-2 text-center text-[11px] leading-tight text-ddnpgrey sm:h-32 sm:w-32">
+          image to come
+        </div>
+      )
+    }
+  </div>
+  <div class="min-w-0">
+    <h3
+      class="m-0 text-lg font-bold tracking-tight text-gray-900 group-hover:underline sm:text-xl"
+    >
+      {title}
+    </h3>
+    <p class="m-0 mt-1 italic text-ddnpgrey">{contributor}</p>
+    <p class="m-0 mt-2 leading-snug text-gray-700" set:html={description}></p>
+  </div>
+</a>

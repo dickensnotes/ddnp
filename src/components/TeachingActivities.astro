@@ -1,0 +1,61 @@
+---
+import TeachingActivityCard from "./TeachingActivityCard.astro";
+
+// Cards for the teaching assignments/activities subpages.
+// Descriptions are kept verbatim from the contributors' submissions.
+// Order is alphabetical by contributor surname (Andersen, Flynn, Gibson,
+// Grener, Hessell), per the team's request when the thumbnail images were
+// added — this differs from the GitHub issue #272 order the cards originally
+// shipped with.
+const activities = [
+  {
+    title: "ASSIGNMENT: Responding to Serial Narratives Over Time",
+    contributor: "Kirsten Andersen",
+    description:
+      "Students engage with serial narratives in this semester-long assignment with creative, critical, and contextual responses.",
+    href: "/usage/teaching/assignments-andersen",
+    img: "/images/assignments/andersen_assignment_thumbnail.webp",
+    alt: "",
+  },
+  {
+    title: "ACTIVITY: Identifying Character Spaces",
+    contributor: "Michael J. Flynn",
+    description:
+      "The working notes for <em>David Copperfield</em> help students grasp Alex Woloch’s concept of “character-spaces” in this classroom activity.",
+    href: "/usage/teaching/assignments-flynn",
+    img: "/images/assignments/flynn_assignment_thumbnail.webp",
+    alt: "",
+  },
+  {
+    title: "ASSIGNMENT: Annotating the Working Notes",
+    contributor: "Anna Gibson",
+    description:
+      "This assignment guides students to select a single installment, annotate its respective working note, and develop an essay to synthesize their insights.",
+    href: "/usage/teaching/assignments-gibson",
+    img: "/images/assignments/gibson_assignment_thumbnail.webp",
+    alt: "",
+  },
+  {
+    title: "ASSIGNMENT: Keeping “Reading Notes” for a Novel",
+    contributor: "Adam Grener",
+    description:
+      "This assignment provides students with a format for keeping “reading notes” that document and analyze each serial installment of a novel.",
+    href: "/usage/teaching/assignments-grener",
+    img: "/images/assignments/grener_assignment_thumbnail.webp",
+    alt: "",
+  },
+  {
+    title: "ASSIGNMENT: Examining a Weekly Serial Part",
+    contributor: "Nikki Hessell",
+    description:
+      "In this short assignment, students examine a weekly serial installment to reflect on the relationship between literature and journalism.",
+    href: "/usage/teaching/assignments-hessell",
+    img: "/images/assignments/hessell_assignment_thumbnail.webp",
+    alt: "",
+  },
+];
+---
+
+<section class="not-prose my-8 flex flex-col gap-4">
+  {activities.map((activity) => <TeachingActivityCard {...activity} />)}
+</section>
