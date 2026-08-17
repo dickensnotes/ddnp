@@ -1,22 +1,22 @@
 ---
-// Page title format: "Specific Page Name - Digital Dickens Notes Project"
-// The homepage uses just "Digital Dickens Notes Project" (no suffix).
+// Page title format: "Specific Page Name - Dickens Notes"
+// The homepage uses just "Dickens Notes" (no suffix).
 // All other pages get the site name appended automatically below.
 import "../styles/global.scss";
 const {
-  title = "Digital Dickens Notes Project",
-  description = "The Digital Dickens Notes Project is an exploration of Charles Dickens's Working Notes",
-  twitterTitle = "Digital Dickens Notes Project",
-  twitterDescription = "The Digital Dickens Notes Project is an exploration of Charles Dickens's Working Notes",
+  title = "Dickens Notes",
+  description = "The Dickens Notes project is an exploration of Charles Dickens's Working Notes",
+  twitterTitle = "Dickens Notes",
+  twitterDescription = "The Dickens Notes project is an exploration of Charles Dickens's Working Notes",
   twitterImage = "https://www.dickensnotes.org/images/twitter_cards/Home-with-logo.jpg",
-  twitterImageAlt = "Image of Dickens' Dream with Digital Dickens Notes Project logo",
+  twitterImageAlt = "Image of Dickens' Dream with Dickens Notes logo",
 } = Astro.props;
 ---
 
 <meta charset="UTF-8" />
 <meta name="description" content={description} />
 <meta name="viewport" content="width=device-width" />
-<title>{title.includes("Digital Dickens Notes Project") ? title : `${title} - Digital Dickens Notes Project`}</title>
+<title>{title.includes("Digital Dickens Notes Project") ? title : `${title} - Dickens Notes`}</title>
 
 <link rel="preconnect" href="https://fonts.googleapis.com" />
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
