@@ -1,0 +1,28 @@
+---
+// Timeline variant (V3) — key to the rail markers.
+//
+// The marker shapes only reinforce information that is already written out on
+// every entry, so this legend is a convenience rather than a requirement; the
+// swatches themselves are aria-hidden inside TimelineNode and the label text
+// carries the meaning.
+import TimelineNode from "./TimelineNode.astro";
+
+const keys = [
+  { cadence: "monthly", status: "published", label: "monthly numbers" },
+  { cadence: "weekly", status: "published", label: "weekly parts" },
+  { cadence: "monthly", status: "forthcoming", label: "in preparation" },
+];
+---
+
+<ul
+  class="m-0 flex list-none flex-wrap items-center gap-x-5 gap-y-2 p-0 text-xs text-ddnpgrey"
+>
+  {
+    keys.map((key) => (
+      <li class="flex items-center gap-2">
+        <TimelineNode cadence={key.cadence} status={key.status} />
+        {key.label}
+      </li>
+    ))
+  }
+</ul>

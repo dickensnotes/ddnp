@@ -1,0 +1,54 @@
+---
+// V4 "The Leaf" — a novel whose edition is still in preparation.
+//
+// Same bifold anatomy as LeafCard, drained of ink: dashed hairline, no sheaf
+// behind it, hollow installment strip. It is not a link and holds no
+// focusable element, so keyboard users are never dropped onto a dead card;
+// the "In preparation" label states that in text rather than relying on the
+// dashed border alone.
+const { title, dates, serial } = Astro.props;
+---
+
+<li
+  class="grid grid-cols-1 rounded-[1px] border border-dashed border-ddnpgrey/50 bg-[#fbf8ee]/60 sm:grid-cols-[10rem_minmax(0,1fr)]"
+>
+  <div
+    class="row-start-2 flex flex-col p-4 sm:col-start-2 sm:row-start-1 sm:p-5"
+  >
+    <p
+      class="m-0 text-[10px] font-bold uppercase tracking-[0.18em] text-ddnpgrey"
+    >
+      In preparation
+    </p>
+    <h3
+      class="leaf-title m-0 mt-1 text-xl italic leading-tight text-gray-700 sm:text-2xl"
+    >
+      {title}
+    </h3>
+    <span
+      aria-hidden="true"
+      class="mt-2 block h-px w-8 bg-ddnpgrey/40"
+    ></span>
+    <p class="leaf-prose m-0 mt-3 text-[15px] leading-relaxed text-gray-600">
+      Dickens's Working Notes survive for this novel; a transcribed, annotated
+      edition is on the way.
+    </p>
+  </div>
+
+  <div
+    class="row-start-1 border-b border-dashed border-gray-400 p-4 sm:col-start-1 sm:border-b-0 sm:border-r sm:p-5"
+  >
+    <p
+      class="m-0 text-[10px] font-bold uppercase tracking-[0.18em] text-ddnpgrey/80"
+    >
+      Mems
+    </p>
+    <ul
+      class="m-0 mt-2 list-none p-0 text-xs leading-snug text-ddnpgrey [&>li:first-child]:pt-0 [&>li]:border-b [&>li]:border-gray-300/80 [&>li]:py-1.5"
+    >
+      <li>{dates}</li>
+      <li>{serial}</li>
+      <li>Not yet online</li>
+    </ul>
+  </div>
+</li>

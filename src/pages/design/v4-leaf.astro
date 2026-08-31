@@ -1,0 +1,206 @@
+---
+// DESIGN PREVIEW — V4 "The Leaf".
+//
+// A standalone copy of the homepage that replaces the 2-column card grid with
+// a set of abstracted working-note leaves. Dickens folded one sheet in half
+// per installment — mems on the left, the number plan on the right — and each
+// card keeps that anatomy: a band of the actual manuscript up top, a shaded
+// fold below it with jotted metadata on ruled lines to one side and prose to
+// the other. No paper texture, no wood, no simulated depth.
+//
+// Nothing here is imported by the real homepage.
+// Analytics are deliberately omitted on preview pages.
+import Footer from "../../components/Footer.astro";
+import Header from "../../components/Header.astro";
+import Hero from "../../components/Hero.astro";
+import MainHead from "../../components/MainHead.astro";
+import SkipLink from "../../components/SkipLink.astro";
+import LeafCard from "../../components/homepage-variants/LeafCard.astro";
+import LeafGhost from "../../components/homepage-variants/LeafGhost.astro";
+
+// `swatch` shifts the object-position of each manuscript crop so no two cards
+// show the same patch of handwriting.
+const published = [
+  {
+    title: "David Copperfield",
+    dates: "1849–50",
+    serial: "19 monthly numbers",
+    href: "/notes/david-copperfield",
+    img: "/images/home/david-copperfield-wn-7-card.webp",
+    swatch: "28% 34%",
+    description:
+      "Immerse yourself in the composition of Dickens's most autobiographical novel through our introduction and annotations to these notes.",
+  },
+  {
+    title: "Bleak House",
+    dates: "1852–53",
+    serial: "19 monthly numbers",
+    href: "/notes/bleak-house",
+    img: "/images/home/bleak-house-wn-15-card.webp",
+    swatch: "68% 47%",
+    description:
+      "Explore Dickens's management of the novel's dual narrators with our introduction and annotations to these notes.",
+  },
+  {
+    title: "Hard Times",
+    dates: "1854",
+    serial: "20 weekly parts",
+    href: "/notes/hard-times",
+    img: "/images/home/hard-times-wn-02-card.webp",
+    swatch: "40% 62%",
+    description:
+      "Follow Dickens's difficulties navigating a weekly serial with our introduction and annotations to these notes.",
+  },
+  {
+    title: "Little Dorrit",
+    dates: "1855–57",
+    serial: "19 monthly numbers",
+    href: "/notes/little-dorrit",
+    img: "/images/home/little-dorrit-wn-04-card.webp",
+    swatch: "72% 66%",
+    description:
+      "Discover how Dickens's idea for &ldquo;Nobody's Fault&rdquo; transformed into <em>Little Dorrit</em> through our introduction and annotations to these notes.",
+  },
+];
+
+const forthcoming = [
+  {
+    title: "Martin Chuzzlewit",
+    dates: "1843–44",
+    serial: "20 monthly numbers",
+  },
+  {
+    title: "Dombey and Son",
+    dates: "1846–48",
+    serial: "20 monthly numbers",
+  },
+  {
+    title: "Our Mutual Friend",
+    dates: "1864–65",
+    serial: "20 monthly numbers",
+  },
+  {
+    title: "The Mystery of Edwin Drood",
+    dates: "1870",
+    serial: "unfinished, monthly numbers",
+  },
+];
+---
+
+<html lang="en">
+  <head>
+    <MainHead
+      title="Dickens Notes"
+      description="The Dickens Notes project explores serial form with Charles Dickens's working notes"
+    />
+    <style is:global>
+      /* src/styles/global.scss sets `* { box-sizing: content-box }` sitewide,
+         which makes Tailwind's padding + fixed-size utilities overflow.
+         Restore border-box inside this preview section only. */
+      #leaves,
+      #leaves * {
+        box-sizing: border-box;
+      }
+
+      /* Titles and card prose are set in a serif against the site's Inter.
+         Tailwind can't name a font stack that isn't in the theme without an
+         unreadable arbitrary value. */
+      #leaves .leaf-title,
+      #leaves .leaf-prose {
+        font-family: Georgia, "Times New Roman", Times, serif;
+      }
+
+      /* The sheet: cream paper stock. The ruling is kept near-subliminal —
+         the mems entries carry the visible rules, and two competing line
+         systems behind the prose read as noise. Kept as a class because the
+         ruling gradient and any hover background utility would fight over
+         background-color. */
+      #leaves .leaf-sheet {
+        background-color: #fbf8ee;
+        background-image: repeating-linear-gradient(
+          to bottom,
+          transparent 0,
+          transparent 27px,
+          rgba(80, 104, 89, 0.045) 27px,
+          rgba(80, 104, 89, 0.045) 28px
+        );
+      }
+
+      /* The manuscript band dissolves into the sheet: multiply lets the
+         photographed paper take the card's cream, and the mask fades the
+         bottom edge so handwriting and card text share one page. */
+      #leaves .leaf-band {
+        mix-blend-mode: multiply;
+        -webkit-mask-image: linear-gradient(
+          to bottom,
+          rgba(0, 0, 0, 1) 45%,
+          rgba(0, 0, 0, 0) 100%
+        );
+        mask-image: linear-gradient(
+          to bottom,
+          rgba(0, 0, 0, 1) 45%,
+          rgba(0, 0, 0, 0) 100%
+        );
+      }
+
+      /* The fold, shaded like creased paper. */
+      #leaves .leaf-crease-v {
+        background: linear-gradient(
+          to right,
+          rgba(63, 53, 32, 0) 0%,
+          rgba(63, 53, 32, 0.07) 38%,
+          rgba(63, 53, 32, 0.14) 50%,
+          rgba(63, 53, 32, 0.04) 62%,
+          rgba(63, 53, 32, 0) 100%
+        );
+      }
+      #leaves .leaf-crease-h {
+        background: linear-gradient(
+          to bottom,
+          rgba(63, 53, 32, 0) 0%,
+          rgba(63, 53, 32, 0.07) 38%,
+          rgba(63, 53, 32, 0.14) 50%,
+          rgba(63, 53, 32, 0.04) 62%,
+          rgba(63, 53, 32, 0) 100%
+        );
+      }
+    </style>
+  </head>
+
+  <body class="container mx-auto">
+    <SkipLink />
+    <Header />
+    <main id="main-content">
+      <Hero />
+
+      <section
+        id="leaves"
+        aria-labelledby="leaves-heading"
+        class="bg-ddnptaupe/40 px-4 py-10 sm:px-6 sm:py-14"
+      >
+        <div class="max-w-2xl">
+          <h2
+            id="leaves-heading"
+            class="m-0 text-2xl font-bold tracking-tight text-gray-900 sm:text-3xl"
+          >
+            The Working Notes
+          </h2>
+          <p class="m-0 mt-3 leading-relaxed text-gray-700">
+            For each installment Dickens folded a single sheet in half: terse
+            mems to the left, the plan for the number to the right. These cards
+            keep the fold. Four editions are online now; four more are in
+            preparation.
+          </p>
+        </div>
+
+        <ul
+          class="m-0 mt-8 grid list-none grid-cols-1 gap-7 p-0 lg:grid-cols-2 lg:gap-8"
+        >
+          {published.map((novel) => <LeafCard {...novel} alt="" />)}
+          {forthcoming.map((novel) => <LeafGhost {...novel} />)}
+        </ul>
+      </section>
+    </main>
+    <Footer />
+  </body>
+</html>

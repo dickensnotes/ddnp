@@ -1,0 +1,172 @@
+---
+// Timeline variant (V3) — one novel in the chronology.
+//
+// Renders a single <li> laid out as a grid:
+//   base   [ rail | entry ]
+//   lg     [ year gutter | rail | entry ]
+//
+// Published novels get a horizontal teaching-card (square manuscript
+// thumbnail left, text right) that is one whole link. Forthcoming novels get
+// a slimmer, muted, non-interactive row in the same chronological position so
+// the rail itself shows how much of Dickens's serial career is still to come.
+//
+// Accessibility:
+//  - The whole published entry is a single <a>; its heading and visible
+//    metadata line ("Working Notes · 19 monthly numbers") convey the
+//    destination, so the thumbnail is decorative (alt="") per WCAG H67 — the
+//    same rationale documented in src/pages/index.astro.
+//  - The lg year gutter repeats the run dates already visible in the heading,
+//    so it is aria-hidden to avoid a double announcement.
+//  - Node shape (monthly / weekly / forthcoming) is decorative reinforcement
+//    only; the same fact is always present in text.
+//  - Hover effects are duplicated on focus-within, and the scale transform is
+//    gated behind motion-safe.
+//
+// `description` is rendered with set:html so novel titles can be italicised.
+// Content is static and author-controlled.
+import TimelineNode from "./TimelineNode.astro";
+
+const {
+  title,
+  dates,
+  startYear,
+  serial,
+  description,
+  href,
+  img,
+  cadence = "monthly",
+  status = "published",
+  decade,
+  isFirst = false,
+  isLast = false,
+} = Astro.props;
+
+const forthcoming = status === "forthcoming";
+
+// Distance from the top of the rail cell to the centre of the node, so the
+// rail can be capped exactly at the first and last markers.
+const nodeCenter = forthcoming ? "1.5rem" : "1.9375rem";
+const nodeTopClass = forthcoming ? "top-3" : "top-[1.125rem] sm:top-[1.375rem]";
+// Baseline-matches the gutter year to the entry heading (lg and up only).
+const yearTopClass = forthcoming ? "pt-[0.875rem]" : "pt-6";
+---
+
+<li
+  class="group/row grid grid-cols-[1.5rem_minmax(0,1fr)] gap-x-3 lg:grid-cols-[4.5rem_1.5rem_minmax(0,1fr)] lg:gap-x-4"
+>
+  {
+    decade && (
+      <p class="col-span-full m-0 mb-5 flex items-center gap-3 lg:gap-4">
+        <span class="shrink-0 text-xs font-bold uppercase tracking-[0.18em] text-ddnpgrey lg:w-[4.5rem] lg:text-right">
+          {decade}
+        </span>
+        <span aria-hidden="true" class="h-px flex-1 bg-ddnpblue/40" />
+      </p>
+    )
+  }
+
+  <p
+    aria-hidden="true"
+    class:list={[
+      "m-0 hidden text-right text-sm font-bold tabular-nums text-ddnpgrey lg:block",
+      yearTopClass,
+    ]}
+  >
+    {startYear}
+  </p>
+
+  <div class="relative flex justify-center" style={`--node-center:${nodeCenter}`}>
+    {!isFirst && <span aria-hidden="true" class="tl-line tl-line--above" />}
+    {!isLast && <span aria-hidden="true" class="tl-line tl-line--below" />}
+    {isLast && <span aria-hidden="true" class="tl-line tl-line--tail" />}
+    <span
+      class:list={[
+        "absolute left-1/2 z-10 flex -translate-x-1/2 items-center justify-center rounded-full bg-white p-1",
+        nodeTopClass,
+        !forthcoming &&
+          "motion-safe:transition-transform group-hover/row:scale-125 group-focus-within/row:scale-125",
+      ]}
+    >
+      <TimelineNode cadence={cadence} status={status} />
+    </span>
+  </div>
+
+  <div class="min-w-0 pb-6 sm:pb-8">
+    {
+      forthcoming ? (
+        <div class="rounded-md border border-dashed border-ddnpblue/60 bg-ddnpblue/5 px-4 py-3">
+          <h3 class="m-0 text-base font-bold tracking-tight text-gray-900">
+            <em>{title}</em>
+            <span class="font-normal not-italic text-ddnpgrey">({dates})</span>
+          </h3>
+          <p class="m-0 mt-1 text-sm leading-snug text-ddnpgrey">
+            Working notes forthcoming · {serial}
+          </p>
+        </div>
+      ) : (
+        <a
+          href={href}
+          class="group/card flex items-start gap-4 rounded-md border border-ddnpblue bg-ddnpblue/10 p-4 text-gray-900 no-underline transition hover:bg-ddnpblue/20 hover:shadow-md focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ddnpblue sm:gap-5 sm:p-5"
+        >
+          <img
+            src={img}
+            alt=""
+            width="2700"
+            height="2100"
+            loading="lazy"
+            decoding="async"
+            class="h-20 w-20 shrink-0 rounded-md border border-ddnpblue/40 object-cover sm:h-28 sm:w-28"
+          />
+          <div class="min-w-0">
+            <h3 class="m-0 text-lg font-bold tracking-tight text-gray-900 group-hover/card:underline sm:text-xl">
+              <em>{title}</em>
+              <span class="font-normal not-italic text-ddnpgrey">
+                ({dates})
+              </span>
+            </h3>
+            <p class="m-0 mt-1 text-sm text-ddnpgrey">
+              Working Notes · {serial}
+            </p>
+            <p
+              class="m-0 mt-2 leading-snug text-gray-700"
+              set:html={description}
+            />
+          </div>
+        </a>
+      )
+    }
+  </div>
+</li>
+
+<style>
+  /* The rail. Drawn per-entry so it always lines up with that entry's node
+     regardless of row height; --node-center is set inline above. Tailwind
+     can't express "stop exactly at the marker", hence the custom rules. */
+  .tl-line {
+    position: absolute;
+    left: 50%;
+    width: 1px;
+    transform: translateX(-50%);
+    background-color: rgb(109 159 215 / 0.4); /* ddnpblue/40 */
+  }
+  .tl-line--above {
+    top: 0;
+    height: var(--node-center);
+  }
+  .tl-line--below {
+    top: var(--node-center);
+    bottom: 0;
+  }
+  /* Last entry: the rail fades out below 1870 rather than stopping square —
+     Edwin Drood was left unfinished. */
+  .tl-line--tail {
+    top: var(--node-center);
+    height: 3.5rem;
+    background-color: transparent;
+    background-image: linear-gradient(
+      to bottom,
+      rgb(109 159 215 / 0.4),
+      rgb(109 159 215 / 0)
+    );
+  }
+</style>

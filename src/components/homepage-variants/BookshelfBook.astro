@@ -1,0 +1,478 @@
+---
+// V2 "Bookshelf" — a single volume standing on the shelf.
+//
+// Published novels render as an <a> (one real link per novel). Forthcoming
+// novels render as a non-interactive <div> with a ghosted, dashed spine. The
+// two branches are written out rather than built from a dynamic <Tag> so that
+// Astro's scoped-style attribute is guaranteed to land on the element.
+//
+// Accessibility notes:
+//  - Title and dates are printed on the spine and are legible with no
+//    interaction; the reveal panel is supplementary.
+//  - The panel lives *inside* the link so the reveal is pure CSS and fires on
+//    :hover and :focus-visible alike. It is visibility:hidden at rest, so it
+//    stays out of the accessible name and the a11y tree until revealed.
+//  - The manuscript thumbnail is decorative (alt="") — the link already carries
+//    the title and the description. Same H67 rationale as src/pages/index.astro.
+const {
+  title,
+  dates,
+  serial,
+  description,
+  href,
+  img,
+  cloth,
+  clothDeep,
+  ink,
+  w = 66,
+  h = 300,
+  wm = 60,
+  hm = 240,
+  lean = 0,
+  forthcoming = false,
+} = Astro.props;
+
+// Leaning volumes pivot on their bottom-right corner; upright volumes hinge on
+// their left edge, so the rotateY "drawn off the shelf" gesture reads right.
+const vars = [
+  `--w:${w}px`,
+  `--h:${h}px`,
+  `--wm:${wm}px`,
+  `--hm:${hm}px`,
+  `--cloth:${cloth}`,
+  `--cloth-deep:${clothDeep}`,
+  `--ink:${ink}`,
+  `--lean:${lean}deg`,
+  `--origin:${lean ? "100% 100%" : "0% 100%"}`,
+].join(";");
+---
+
+<li class:list={["bs-slot", { "is-ghost": forthcoming }]} style={vars}>
+  {
+    forthcoming ? (
+      <div class="bs-book">
+        <span class="bs-3d">
+          <span class="bs-face">
+            <span class="bs-rule bs-rule-head" />
+            <span class="bs-letters">
+              <em class="bs-spine-title">{title}</em>
+              <span class="bs-spine-dates">
+                <span class="sr-only">working notes in preparation, </span>
+                {dates}
+              </span>
+            </span>
+            <span class="bs-rule bs-rule-tail" />
+          </span>
+        </span>
+      </div>
+    ) : (
+      <a class="bs-book" href={href}>
+        <span class="bs-3d">
+          <span class="bs-face">
+            <span class="bs-rule bs-rule-head" />
+            <span class="bs-letters">
+              <em class="bs-spine-title">{title}</em>
+              <span class="bs-spine-dates">
+                <span class="sr-only">Working Notes, </span>
+                {dates}
+              </span>
+            </span>
+            <span class="bs-rule bs-rule-tail" />
+          </span>
+          <span class="bs-cover" />
+        </span>
+
+        <span class="bs-panel">
+          <img
+            class="bs-thumb"
+            src={img}
+            alt=""
+            width="400"
+            height="300"
+            loading="lazy"
+          />
+          <span class="bs-panel-text">
+            <span class="bs-panel-title">
+              <em>{title}</em>{" "}
+              <span class="bs-panel-dates">({dates})</span>
+            </span>
+            <span class="bs-panel-serial">{serial}</span>
+            <span class="bs-panel-desc">{description}</span>
+            <span class="bs-panel-cta">
+              Read the working notes <span aria-hidden="true">&rarr;</span>
+            </span>
+          </span>
+        </span>
+      </a>
+    )
+  }
+</li>
+
+<style>
+  /* global.scss sets `* { box-sizing: content-box }`; opt this component back
+     into border-box so padded, fixed-width faces size predictably. Written as
+     two selectors, not `*`, because Astro scopes with :where() — a bare `*`
+     would compile to zero specificity and tie with the global rule. */
+  .bs-slot,
+  .bs-slot * {
+    box-sizing: border-box;
+  }
+
+  .bs-slot {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    /* Flex items honour z-index without position, so the volume drawn out can
+       rise above its neighbours while .bs-panel still anchors to .bs-stage. */
+    z-index: 0;
+  }
+
+  .bs-slot:hover,
+  .bs-slot:focus-within {
+    z-index: 30;
+  }
+
+  .bs-book {
+    display: block;
+    color: inherit;
+    text-decoration: none;
+  }
+
+  .bs-3d {
+    position: relative;
+    display: block;
+    width: var(--wm);
+    height: var(--hm);
+    transform-style: preserve-3d;
+    transform-origin: var(--origin);
+    /* perspective() inside the transform (rather than the `perspective`
+       property on an ancestor) keeps every ancestor a non-containing-block, so
+       .bs-panel can still anchor to .bs-stage further up the tree. */
+    transform: perspective(900px) rotate(var(--lean)) rotateY(var(--turn, 0deg))
+      rotateX(var(--tip, 0deg)) translateY(var(--lift, 0px));
+    transition: transform 260ms cubic-bezier(0.22, 0.61, 0.36, 1);
+  }
+
+  .bs-face {
+    position: absolute;
+    inset: 0;
+    overflow: hidden;
+    border-radius: 2px 4px 4px 2px;
+    background:
+      /* rounded-spine shading: dark at both hinges, sheen off-centre */
+      linear-gradient(
+        90deg,
+        rgba(0, 0, 0, 0.55) 0%,
+        rgba(0, 0, 0, 0.14) 9%,
+        rgba(255, 255, 255, 0.11) 28%,
+        rgba(255, 255, 255, 0.03) 55%,
+        rgba(0, 0, 0, 0.24) 84%,
+        rgba(0, 0, 0, 0.62) 100%
+      ),
+      /* cloth weave */
+        repeating-linear-gradient(
+          90deg,
+          rgba(255, 255, 255, 0.03) 0 1px,
+          transparent 1px 3px
+        ),
+      repeating-linear-gradient(
+        0deg,
+        rgba(0, 0, 0, 0.06) 0 1px,
+        transparent 1px 3px
+      ),
+      /* head and tail darkened by shelf wear */
+        linear-gradient(
+          180deg,
+          var(--cloth-deep) 0%,
+          var(--cloth) 14%,
+          var(--cloth) 84%,
+          var(--cloth-deep) 100%
+        );
+    box-shadow:
+      inset 0 1px 0 rgba(255, 255, 255, 0.14),
+      0 10px 14px -8px rgba(0, 0, 0, 0.8);
+    transition:
+      box-shadow 200ms ease,
+      outline-color 120ms ease;
+  }
+
+  /* Gilt rules at head and tail, as on a Victorian publisher's binding. */
+  .bs-rule {
+    position: absolute;
+    left: 15%;
+    right: 15%;
+    height: 5px;
+    border-top: 1px solid rgba(201, 169, 95, 0.7);
+    border-bottom: 1px solid rgba(201, 169, 95, 0.45);
+  }
+  .bs-rule-head {
+    top: 12px;
+  }
+  .bs-rule-tail {
+    bottom: 12px;
+  }
+
+  /* Real spine lettering: reads top-to-bottom, the usual English convention. */
+  .bs-letters {
+    writing-mode: vertical-rl;
+    display: flex;
+    /* In vertical-rl the inline axis runs downward, so `row` stacks the title
+       above the dates along the length of the spine. */
+    flex-direction: row;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+    height: 100%;
+    padding: 30px 0;
+    gap: 1rem;
+    font-family: var(--bs-serif);
+    color: var(--ink);
+  }
+
+  .bs-spine-title {
+    font-style: italic;
+    font-weight: 600;
+    font-size: 12px;
+    letter-spacing: 0.03em;
+    white-space: nowrap;
+    text-shadow: 0 1px 0 rgba(0, 0, 0, 0.45);
+  }
+
+  .bs-spine-dates {
+    font-size: 10.5px;
+    letter-spacing: 0.1em;
+    white-space: nowrap;
+    opacity: 0.88;
+  }
+
+  /* Front board, hinged at the spine's right edge and turned almost fully away
+     — a sliver at rest, swinging into view when the volume is drawn out. */
+  .bs-cover {
+    position: absolute;
+    top: 0;
+    left: 100%;
+    width: 128px;
+    height: 100%;
+    transform-origin: left center;
+    transform: rotateY(-86deg);
+    border-radius: 0 5px 5px 0;
+    background:
+      linear-gradient(
+        90deg,
+        rgba(255, 255, 255, 0.16) 0%,
+        rgba(0, 0, 0, 0.2) 30%,
+        rgba(0, 0, 0, 0.5) 100%
+      ),
+      var(--cloth-deep);
+    box-shadow: inset 0 0 0 1px rgba(0, 0, 0, 0.4);
+  }
+
+  /* Blind-stamped panel on the board. */
+  .bs-cover::after {
+    content: "";
+    position: absolute;
+    inset: 12px;
+    border: 1px solid rgba(201, 169, 95, 0.3);
+    border-radius: 2px;
+  }
+
+  /* ---- Drawn from the shelf ---- */
+
+  .bs-book:hover .bs-3d,
+  .bs-book:focus-visible .bs-3d {
+    --turn: 19deg;
+    --tip: -3deg;
+    --lift: -14px;
+  }
+
+  .bs-book:hover .bs-face,
+  .bs-book:focus-visible .bs-face {
+    box-shadow:
+      inset 0 0 0 1px rgba(240, 223, 174, 0.55),
+      inset 0 1px 0 rgba(255, 255, 255, 0.2),
+      0 22px 26px -12px rgba(0, 0, 0, 0.9);
+  }
+
+  .bs-book:focus-visible {
+    outline: none;
+  }
+
+  .bs-book:focus-visible .bs-face {
+    outline: 3px solid #f0dfae;
+    outline-offset: 4px;
+  }
+
+  /* ---- Forthcoming volumes: present, but not yet bound ---- */
+
+  .is-ghost .bs-face {
+    background:
+      linear-gradient(
+        90deg,
+        rgba(0, 0, 0, 0.3) 0%,
+        rgba(255, 255, 255, 0.06) 30%,
+        rgba(0, 0, 0, 0.28) 100%
+      ),
+      rgba(206, 198, 165, 0.14);
+    border: 1px dashed rgba(206, 198, 165, 0.55);
+    box-shadow: none;
+  }
+
+  .is-ghost .bs-rule {
+    border-top-color: rgba(206, 198, 165, 0.4);
+    border-bottom-color: rgba(206, 198, 165, 0.22);
+  }
+
+  .is-ghost .bs-letters {
+    color: #e7e1cd;
+  }
+
+  .is-ghost .bs-spine-title {
+    font-weight: 500;
+    text-shadow: none;
+  }
+
+  /* ---- The reveal panel, laid on the desk below the shelves ---- */
+
+  .bs-panel {
+    position: absolute;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    display: flex;
+    align-items: center;
+    gap: 1.15rem;
+    min-height: var(--bs-reveal-h, 12.5rem);
+    padding: 1.15rem 1.35rem;
+    border: 1px solid rgba(201, 169, 95, 0.55);
+    border-radius: 3px;
+    background: radial-gradient(
+      120% 140% at 8% 0%,
+      #fbf6e8 0%,
+      #efe7d2 55%,
+      #e6dcc2 100%
+    );
+    box-shadow:
+      0 24px 34px -18px rgba(0, 0, 0, 0.9),
+      inset 0 1px 0 rgba(255, 255, 255, 0.7);
+    color: #1f2937;
+    visibility: hidden;
+    opacity: 0;
+    transition:
+      opacity 180ms ease,
+      visibility 180ms ease;
+  }
+
+  .bs-book:hover .bs-panel,
+  .bs-book:focus-visible .bs-panel {
+    visibility: visible;
+    opacity: 1;
+  }
+
+  .bs-thumb {
+    flex: none;
+    width: 9.5rem;
+    height: 7.125rem;
+    object-fit: cover;
+    border-radius: 2px;
+    border: 1px solid rgba(80, 104, 89, 0.45);
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.28);
+  }
+
+  .bs-panel-text {
+    display: block;
+    min-width: 0;
+  }
+
+  .bs-panel-title {
+    display: block;
+    font-family: var(--bs-serif);
+    font-size: 1.2rem;
+    font-weight: 700;
+    letter-spacing: -0.01em;
+    color: #111827;
+  }
+
+  .bs-panel-dates {
+    font-weight: 400;
+  }
+
+  .bs-panel-serial {
+    display: block;
+    margin-top: 0.15rem;
+    font-size: 0.78rem;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: #3f5245;
+  }
+
+  .bs-panel-desc {
+    display: block;
+    margin-top: 0.5rem;
+    font-size: 0.92rem;
+    line-height: 1.45;
+    color: #374151;
+  }
+
+  .bs-panel-cta {
+    display: block;
+    margin-top: 0.6rem;
+    font-size: 0.88rem;
+    font-weight: 700;
+    color: #2b405c;
+    text-decoration: underline;
+    text-underline-offset: 3px;
+    text-decoration-color: rgba(43, 64, 92, 0.5);
+  }
+
+  /* ---- Breakpoints ---- */
+
+  @media (max-width: 639px) {
+    /* The shelf is the whole interface on phones; the reveal panel is replaced
+       by the always-visible catalogue beneath the case. */
+    .bs-panel {
+      display: none;
+    }
+  }
+
+  @media (min-width: 640px) {
+    .bs-3d {
+      width: var(--w);
+      height: var(--h);
+    }
+    .bs-letters {
+      padding: 34px 0;
+    }
+    .bs-spine-title {
+      font-size: 14px;
+    }
+    .bs-spine-dates {
+      font-size: 11.5px;
+    }
+  }
+
+  @media (min-width: 1024px) {
+    .bs-panel {
+      gap: 1.5rem;
+      padding: 1.25rem 1.6rem;
+    }
+    .bs-thumb {
+      width: 11rem;
+      height: 8.25rem;
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .bs-3d,
+    .bs-face,
+    .bs-panel {
+      transition: none;
+    }
+    /* No tilt, no slide — just the gilt highlight and the panel. */
+    .bs-book:hover .bs-3d,
+    .bs-book:focus-visible .bs-3d {
+      --turn: 0deg;
+      --tip: 0deg;
+      --lift: 0px;
+    }
+  }
+</style>

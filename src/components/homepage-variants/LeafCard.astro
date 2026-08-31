@@ -1,0 +1,114 @@
+---
+// V4 "The Leaf" — card for a PUBLISHED novel's Working Notes.
+//
+// The whole card is one sheet of paper. The manuscript band at the top is
+// blended into the sheet (multiply + fade mask, see .leaf-band in the page)
+// so Dickens's handwriting and the card's own text share a single continuous
+// page rather than a photo sitting in a UI card. A shaded crease runs across
+// the entire sheet — vertical alongside the mems column on wide screens,
+// horizontal under the mems band when the fold rotates — and each sheet
+// rests at a slightly different angle, straightening on hover/focus.
+//
+// DOM order is band, plan panel, mems panel, but CSS grid places the mems
+// panel before the plan panel visually. The card is a single focusable
+// element, so there is no tab-order mismatch, and screen readers get the
+// novel title before its metadata.
+//
+// Accessibility: the whole card is one link whose heading, mems and
+// description convey the destination, so the manuscript band is decorative
+// (alt=""). This mirrors the H67 rationale documented in src/pages/index.astro.
+//
+// `description` is rendered with set:html so novel titles can be italicized
+// (e.g. <em>Little Dorrit</em>). Content is static and author-controlled.
+const {
+  title,
+  dates,
+  serial,
+  description,
+  href,
+  img,
+  swatch = "50% 45%",
+  alt = "",
+} = Astro.props;
+---
+
+<li
+  class="group relative transition-transform duration-200 odd:rotate-[0.4deg] even:-rotate-[0.35deg] hover:rotate-0 focus-within:rotate-0 motion-reduce:transition-none"
+>
+  {/* The sheaf: a single flat offset edge suggesting the leaves stacked
+      beneath this one. A sibling rather than a shadow so it stays a crisp
+      hairline instead of a blur. */}
+  <span
+    aria-hidden="true"
+    class="absolute inset-0 translate-x-[3px] translate-y-[3px] rounded-[1px] border border-ddnptaupe bg-ddnptaupe/50"
+  ></span>
+
+  <a
+    href={href}
+    class="leaf-sheet relative grid h-full grid-cols-1 overflow-hidden rounded-[1px] border border-ddnptaupe/90 no-underline shadow-[0_1px_2px_rgba(63,53,32,0.10),0_5px_14px_rgba(63,53,32,0.12)] transition-[border-color,box-shadow] duration-200 hover:border-ddnpblue/70 hover:shadow-[0_2px_4px_rgba(63,53,32,0.12),0_10px_24px_rgba(63,53,32,0.16)] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ddnpblue sm:grid-cols-[10rem_minmax(0,1fr)]"
+  >
+    {/* The top of the leaf: Dickens's handwriting, dissolving into the page. */}
+    <img
+      src={img}
+      alt={alt}
+      width="2700"
+      height="2100"
+      loading="lazy"
+      decoding="async"
+      style={`object-position:${swatch}`}
+      class="leaf-band row-start-1 h-24 w-full object-cover sm:col-span-2 sm:h-32"
+    />
+
+    {/* The fold: a shaded crease across the whole sheet, band included. */}
+    <span
+      aria-hidden="true"
+      class="leaf-crease-v pointer-events-none absolute inset-y-0 left-[10rem] hidden w-7 -translate-x-1/2 sm:block"
+    ></span>
+
+    {/* Right half of the fold: the number plan — title and prose. */}
+    <div
+      class="row-start-3 flex flex-col p-4 sm:col-start-2 sm:row-start-2 sm:p-5"
+    >
+      <h3
+        class="leaf-title m-0 text-xl italic leading-tight text-gray-900 sm:text-2xl"
+      >
+        {title}
+      </h3>
+      {/* Ink stroke: sits under the title at rest, draws out on hover/focus. */}
+      <span
+        aria-hidden="true"
+        class="mt-2 block h-[2px] w-8 bg-ddnpblue transition-all duration-300 group-hover:w-28 group-focus-within:w-28 motion-reduce:transition-none"
+      ></span>
+      <p
+        class="leaf-prose m-0 mt-3 text-[15px] leading-relaxed text-gray-700"
+        set:html={description}
+      />
+      <span
+        class="leaf-prose mt-auto pt-4 text-[13px] font-semibold italic text-[#3e688f] group-hover:underline group-focus-within:underline"
+      >
+        Read the working notes&nbsp;&rarr;
+      </span>
+    </div>
+
+    {/* Left half of the fold: the mems, jotted on ruled lines. */}
+    <div class="relative row-start-2 p-4 sm:col-start-1 sm:row-start-2 sm:p-5">
+      <p
+        class="m-0 text-[10px] font-bold uppercase tracking-[0.18em] text-ddnpgrey"
+      >
+        Mems
+      </p>
+      <ul
+        class="m-0 mt-2 list-none p-0 text-xs leading-snug text-ddnpgrey [&>li:first-child]:pt-0 [&>li]:border-b [&>li]:border-ddnpblue/25 [&>li]:py-1.5"
+      >
+        <li>{dates}</li>
+        <li>{serial}</li>
+        <li>Transcribed &amp; annotated</li>
+      </ul>
+      {/* The fold when it runs horizontally (mobile). */}
+      <span
+        aria-hidden="true"
+        class="leaf-crease-h pointer-events-none absolute inset-x-0 -bottom-3 h-6 sm:hidden"
+      ></span>
+    </div>
+  </a>
+</li>

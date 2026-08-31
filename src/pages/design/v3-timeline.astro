@@ -1,0 +1,175 @@
+---
+// DESIGN PREVIEW — V3 "Serial Timeline".
+// A standalone copy of the homepage that replaces the 2-column card grid with
+// a chronological rail running from Martin Chuzzlewit (1843) to Edwin Drood
+// (1870). Nothing here is imported by the real homepage.
+// Analytics are deliberately omitted on preview pages.
+import Footer from "../../components/Footer.astro";
+import Header from "../../components/Header.astro";
+import Hero from "../../components/Hero.astro";
+import MainHead from "../../components/MainHead.astro";
+import SkipLink from "../../components/SkipLink.astro";
+import TimelineEntry from "../../components/homepage-variants/TimelineEntry.astro";
+import TimelineLegend from "../../components/homepage-variants/TimelineLegend.astro";
+
+// Ordered by first serial number, so the collection reads as a chronology of
+// Dickens's serial career rather than as a list of what happens to be ready.
+// `decade` is set on the first novel of each decade and drawn as a rung
+// across the rail.
+const novels = [
+  {
+    title: "Martin Chuzzlewit",
+    dates: "1843–44",
+    startYear: "1843",
+    serial: "20 monthly numbers",
+    cadence: "monthly",
+    status: "forthcoming",
+    decade: "1840s",
+  },
+  {
+    title: "Dombey and Son",
+    dates: "1846–48",
+    startYear: "1846",
+    serial: "20 monthly numbers",
+    cadence: "monthly",
+    status: "forthcoming",
+  },
+  {
+    title: "David Copperfield",
+    dates: "1849–50",
+    startYear: "1849",
+    serial: "19 monthly numbers",
+    cadence: "monthly",
+    status: "published",
+    href: "/notes/david-copperfield",
+    img: "/images/home/david-copperfield-wn-7-card.webp",
+    description:
+      "Immerse yourself in the composition of Dickens's most autobiographical novel through our introduction and annotations to these notes.",
+  },
+  {
+    title: "Bleak House",
+    dates: "1852–53",
+    startYear: "1852",
+    serial: "19 monthly numbers",
+    cadence: "monthly",
+    status: "published",
+    href: "/notes/bleak-house",
+    img: "/images/home/bleak-house-wn-15-card.webp",
+    description:
+      "Explore Dickens's management of the novel's dual narrators with our introduction and annotations to these notes.",
+    decade: "1850s",
+  },
+  {
+    title: "Hard Times",
+    dates: "1854",
+    startYear: "1854",
+    serial: "20 weekly parts",
+    cadence: "weekly",
+    status: "published",
+    href: "/notes/hard-times",
+    img: "/images/home/hard-times-wn-02-card.webp",
+    description:
+      "Follow Dickens's difficulties navigating a weekly serial with our introduction and annotations to these notes.",
+  },
+  {
+    title: "Little Dorrit",
+    dates: "1855–57",
+    startYear: "1855",
+    serial: "19 monthly numbers",
+    cadence: "monthly",
+    status: "published",
+    href: "/notes/little-dorrit",
+    img: "/images/home/little-dorrit-wn-04-card.webp",
+    description:
+      "Discover how Dickens's idea for &ldquo;Nobody's Fault&rdquo; transformed into <em>Little Dorrit</em> through our introduction and annotations to these notes.",
+  },
+  {
+    title: "Our Mutual Friend",
+    dates: "1864–65",
+    startYear: "1864",
+    serial: "20 monthly numbers",
+    cadence: "monthly",
+    status: "forthcoming",
+    decade: "1860s",
+  },
+  {
+    title: "The Mystery of Edwin Drood",
+    dates: "1870",
+    startYear: "1870",
+    serial: "unfinished, monthly numbers",
+    cadence: "monthly",
+    status: "forthcoming",
+    decade: "1870",
+  },
+];
+---
+
+<html lang="en">
+  <head>
+    <MainHead
+      title="Dickens Notes"
+      description="The Dickens Notes project explores serial form with Charles Dickens's working notes"
+    />
+    <style is:global>
+      /* src/styles/global.scss sets `* { box-sizing: content-box }` sitewide,
+         which makes Tailwind's padding + fixed-size utilities overflow.
+         Restore border-box inside this preview section only. */
+      #chronology,
+      #chronology * {
+        box-sizing: border-box;
+      }
+    </style>
+  </head>
+
+  <body class="container mx-auto">
+    <SkipLink />
+    <Header />
+    <main id="main-content">
+      <Hero />
+
+      <section
+        id="chronology"
+        aria-labelledby="chronology-heading"
+        class="mt-12 px-4 sm:px-6"
+      >
+        <div class="border-b-2 border-ddnpblue/50 pb-4">
+          <h2
+            id="chronology-heading"
+            class="m-0 text-2xl font-bold tracking-tight text-gray-900 sm:text-3xl"
+          >
+            Dickens's serial career, 1843&ndash;1870
+          </h2>
+          <p class="m-0 mt-2 max-w-2xl leading-snug text-gray-700">
+            The surviving Working Notes in the order Dickens wrote them &mdash;
+            four editions available now, four in preparation.
+          </p>
+        </div>
+
+        <!-- pl-9 / lg:pl-32 align with the entry column of TimelineEntry's grid. -->
+        <div class="mt-4 lg:pl-32">
+          <TimelineLegend />
+        </div>
+
+        <ol class="m-0 mt-8 list-none p-0">
+          {
+            novels.map((novel, index) => (
+              <TimelineEntry
+                {...novel}
+                isFirst={index === 0}
+                isLast={index === novels.length - 1}
+              />
+            ))
+          }
+        </ol>
+
+        <p
+          class="m-0 mt-2 max-w-2xl pl-9 text-sm leading-snug text-ddnpgrey lg:pl-32"
+        >
+          Dickens died in June 1870 with <em>The Mystery of Edwin Drood</em> half-written;
+          the chronology, like the novel, breaks off unfinished.
+        </p>
+      </section>
+    </main>
+    <Footer />
+  </body>
+</html>

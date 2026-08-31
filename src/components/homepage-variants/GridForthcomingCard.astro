@@ -1,0 +1,46 @@
+---
+// V1 "Refined Grid" — card for a novel whose working notes are still in
+// preparation. Deliberately NOT a link and NOT interactive: there is nowhere
+// to go yet, so it carries no hover state, no focus ring and no tab stop.
+//
+// In place of a manuscript photograph it shows a quiet siglum panel — the
+// novel's scholarly initials set in a serif face on ddnptaupe inside a thin
+// inset rule — so the slot reads as a bound volume waiting on the shelf rather
+// than as a broken image. The siglum is aria-hidden: it is an ornament, and the
+// full title sits directly beneath it.
+const { title, dates, serial, siglum } = Astro.props;
+---
+
+<div
+  class="flex h-full w-full flex-col overflow-hidden rounded-md border border-ddnptaupe bg-ddnptaupe/20"
+>
+  <div
+    class="relative flex aspect-[3/2] w-full items-center justify-center border-b border-ddnptaupe bg-ddnptaupe/40"
+  >
+    <span
+      aria-hidden="true"
+      class="pointer-events-none absolute inset-3 rounded-sm border border-ddnpgrey/20 sm:inset-4"
+    ></span>
+    <span
+      aria-hidden="true"
+      class="-mr-[0.2em] select-none font-serif text-4xl font-bold tracking-[0.2em] text-ddnpgrey/50 sm:text-5xl"
+    >
+      {siglum}
+    </span>
+  </div>
+  <div class="flex flex-1 flex-col p-4 sm:p-5">
+    <h3 class="m-0 text-lg font-bold tracking-tight text-gray-900 sm:text-xl">
+      <em>{title}</em>
+    </h3>
+    <p class="m-0 mt-1 text-sm italic text-ddnpgrey">
+      {dates}<span aria-hidden="true" class="not-italic"> · </span>{serial}
+    </p>
+    <p class="m-0 mt-3">
+      <span
+        class="inline-flex items-center rounded-full border border-ddnpgrey/40 bg-white/70 px-2.5 py-0.5 text-xs font-semibold uppercase tracking-wide text-ddnpgrey"
+      >
+        Coming soon
+      </span>
+    </p>
+  </div>
+</div>

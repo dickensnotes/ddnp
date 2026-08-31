@@ -1,0 +1,45 @@
+---
+// DESIGN PREVIEW — homepage novel-card variant V2, "Bookshelf".
+// A standalone copy of the homepage; the real homepage (src/pages/index.astro)
+// is untouched. The Google Analytics tag is deliberately omitted on preview
+// pages.
+//
+// The novel section is self-contained in BookshelfSection.astro (data and all)
+// because its markup, its CSS custom properties and its reveal-panel
+// positioning have to travel together.
+import Footer from "../../components/Footer.astro";
+import Header from "../../components/Header.astro";
+import Hero from "../../components/Hero.astro";
+import MainHead from "../../components/MainHead.astro";
+import SkipLink from "../../components/SkipLink.astro";
+import BookshelfSection from "../../components/homepage-variants/BookshelfSection.astro";
+---
+
+<html lang="en">
+  <head>
+    <MainHead
+      title="Design preview: Bookshelf"
+      description="Design preview of a homepage novel-card layout for the Dickens Notes project"
+    />
+    <style is:global>
+      /* The bookshelf band breaks out of body.container to 100vw. On a page
+         with a classic scrollbar that is a hair wider than the viewport, so
+         clip the overflow. `clip` rather than `hidden`: it creates no scroll
+         container and leaves position: sticky alone. Preview page only. */
+      html,
+      body {
+        overflow-x: clip;
+      }
+    </style>
+  </head>
+
+  <body class="container mx-auto">
+    <SkipLink />
+    <Header />
+    <main id="main-content">
+      <Hero />
+      <BookshelfSection />
+    </main>
+    <Footer />
+  </body>
+</html>

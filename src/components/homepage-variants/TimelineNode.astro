@@ -1,0 +1,31 @@
+---
+// Timeline variant (V3) — the marker that sits on the chronology rail.
+//
+// Three states, all purely decorative (the same information is carried in
+// visible text on every entry, and repeated in the legend):
+//   monthly     — solid dot
+//   weekly      — dot inside a ring, for the denser weekly cadence
+//   forthcoming — hollow dashed dot
+//
+// Rendered at 1rem square so it centres inside the 1.5rem rail column.
+const { cadence = "monthly", status = "published" } = Astro.props;
+const forthcoming = status === "forthcoming";
+---
+
+<span
+  aria-hidden="true"
+  class="relative flex h-4 w-4 shrink-0 items-center justify-center"
+>
+  {
+    forthcoming ? (
+      <span class="h-3 w-3 rounded-full border border-dashed border-ddnpgrey/70 bg-white" />
+    ) : cadence === "weekly" ? (
+      <>
+        <span class="absolute inset-0 rounded-full border border-ddnpgrey/70" />
+        <span class="h-1.5 w-1.5 rounded-full bg-ddnpgrey" />
+      </>
+    ) : (
+      <span class="h-2.5 w-2.5 rounded-full bg-ddnpgrey" />
+    )
+  }
+</span>

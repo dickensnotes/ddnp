@@ -1,0 +1,404 @@
+---
+// V2 "Bookshelf" — the whole novel section: a full-bleed band of dark panelling
+// with two shelves of volumes and a reveal area beneath them.
+//
+// The section is self-contained (data included) so the preview page stays a
+// clean copy of the homepage shell. Nothing here touches shared components.
+import BookshelfShelf from "./BookshelfShelf.astro";
+import BookshelfBook from "./BookshelfBook.astro";
+
+// Victorian publisher's-cloth tones chosen to sit beside the brand palette:
+// ddnpgrey's grey-green, a muted ddnpblue, and a walnut/tan. Every spine keeps
+// its cream or gilt lettering at 6:1 or better against its own cloth.
+const published = [
+  {
+    title: "David Copperfield",
+    dates: "1849–50",
+    serial: "19 monthly numbers",
+    description:
+      "Immerse yourself in the composition of Dickens's most autobiographical novel through our introduction and annotations to these notes.",
+    href: "/notes/david-copperfield",
+    img: "/images/home/david-copperfield-wn-7-card.webp",
+    cloth: "#35493c",
+    clothDeep: "#1f2e26",
+    ink: "#efdfae",
+    w: 66,
+    h: 300,
+    wm: 60,
+    hm: 240,
+  },
+  {
+    title: "Bleak House",
+    dates: "1852–53",
+    serial: "19 monthly numbers",
+    description:
+      "Explore Dickens's management of the novel's dual narrators with our introduction and annotations to these notes.",
+    href: "/notes/bleak-house",
+    img: "/images/home/bleak-house-wn-15-card.webp",
+    cloth: "#2f4560",
+    clothDeep: "#1c2a3c",
+    ink: "#e9e2cc",
+    w: 72,
+    h: 316,
+    wm: 64,
+    hm: 252,
+  },
+  {
+    // Hard Times is the slim one: a weekly serial, and by far the shortest novel.
+    title: "Hard Times",
+    dates: "1854",
+    serial: "20 weekly parts",
+    description:
+      "Follow Dickens's difficulties navigating a weekly serial with our introduction and annotations to these notes.",
+    href: "/notes/hard-times",
+    img: "/images/home/hard-times-wn-02-card.webp",
+    cloth: "#5a4530",
+    clothDeep: "#34261a",
+    ink: "#ead9b2",
+    w: 56,
+    h: 282,
+    wm: 52,
+    hm: 226,
+  },
+  {
+    title: "Little Dorrit",
+    dates: "1855–57",
+    serial: "19 monthly numbers",
+    description:
+      "Discover how Dickens's idea for 'Nobody's Fault' transformed into 'Little Dorrit' through our introduction and annotations to these notes.",
+    href: "/notes/little-dorrit",
+    img: "/images/home/little-dorrit-wn-04-card.webp",
+    cloth: "#3d5651",
+    clothDeep: "#253a36",
+    ink: "#efe6c8",
+    w: 70,
+    h: 308,
+    wm: 62,
+    hm: 246,
+  },
+];
+
+// Working notes survive for these, but no edition is online yet: unbound,
+// ghosted spines. The Mystery of Edwin Drood leans into the empty shelf space —
+// the volume Dickens never finished.
+const forthcoming = [
+  {
+    title: "Martin Chuzzlewit",
+    dates: "1843–44",
+    serial: "20 monthly numbers",
+    w: 68,
+    h: 304,
+    wm: 60,
+    hm: 244,
+  },
+  {
+    title: "Dombey and Son",
+    dates: "1846–48",
+    serial: "20 monthly numbers",
+    w: 66,
+    h: 296,
+    wm: 58,
+    hm: 238,
+  },
+  {
+    title: "Our Mutual Friend",
+    dates: "1864–65",
+    serial: "20 monthly numbers",
+    w: 70,
+    h: 310,
+    wm: 60,
+    hm: 248,
+  },
+  {
+    title: "The Mystery of Edwin Drood",
+    dates: "1870",
+    serial: "unfinished, monthly numbers",
+    w: 52,
+    h: 322,
+    wm: 48,
+    hm: 258,
+    lean: 9,
+  },
+];
+
+const ghostCloth = {
+  cloth: "rgba(206,198,165,0.14)",
+  clothDeep: "rgba(206,198,165,0.06)",
+  ink: "#e7e1cd",
+};
+---
+
+<section class="bs-band" aria-labelledby="bs-heading">
+  <div class="bs-inner">
+    <div class="bs-head">
+      <p class="bs-eyebrow">The Collection</p>
+      <h2 id="bs-heading" class="bs-h2">Dickens's Working Notes</h2>
+      <p class="bs-lede">
+        Dickens wrote each novel against a set of number plans — one leaf per
+        installment, drafted before and during composition. Four novels are
+        edited here with transcriptions and annotations; four more are in
+        preparation.
+      </p>
+    </div>
+
+    <div class="bs-stage">
+      <BookshelfShelf
+        id="bs-shelf-available"
+        heading="Volumes available now"
+        plaque="Now available"
+      >
+        {published.map((novel) => <BookshelfBook {...novel} />)}
+      </BookshelfShelf>
+
+      <BookshelfShelf
+        id="bs-shelf-forthcoming"
+        heading="Volumes in preparation"
+        plaque="In preparation"
+      >
+        {
+          forthcoming.map((novel) => (
+            <BookshelfBook {...novel} {...ghostCloth} forthcoming />
+          ))
+        }
+      </BookshelfShelf>
+
+      <!-- Resting state of the reveal area. Each volume's own panel overlays
+           this on :hover / :focus-visible; both share --bs-reveal-h so the swap
+           never shifts the page. -->
+      <div class="bs-reveal">
+        <span class="bs-reveal-mark" aria-hidden="true">§</span>
+        <p class="bs-reveal-text">
+          <strong>Take down a volume.</strong> Move over — or tab to — any bound
+          spine to see the working notes it opens onto. The four pale volumes are
+          in preparation: Dickens's number plans for them survive, and editions
+          are being prepared.
+        </p>
+      </div>
+    </div>
+
+    <!-- Phones get the same information as the reveal panel, always visible,
+         rather than a hover affordance they cannot use. The spines above remain
+         the links; these entries are plain text. -->
+    <div class="bs-catalogue">
+      <h3 class="sr-only">Notes on the volumes available now</h3>
+      <ul role="list">
+        {
+          published.map((novel) => (
+            <li>
+              <p class="bs-cat-title">
+                <em>{novel.title}</em>{" "}
+                <span class="bs-cat-dates">({novel.dates})</span>
+              </p>
+              <p class="bs-cat-serial">{novel.serial}</p>
+              <p class="bs-cat-desc">{novel.description}</p>
+            </li>
+          ))
+        }
+      </ul>
+    </div>
+  </div>
+</section>
+
+<style>
+  /* global.scss sets `* { box-sizing: content-box }` — opt back into border-box
+     so the full-bleed band's padding does not add to its 100vw width. Not a
+     bare `*`: Astro scopes with :where(), so `*` would compile to zero
+     specificity and merely tie with the global rule. */
+  .bs-band,
+  .bs-band * {
+    box-sizing: border-box;
+  }
+
+  /* A serif for anything that behaves like print — spine lettering, headings,
+     panel titles. System faces only; no new webfont for a preview page. */
+  .bs-band {
+    --bs-serif: Georgia, "Iowan Old Style", "Palatino Linotype", "Book Antiqua",
+      serif;
+
+    position: relative;
+    /* Break out of body.container to the full viewport: a study wall, not a
+       card. Margins (not transforms) so descendants keep their containing
+       block. The page sets overflow-x: clip to absorb the scrollbar. */
+    width: 100vw;
+    margin-left: calc(50% - 50vw);
+    margin-right: calc(50% - 50vw);
+    padding: 3.5rem 1rem 3rem;
+    background:
+      /* lamplight from above */
+      radial-gradient(
+        120% 80% at 50% 6%,
+        rgba(255, 226, 180, 0.08),
+        transparent 62%
+      ),
+      /* faint panelling seams on the back wall */
+        repeating-linear-gradient(
+          90deg,
+          rgba(0, 0, 0, 0.2) 0 1px,
+          transparent 1px 3px,
+          rgba(255, 255, 255, 0.012) 3px 4px,
+          transparent 4px 104px
+        ),
+      /* starts at the hero's own gray-900 so the seam disappears */
+        linear-gradient(180deg, #111827 0, #1b1e19 110px, #23261e 46%, #191c16 100%);
+  }
+
+  /* Skirting at the foot of the wall, closing the band off from the footer. */
+  .bs-band::after {
+    content: "";
+    position: absolute;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    height: 12px;
+    background: linear-gradient(180deg, #2c2f24, #12140f);
+    box-shadow: inset 0 1px 0 rgba(255, 226, 190, 0.16);
+  }
+
+  .bs-inner {
+    max-width: 64rem;
+    margin: 0 auto;
+  }
+
+  .bs-head {
+    max-width: 42rem;
+  }
+
+  .bs-eyebrow {
+    margin: 0;
+    font-size: 0.72rem;
+    font-weight: 700;
+    letter-spacing: 0.22em;
+    text-transform: uppercase;
+    color: #c9a95f;
+  }
+
+  .bs-h2 {
+    margin: 0.5rem 0 0;
+    font-family: var(--bs-serif);
+    font-size: 1.9rem;
+    font-weight: 700;
+    letter-spacing: -0.015em;
+    color: #f4efe2;
+  }
+
+  .bs-lede {
+    margin: 0.75rem 0 0;
+    max-width: 38rem;
+    line-height: 1.55;
+    color: #d7d2c2;
+  }
+
+  /* Positioning context for every volume's reveal panel. The panels are
+     absolutely positioned to this box's bottom edge, where .bs-reveal sits. */
+  .bs-stage {
+    --bs-reveal-h: 12.5rem;
+    position: relative;
+    margin-top: 3rem;
+  }
+
+  .bs-reveal {
+    display: none;
+    align-items: center;
+    gap: 1rem;
+    min-height: var(--bs-reveal-h);
+    margin-top: 2.75rem;
+    padding: 1.15rem 1.35rem;
+    border: 1px dashed rgba(206, 198, 165, 0.42);
+    border-radius: 3px;
+    background: rgba(206, 198, 165, 0.05);
+    color: #ded8c6;
+  }
+
+  .bs-reveal-mark {
+    flex: none;
+    font-family: var(--bs-serif);
+    font-size: 2rem;
+    line-height: 1;
+    color: #c9a95f;
+  }
+
+  .bs-reveal-text {
+    margin: 0;
+    max-width: 46rem;
+    line-height: 1.55;
+  }
+
+  .bs-reveal-text strong {
+    color: #f4efe2;
+  }
+
+  /* ---- Phone catalogue ---- */
+
+  .bs-catalogue {
+    margin-top: 2.25rem;
+  }
+
+  .bs-catalogue ul {
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+
+  .bs-catalogue li {
+    padding: 0.85rem 0 0.85rem 0.9rem;
+    border-left: 2px solid rgba(201, 169, 95, 0.55);
+  }
+
+  .bs-catalogue li + li {
+    margin-top: 0.4rem;
+  }
+
+  .bs-cat-title {
+    margin: 0;
+    font-family: var(--bs-serif);
+    font-size: 1.05rem;
+    font-weight: 700;
+    color: #f4efe2;
+  }
+
+  .bs-cat-dates {
+    font-weight: 400;
+  }
+
+  .bs-cat-serial {
+    margin: 0.1rem 0 0;
+    font-size: 0.72rem;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: #b7ae93;
+  }
+
+  .bs-cat-desc {
+    margin: 0.4rem 0 0;
+    font-size: 0.92rem;
+    line-height: 1.5;
+    color: #d7d2c2;
+  }
+
+  /* ---- Breakpoints ---- */
+
+  @media (min-width: 640px) {
+    .bs-band {
+      padding: 4.5rem 1.5rem 3.5rem;
+    }
+    .bs-h2 {
+      font-size: 2.3rem;
+    }
+    .bs-reveal {
+      display: flex;
+    }
+    /* Superseded by the reveal area from here up. */
+    .bs-catalogue {
+      display: none;
+    }
+  }
+
+  @media (min-width: 1024px) {
+    .bs-stage {
+      --bs-reveal-h: 10.75rem;
+    }
+    .bs-band {
+      padding: 5rem 2rem 4rem;
+    }
+  }
+</style>

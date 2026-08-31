@@ -1,0 +1,112 @@
+---
+// V2 "Bookshelf" — one shelf: a row of volumes standing on a wooden plank.
+//
+// The shelf is grouped by a visually hidden <h3> so screen-reader users get the
+// same "now available / in preparation" distinction that sighted users read
+// from the brass plaque and the ghosted spines.
+const { id, heading, plaque } = Astro.props;
+---
+
+<section class="bs-unit" aria-labelledby={id}>
+  <h3 id={id} class="sr-only">{heading}</h3>
+  <ul class="bs-shelf" role="list">
+    <slot />
+  </ul>
+  <div class="bs-plank" aria-hidden="true">
+    <span class="bs-plaque">{plaque}</span>
+  </div>
+</section>
+
+<style>
+  /* global.scss sets `* { box-sizing: content-box }` — opt back into
+     border-box. Not a bare `*`: Astro scopes with :where(), so `*` would
+     compile to zero specificity and merely tie with the global rule. */
+  .bs-unit,
+  .bs-unit * {
+    box-sizing: border-box;
+  }
+
+  .bs-unit {
+    display: block;
+  }
+
+  .bs-unit + .bs-unit {
+    margin-top: 2.5rem;
+  }
+
+  .bs-shelf {
+    display: flex;
+    align-items: flex-end;
+    justify-content: center;
+    gap: 7px;
+    /* The plank follows in the DOM and so paints over the volumes: the -3px
+       tucks their bottom edges behind its front lip, as on a real shelf. */
+    margin: 0 0 -3px;
+    padding: 0 0.75rem;
+    list-style: none;
+  }
+
+  /* The plank: a lit top surface, a shaded front edge, and a cast shadow on
+     the back wall beneath it. */
+  .bs-plank {
+    position: relative;
+    height: 24px;
+    border-radius: 1px 1px 3px 3px;
+    background:
+      repeating-linear-gradient(
+        90deg,
+        rgba(0, 0, 0, 0.1) 0 2px,
+        rgba(255, 255, 255, 0.028) 2px 5px,
+        transparent 5px 19px,
+        rgba(0, 0, 0, 0.07) 19px 21px,
+        transparent 21px 47px
+      ),
+      linear-gradient(
+        180deg,
+        #a87a4f 0px,
+        #8a6340 5px,
+        #6d4b2d 9px,
+        #59391f 55%,
+        #3a2313 100%
+      );
+    box-shadow:
+      inset 0 1px 0 rgba(255, 226, 190, 0.4),
+      0 16px 24px -12px rgba(0, 0, 0, 0.95),
+      0 3px 0 -1px rgba(0, 0, 0, 0.45);
+  }
+
+  .bs-plaque {
+    position: absolute;
+    right: 14px;
+    bottom: 3px;
+    padding: 3px 8px 2px;
+    border: 1px solid rgba(240, 224, 180, 0.5);
+    border-radius: 2px;
+    background: linear-gradient(180deg, #8a6f36, #5c4921);
+    box-shadow:
+      0 1px 0 rgba(0, 0, 0, 0.5),
+      inset 0 1px 0 rgba(255, 240, 200, 0.35);
+    font-size: 9.5px;
+    font-weight: 700;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: #f6ead0;
+    white-space: nowrap;
+  }
+
+  @media (min-width: 640px) {
+    .bs-shelf {
+      gap: 10px;
+      padding: 0 1.5rem;
+    }
+    .bs-plank {
+      height: 28px;
+    }
+    .bs-plaque {
+      font-size: 10.5px;
+      padding: 4px 10px 3px;
+      bottom: 4px;
+      right: 20px;
+    }
+  }
+</style>
