@@ -1,0 +1,16 @@
+---
+import MiradorFullScreenLayout from "../../layouts/mirador-full-screen-layout.astro";
+import MiradorEditor from "../../components/MiradorEditor";
+
+// Unlisted test page for the Mirador Annotation Editor.
+// Not linked from the nav; annotations persist to localStorage only.
+const manifest =
+  "https://dickensnotes.github.io/dickens-annotations/img/derivatives/iiif/davidcopperfieldtranscription/manifest.json";
+---
+
+<MiradorFullScreenLayout
+  title="Annotation editor test"
+  description="Mirador Annotation Editor test"
+>
+  <MiradorEditor client:only="react" loadedManifest={manifest} />
+</MiradorFullScreenLayout>
