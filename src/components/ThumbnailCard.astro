@@ -1,0 +1,86 @@
+---
+// Shared horizontal card: small square thumbnail on the left, text (title,
+// meta line, description) on the right. Used by TeachingActivityCard (teaching
+// assignments) and NovelCard (homepage working notes editions), so both stay
+// visually in sync. Styled with the site's ddnpblue brand color (see
+// MiradorCard.astro for the same bg-ddnpblue/10 treatment).
+//
+// Variants:
+// - "default": the whole card is a single link to `href`.
+// - "forthcoming": dashed, muted, and rendered as a <div> (not a link), since
+//   there is no page to visit yet. The meta line should state the status in
+//   words so it isn't conveyed by styling alone.
+//
+// Accessibility: the card's heading + description already convey its purpose,
+// so the thumbnail is decorative (alt=""). This mirrors the H67 rationale
+// documented in src/pages/index.astro.
+//
+// `title`, `meta`, and `description` are rendered with set:html so work titles
+// can be italicized (e.g. <i>Bleak House</i>). Content is static and
+// author-controlled.
+import { faFeatherPointed } from "@fortawesome/free-solid-svg-icons";
+
+const {
+  href,
+  img,
+  alt = "",
+  title,
+  meta,
+  description,
+  variant = "default",
+} = Astro.props;
+
+const forthcoming = variant === "forthcoming";
+const Tag = href && !forthcoming ? "a" : "div";
+
+// FontAwesome icon definitions are [width, height, ligatures, unicode, path],
+// so the icon can be inlined as static SVG without a React island.
+const [iconW, iconH, , , iconPath] = faFeatherPointed.icon;
+
+const rootClass = forthcoming
+  ? "flex items-start gap-4 sm:gap-5 rounded-md border border-dashed border-ddnpblue/70 p-4 sm:p-5"
+  : "group flex items-start gap-4 sm:gap-5 rounded-md border border-ddnpblue bg-ddnpblue/10 p-4 sm:p-5 no-underline transition hover:bg-ddnpblue/20 hover:shadow-md focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ddnpgrey";
+---
+
+<Tag href={Tag === "a" ? href : undefined} class={rootClass}>
+  <div class="shrink-0">
+    {
+      img ? (
+        <img
+          src={img}
+          alt={alt}
+          width="128"
+          height="128"
+          loading="lazy"
+          decoding="async"
+          class="h-24 w-24 rounded-md border border-ddnpblue/40 object-cover sm:h-32 sm:w-32"
+        />
+      ) : forthcoming ? (
+        <div class="flex h-24 w-24 items-center justify-center rounded-md border border-dashed border-ddnpblue/50 bg-ddnpblue/5 text-ddnpblue sm:h-32 sm:w-32">
+          <svg
+            aria-hidden="true"
+            viewBox={`0 0 ${iconW} ${iconH}`}
+            class="h-8 w-8 sm:h-10 sm:w-10"
+          >
+            <path fill="currentColor" d={iconPath} />
+          </svg>
+        </div>
+      ) : (
+        <div class="flex h-24 w-24 items-center justify-center rounded-md border border-dashed border-ddnpblue/50 bg-white/50 px-2 text-center text-[11px] leading-tight text-ddnpgrey sm:h-32 sm:w-32">
+          image to come
+        </div>
+      )
+    }
+  </div>
+  <div class="min-w-0">
+    <h3
+      class:list={[
+        "m-0 text-lg font-bold tracking-tight text-gray-900 sm:text-xl",
+        { "group-hover:underline": !forthcoming },
+      ]}
+      set:html={title}
+    />
+    <p class="m-0 mt-1 italic text-ddnpgrey" set:html={meta} />
+    <p class="m-0 mt-2 leading-snug text-gray-700" set:html={description} />
+  </div>
+</Tag>
