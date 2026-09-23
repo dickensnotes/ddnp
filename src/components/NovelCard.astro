@@ -2,7 +2,7 @@
 // Homepage card for one working notes edition (see src/data/novels.js).
 // The visual shell lives in ThumbnailCard.astro, shared with the teaching
 // activity cards. Published editions link to their notes page; forthcoming
-// editions render as a non-link card with the release date in the meta line.
+// editions render as a non-link card with the release quarter in the meta line.
 import ThumbnailCard from "./ThumbnailCard.astro";
 
 const { novel } = Astro.props;
@@ -13,7 +13,8 @@ const published = novel.status === "published";
   href={published ? novel.href : undefined}
   img={novel.thumbnail}
   title={`<i>${novel.title}</i>`}
-  meta={published ? novel.dates : `${novel.dates} · Edition due ${novel.release}`}
+  meta={published ? novel.dates : `${novel.dates} · Edition coming ${novel.release}`}
   description={novel.description}
   variant={published ? "default" : "forthcoming"}
+  size="large"
 />

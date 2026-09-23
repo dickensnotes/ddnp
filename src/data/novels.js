@@ -14,7 +14,7 @@ export const novels = [
     title: "The Old Curiosity Shop",
     dates: "1840–41",
     status: "forthcoming",
-    release: "June 2027",
+    release: "Q2 2027",
     href: null,
     thumbnail: null,
     description:
@@ -24,7 +24,7 @@ export const novels = [
     title: "Martin Chuzzlewit",
     dates: "1843–44",
     status: "forthcoming",
-    release: "June 2027",
+    release: "Q2 2027",
     href: null,
     thumbnail: null,
     description:
@@ -34,7 +34,7 @@ export const novels = [
     title: "Dombey and Son",
     dates: "1846–48",
     status: "forthcoming",
-    release: "December 2026",
+    release: "Q4 2026",
     href: null,
     thumbnail: null,
     description: "Dickens’s first full set of systematic working notes.",
@@ -83,7 +83,7 @@ export const novels = [
     title: "Great Expectations",
     dates: "1860–61",
     status: "forthcoming",
-    release: "December 2027",
+    release: "Q4 2027",
     href: null,
     thumbnail: null,
     description: "Three pages of planning documents for this weekly novel.",
@@ -92,7 +92,7 @@ export const novels = [
     title: "Our Mutual Friend",
     dates: "1864–65",
     status: "forthcoming",
-    release: "December 2027",
+    release: "Q4 2027",
     href: null,
     thumbnail: null,
     description:
@@ -102,7 +102,7 @@ export const novels = [
     title: "The Mystery of Edwin Drood",
     dates: "1870",
     status: "forthcoming",
-    release: "December 2026",
+    release: "Q4 2026",
     href: null,
     thumbnail: null,
     description:

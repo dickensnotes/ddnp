@@ -11,6 +11,11 @@
 //   there is no page to visit yet. The meta line should state the status in
 //   words so it isn't conveyed by styling alone.
 //
+// Sizes:
+// - "default": 96px thumbnail, 128px from sm up (teaching cards).
+// - "large": 112px thumbnail, 160px from sm up (homepage editions). Source
+//   thumbnails are 320px square, so 160px is the largest that stays sharp at 2x.
+//
 // Accessibility: the card's heading + description already convey its purpose,
 // so the thumbnail is decorative (alt=""). This mirrors the H67 rationale
 // documented in src/pages/index.astro.
@@ -28,10 +33,18 @@ const {
   meta,
   description,
   variant = "default",
+  size = "default",
 } = Astro.props;
 
 const forthcoming = variant === "forthcoming";
 const Tag = href && !forthcoming ? "a" : "div";
+
+// Full class strings (not interpolated) so Tailwind can find them.
+const sizes = {
+  default: { px: 128, box: "h-24 w-24 sm:h-32 sm:w-32" },
+  large: { px: 160, box: "h-28 w-28 sm:h-40 sm:w-40" },
+};
+const { px, box } = sizes[size] ?? sizes.default;
 
 // FontAwesome icon definitions are [width, height, ligatures, unicode, path],
 // so the icon can be inlined as static SVG without a React island.
@@ -49,14 +62,14 @@ const rootClass = forthcoming
         <img
           src={img}
           alt={alt}
-          width="128"
-          height="128"
+          width={px}
+          height={px}
           loading="lazy"
           decoding="async"
-          class="h-24 w-24 rounded-md border border-ddnpblue/40 object-cover sm:h-32 sm:w-32"
+          class={`${box} rounded-md border border-ddnpblue/40 object-cover`}
         />
       ) : forthcoming ? (
-        <div class="flex h-24 w-24 items-center justify-center rounded-md border border-dashed border-ddnpblue/50 bg-ddnpblue/5 text-ddnpblue sm:h-32 sm:w-32">
+        <div class={`${box} flex items-center justify-center rounded-md border border-dashed border-ddnpblue/50 bg-ddnpblue/5 text-ddnpblue`}>
           <svg
             aria-hidden="true"
             viewBox={`0 0 ${iconW} ${iconH}`}
@@ -66,7 +79,7 @@ const rootClass = forthcoming
           </svg>
         </div>
       ) : (
-        <div class="flex h-24 w-24 items-center justify-center rounded-md border border-dashed border-ddnpblue/50 bg-white/50 px-2 text-center text-[11px] leading-tight text-ddnpgrey sm:h-32 sm:w-32">
+        <div class={`${box} flex items-center justify-center rounded-md border border-dashed border-ddnpblue/50 bg-white/50 px-2 text-center text-[11px] leading-tight text-ddnpgrey`}>
           image to come
         </div>
       )
