@@ -1,10 +1,24 @@
 import React, { useEffect } from "react";
 import mirador from "mirador";
-import annotationPlugins, { annotationAdapters } from "mirador-annotation-editor";
+import annotationPlugins from "mirador-annotation-editor";
 import "mirador-annotation-editor/dist/index.css";
+import GitHubAnnotationAdapter from "../lib/GitHubAnnotationAdapter.js";
 
-// Test: Mirador + Mirador Annotation Editor (MAE) with MAE's bundled
-// LocalStorageAdapter. Annotations are saved in this browser only.
+// Test: Mirador + Mirador Annotation Editor (MAE), reading annotations from
+// the mae-poc branch of dickens-annotations. Saving is not connected yet.
+
+// All annotations reach the editor through the adapter, so drop the
+// manifest's links to the published lists; otherwise Mirador loads them too
+// and every annotation appears twice.
+function withoutAnnotationLists(url, action) {
+  if (!action.manifestJson?.sequences) return action;
+  const manifestJson = structuredClone(action.manifestJson);
+  manifestJson.sequences.forEach((sequence) =>
+    sequence.canvases.forEach((canvas) => delete canvas.otherContent)
+  );
+  return { ...action, manifestJson };
+}
+
 export default function MiradorEditor(props) {
   const urlParams = new URLSearchParams(window.location.search);
   const canvas = urlParams.get("canvas");
@@ -13,13 +27,12 @@ export default function MiradorEditor(props) {
     id: "mirador",
     annotation: {
       adapter: (canvasId) =>
-        new annotationAdapters.LocalStorageAdapter(
-          `localStorage://?canvasId=${canvasId}`,
-          "Test user"
-        ),
+        new GitHubAnnotationAdapter(canvasId, { user: "Test user" }),
       allowTargetShapesStyling: true,
-      exportLocalStorageAnnotations: true,
       readonly: false,
+    },
+    requests: {
+      postprocessors: [withoutAnnotationLists],
     },
     annotations: {
       displayAll: true,
