@@ -4,8 +4,9 @@ import annotationPlugins from "mirador-annotation-editor";
 import "mirador-annotation-editor/dist/index.css";
 import GitHubAnnotationAdapter from "../lib/GitHubAnnotationAdapter.js";
 
-// Test: Mirador + Mirador Annotation Editor (MAE), reading annotations from
-// the mae-poc branch of dickens-annotations. Saving is not connected yet.
+// Test: Mirador + Mirador Annotation Editor (MAE), reading and saving
+// annotations on the mae-poc branch of dickens-annotations. Without a token
+// it is read-only.
 
 // All annotations reach the editor through the adapter, so drop the
 // manifest's links to the published lists; otherwise Mirador loads them too
@@ -27,7 +28,11 @@ export default function MiradorEditor(props) {
     id: "mirador",
     annotation: {
       adapter: (canvasId) =>
-        new GitHubAnnotationAdapter(canvasId, { user: "Test user" }),
+        new GitHubAnnotationAdapter(canvasId, {
+          manifestId: props.loadedManifest,
+          token: props.token,
+          user: props.user,
+        }),
       allowTargetShapesStyling: true,
       readonly: false,
     },

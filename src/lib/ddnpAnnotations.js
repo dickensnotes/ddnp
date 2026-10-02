@@ -114,3 +114,204 @@ export function toMaeAnnotation(annotation) {
     },
   };
 }
+
+/* ------------------------------------------------------------------ */
+/* Saving: MAE's W3C annotation → DDNP's IIIF 2 annotation file        */
+/* ------------------------------------------------------------------ */
+
+const IIIF2_CONTEXT = "http://iiif.io/api/presentation/2/context.json";
+
+// Path attributes used by Annonatate, so new targets match the corpus
+const PATH_ATTRIBUTES =
+  'fill-opacity="0.00001" fill="#00bfff" fill-rule="nonzero" stroke="#ff0000" stroke-width="1" ' +
+  'stroke-linecap="butt" stroke-linejoin="miter" stroke-miterlimit="10" stroke-dasharray="" ' +
+  'stroke-dashoffset="0" font-family="none" font-weight="none" font-size="none" ' +
+  'text-anchor="none" style="mix-blend-mode: normal"';
+
+function drawingShapes(maeAnnotation) {
+  let drawingState = maeAnnotation?.maeData?.target?.drawingState;
+  if (typeof drawingState === "string") drawingState = JSON.parse(drawingState);
+  return drawingState?.shapes ?? [];
+}
+
+const round = (n) => Math.round(n * 100) / 100;
+
+/** Map a point in a Konva shape's own coordinates to canvas pixels. */
+function toCanvas(shape, x, y) {
+  const sx = (shape.scaleX ?? 1) * x;
+  const sy = (shape.scaleY ?? 1) * y;
+  const angle = ((shape.rotation ?? 0) * Math.PI) / 180;
+  return [
+    (shape.x ?? 0) + sx * Math.cos(angle) - sy * Math.sin(angle),
+    (shape.y ?? 0) + sx * Math.sin(angle) + sy * Math.cos(angle),
+  ];
+}
+
+function pairs(points, dx = 0, dy = 0) {
+  const result = [];
+  for (let i = 0; i + 1 < points.length; i += 2) result.push([points[i] + dx, points[i + 1] + dy]);
+  return result;
+}
+
+/**
+ * Outline of a MAE shape as polylines in canvas pixels, plus whether each
+ * polyline is closed. Ellipses and circles are approximated with 36 points.
+ */
+export function shapeOutline(shape) {
+  const ellipse = (rx, ry) => [
+    Array.from({ length: 36 }, (_, i) => {
+      const t = (i / 36) * 2 * Math.PI;
+      return toCanvas(shape, rx * Math.cos(t), ry * Math.sin(t));
+    }),
+  ];
+
+  switch (shape.type) {
+    case "rectangle": {
+      const w = shape.width ?? 0;
+      const h = shape.height ?? 0;
+      return { closed: true, lines: [[[0, 0], [w, 0], [w, h], [0, h]].map(([x, y]) => toCanvas(shape, x, y))] };
+    }
+    case "ellipse":
+      return { closed: true, lines: ellipse(shape.radiusX ?? 0, shape.radiusY ?? 0) };
+    case "circle":
+      return { closed: true, lines: ellipse(shape.radius ?? 0, shape.radius ?? 0) };
+    case "polygon":
+      return { closed: true, lines: [pairs(shape.points ?? []).map(([x, y]) => toCanvas(shape, x, y))] };
+    case "freehand":
+      return {
+        closed: false,
+        lines: (shape.lines ?? []).map((line) =>
+          pairs(line.points ?? [], line.x ?? 0, line.y ?? 0).map(([x, y]) => toCanvas(shape, x, y))),
+      };
+    default: // arrow, line, and anything else drawn as points
+      return { closed: false, lines: [pairs(shape.points ?? []).map(([x, y]) => toCanvas(shape, x, y))] };
+  }
+}
+
+/** Bounding box (integers, canvas pixels) around all shapes, or null. */
+export function shapesBoundingBox(shapes) {
+  const points = shapes.flatMap((shape) => shapeOutline(shape).lines.flat());
+  if (points.length === 0) return null;
+  const xs = points.map(([x]) => x);
+  const ys = points.map(([, y]) => y);
+  const x = Math.floor(Math.min(...xs));
+  const y = Math.floor(Math.min(...ys));
+  return { x, y, width: Math.ceil(Math.max(...xs)) - x, height: Math.ceil(Math.max(...ys)) - y };
+}
+
+/** One Annonatate-style SVG holding a path per shape. */
+export function shapesSvg(shapes, makeId = () => crypto.randomUUID()) {
+  const paths = shapes.map((shape) => {
+    const { closed, lines } = shapeOutline(shape);
+    const d = lines
+      .filter((line) => line.length > 0)
+      .map((line) => `M${line.map(([x, y]) => `${round(x)},${round(y)}`).join("L")}${closed ? "z" : ""}`)
+      .join("");
+    const prefix = shape.type === "freehand" ? "rough" : shape.type;
+    return `<path xmlns="http://www.w3.org/2000/svg" d="${d}" id="${prefix}_${makeId()}" ${PATH_ATTRIBUTES}/>`;
+  });
+  return `<svg xmlns='http://www.w3.org/2000/svg'>${paths.join("")}</svg>`;
+}
+
+const GEOMETRY = ["type", "x", "y", "width", "height", "radius", "radiusX", "radiusY", "scaleX", "scaleY", "rotation"];
+
+function sameGeometry(a, b) {
+  return GEOMETRY.every((key) => {
+    const [va, vb] = [a[key] ?? (key.startsWith("scale") ? 1 : 0), b[key] ?? (key.startsWith("scale") ? 1 : 0)];
+    return typeof va === "number" && typeof vb === "number" ? Math.abs(va - vb) < 0.5 : va === vb;
+  });
+}
+
+/** Has the user moved, resized, redrawn or deleted the original target? */
+export function targetChanged(original, maeAnnotation) {
+  const before = toMaeAnnotation(original).maeData.target.drawingState.shapes;
+  const after = drawingShapes(maeAnnotation);
+  return before.length !== after.length || before.some((shape, i) => !sameGeometry(shape, after[i]));
+}
+
+/**
+ * Quill writes every space as &nbsp;, which stops the text wrapping. Turn
+ * them back into spaces, except where &nbsp; is an element's whole content:
+ * `<p>&nbsp;</p>` is how the annotations mark a blank line.
+ */
+export function normalizeHtml(html) {
+  return (html ?? "").replace(/&nbsp;|\u00a0/g, (match, offset, text) =>
+    text[offset - 1] === ">" && text[offset + match.length] === "<" ? "&nbsp;" : " ");
+}
+
+/** The bare `<uuid>.json` filename for a MAE annotation. */
+export function annotationFilename(maeAnnotation) {
+  const last = String(maeAnnotation.id ?? "").split("/").pop().split("#")[0];
+  if (/^[0-9a-f-]{36}\.json$/i.test(last)) return last;
+  if (/^[0-9a-f-]{36}$/i.test(last)) return `${last}.json`;
+  return `${crypto.randomUUID()}.json`;
+}
+
+/**
+ * Convert MAE's annotation into DDNP's IIIF 2 format, in the corpus's key
+ * order. Editing keeps the original author, date and any other fields, and
+ * keeps the original text and target exactly unless they were changed.
+ *
+ * `keepOriginalText`: whether the text is unedited. MAE's editor rewrites
+ * stored HTML on opening, so callers decide this with `textUnchanged` (see
+ * quillHtml.js); without it, only identical text counts as unedited.
+ */
+export function toDdnpAnnotation(
+  maeAnnotation,
+  { original, canvas, manifestId, user, keepOriginalText, now = new Date() },
+) {
+  let resource = [].concat(maeAnnotation.body ?? []).map((body) =>
+    body.purpose === "tagging"
+      ? { "@type": "oa:Tag", chars: body.value }
+      : { "@type": "dctypes:Text", chars: normalizeHtml(body.value), format: "text/html" });
+
+  if (original) {
+    const identical = JSON.stringify([].concat(original.resource ?? []).map((r) => r.chars))
+      === JSON.stringify([].concat(maeAnnotation.body ?? []).map((b) => b.value));
+    if (keepOriginalText ?? identical) resource = original.resource;
+  }
+
+  let on;
+  if (original && !targetChanged(original, maeAnnotation)) {
+    on = original.on;
+  } else {
+    const shapes = drawingShapes(maeAnnotation);
+    const box = shapesBoundingBox(shapes);
+    if (!box) throw new Error("Draw a shape on the page to show what this note is about.");
+    const originalTarget = Array.isArray(original?.on) ? original.on[0] : original?.on;
+    on = [{
+      "@type": "oa:SpecificResource",
+      full: canvas,
+      selector: {
+        "@type": "oa:Choice",
+        default: { "@type": "oa:FragmentSelector", value: `xywh=${box.x},${box.y},${box.width},${box.height}` },
+        item: { "@type": "oa:SvgSelector", value: shapesSvg(shapes) },
+      },
+      within: originalTarget?.within ?? { "@id": manifestId, "@type": "sc:Manifest" },
+    }];
+  }
+
+  const {
+    "@context": _context, "@id": _id, "@type": _type, motivation: _motivation,
+    "oa:annotatedAt": annotatedAt, "oa:annotatedBy": annotatedBy,
+    on: _on, resource: _resource, "oa:serializedAt": _serializedAt, ...otherFields
+  } = original ?? {};
+
+  return {
+    "@context": IIIF2_CONTEXT,
+    "@id": original?.["@id"] ?? annotationFilename(maeAnnotation),
+    "@type": "oa:Annotation",
+    motivation: ["oa:commenting"],
+    "oa:annotatedAt": annotatedAt ?? now.toISOString(),
+    "oa:annotatedBy": annotatedBy ?? [user],
+    on,
+    resource,
+    "oa:serializedAt": now.toISOString(),
+    ...otherFields,
+  };
+}
+
+/** The full `_annotations/<uuid>.json` file: front matter, then 4-space JSON. */
+export function annotationFileText({ canvas, order, annotation }) {
+  return `---\ncanvas: "${canvas}"\norder: ${order}\n---\n${JSON.stringify(annotation, null, 4)}`;
+}

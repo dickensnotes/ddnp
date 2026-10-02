@@ -56,6 +56,9 @@ importers:
       prop-types:
         specifier: ^15.8.1
         version: 15.8.1
+      quill:
+        specifier: 2.0.3
+        version: 2.0.3
       react-i18next:
         specifier: ^15.7.4
         version: 15.7.4(i18next@25.10.10(typescript@5.9.2))(react-dom@19.3.0(react@19.3.0))(react@19.3.0)(typescript@5.9.2)

@@ -1,10 +1,10 @@
 ---
 import MiradorFullScreenLayout from "../../layouts/mirador-full-screen-layout.astro";
-import MiradorEditor from "../../components/MiradorEditor";
+import AnnotationEditorTest from "../../components/AnnotationEditorTest";
 
 // Unlisted test page for the Mirador Annotation Editor.
-// Not linked from the nav. Reads annotations from the mae-poc branch of
-// dickens-annotations; saving is not connected yet.
+// Not linked from the nav. Reads and saves annotations on the mae-poc branch
+// of dickens-annotations (with a GitHub token); never the published ones.
 const manifest =
   "https://dickensnotes.github.io/dickens-annotations/img/derivatives/iiif/davidcopperfieldtranscription/manifest.json";
 ---
@@ -13,5 +13,5 @@ const manifest =
   title="Annotation editor test"
   description="Mirador Annotation Editor test"
 >
-  <MiradorEditor client:only="react" loadedManifest={manifest} />
+  <AnnotationEditorTest client:only="react" loadedManifest={manifest} />
 </MiradorFullScreenLayout>

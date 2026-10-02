@@ -1,4 +1,13 @@
-import { listUrlForCanvas, parseAnnotationFile, toMaeAnnotation } from "./ddnpAnnotations.js";
+import {
+  PAGES_BASE,
+  annotationFileText,
+  annotationFilename,
+  listUrlForCanvas,
+  parseAnnotationFile,
+  toDdnpAnnotation,
+  toMaeAnnotation,
+} from "./ddnpAnnotations.js";
+import { textUnchanged } from "./quillHtml.js";
 
 export const ANNOTATIONS_REPO = "dickensnotes/dickens-annotations";
 // The POC reads and writes this branch only. GitHub Pages and the repo's
@@ -43,8 +52,8 @@ export async function writeToSandbox(method, path, body, headers = {}) {
   return response.json();
 }
 
-async function fetchJson(url, headers) {
-  const response = await fetch(url, { headers });
+async function fetchJson(url, headers, cache = "default") {
+  const response = await fetch(url, { headers, cache });
   if (!response.ok) throw new Error(`${response.status} fetching ${url}`);
   return response.json();
 }
@@ -58,7 +67,7 @@ let branchChangesPromise = null;
 
 export function branchChanges(headers = {}) {
   branchChangesPromise ??= (async () => {
-    const compare = await fetchJson(`${API}/compare/main...${SANDBOX_BRANCH}`, headers);
+    const compare = await fetchJson(`${API}/compare/main...${SANDBOX_BRANCH}`, headers, "no-store");
     const files = compare.files.filter((f) => /^_annotations\/[^/]+\.json$/.test(f.filename));
     const entries = await Promise.all(
       files.map(async (file) => {
@@ -66,7 +75,7 @@ export function branchChanges(headers = {}) {
         if (file.status === "removed") return [name, { removed: true }];
         const response = await fetch(
           `${API}/contents/${file.filename}?ref=${SANDBOX_BRANCH}`,
-          { headers: { ...headers, Accept: "application/vnd.github.raw+json" } },
+          { headers: { ...headers, Accept: "application/vnd.github.raw+json" }, cache: "no-store" },
         );
         if (!response.ok) throw new Error(`${response.status} fetching ${file.filename}`);
         return [name, parseAnnotationFile(await response.text())];
@@ -78,17 +87,52 @@ export function branchChanges(headers = {}) {
   return branchChangesPromise;
 }
 
+const toBase64 = (text) => {
+  const bytes = new TextEncoder().encode(text);
+  let binary = "";
+  for (const byte of bytes) binary += String.fromCharCode(byte);
+  return btoa(binary);
+};
+
+const fromBase64 = (base64) =>
+  new TextDecoder().decode(Uint8Array.from(atob(base64.replace(/\s/g, "")), (c) => c.charCodeAt(0)));
+
+/** Highest `order` per canvas on `main`, from the published root index. */
+let publishedOrdersPromise = null;
+
+function publishedOrders() {
+  publishedOrdersPromise ??= fetchJson(`${PAGES_BASE}/`).then((index) => {
+    const orders = new Map();
+    for (const entry of index.annotations ?? []) {
+      if (entry.filename?.endsWith("-list.json")) continue;
+      const json = typeof entry.json === "string" ? JSON.parse(entry.json) : entry.json;
+      const target = Array.isArray(json?.on) ? json.on[0] : json?.on;
+      const order = Number(entry.order);
+      if (target?.full && Number.isFinite(order)) {
+        orders.set(target.full, Math.max(orders.get(target.full) ?? 0, order));
+      }
+    }
+    return orders;
+  });
+  publishedOrdersPromise.catch(() => { publishedOrdersPromise = null; });
+  return publishedOrdersPromise;
+}
+
 /**
  * MAE storage adapter backed by GitHub. Constructed per canvas by MAE:
  * `adapter: (canvasId) => new GitHubAnnotationAdapter(canvasId, options)`.
  *
- * Reading only, for now: annotations come from the published list for the
- * canvas, overlaid with the sandbox branch's changes.
+ * Reads the published list for the canvas, overlaid with the sandbox
+ * branch's changes. Writes commit `_annotations/<uuid>.json` files to the
+ * sandbox branch only (see `writeToSandbox`). Without a token it is
+ * read-only.
  */
 export default class GitHubAnnotationAdapter {
-  constructor(canvasId, { user = "Anonymous" } = {}) {
+  constructor(canvasId, { user = "Anonymous", token = null, manifestId } = {}) {
     this.canvasId = canvasId;
     this.user = user;
+    this.token = token;
+    this.manifestId = manifestId;
     this.annotationPageId = `${listUrlForCanvas(canvasId)}#${SANDBOX_BRANCH}`;
   }
 
@@ -96,10 +140,14 @@ export default class GitHubAnnotationAdapter {
     return this.user;
   }
 
+  get #headers() {
+    return this.token ? { Authorization: `Bearer ${this.token}` } : {};
+  }
+
   async all() {
     const [published, changes] = await Promise.all([
       fetchJson(listUrlForCanvas(this.canvasId)),
-      branchChanges(),
+      branchChanges(this.#headers),
     ]);
 
     const annotations = [];
@@ -126,20 +174,104 @@ export default class GitHubAnnotationAdapter {
     return (await this.all()).items.find((item) => item.id === annotationId) ?? null;
   }
 
-  async create() {
-    return this.#notConnected();
+  async create(maeAnnotation) {
+    return this.#write(async () => {
+      const filename = annotationFilename(maeAnnotation);
+      const order = await this.#nextOrder();
+      const annotation = toDdnpAnnotation(maeAnnotation, {
+        canvas: this.canvasId, manifestId: this.manifestId, user: this.user,
+      });
+      const file = { canvas: this.canvasId, order, annotation: { ...annotation, "@id": filename } };
+      await writeToSandbox("PUT", `_annotations/${filename}`, {
+        message: `write ${filename} via DDNP editor`,
+        content: toBase64(annotationFileText(file)),
+        branch: SANDBOX_BRANCH,
+      }, this.#headers);
+      (await branchChanges(this.#headers)).set(filename, file);
+    });
   }
 
-  async update() {
-    return this.#notConnected();
+  async update(maeAnnotation) {
+    return this.#write(async () => {
+      const filename = annotationFilename(maeAnnotation);
+      const { sha, file } = await this.#readFile(filename);
+      const annotation = toDdnpAnnotation(maeAnnotation, {
+        original: file.annotation,
+        canvas: file.canvas,
+        manifestId: this.manifestId,
+        user: this.user,
+        keepOriginalText: await textUnchanged(file.annotation, maeAnnotation),
+      });
+      const updated = { ...file, annotation };
+      await writeToSandbox("PUT", `_annotations/${filename}`, {
+        message: `write ${filename} via DDNP editor`,
+        content: toBase64(annotationFileText(updated)),
+        sha,
+        branch: SANDBOX_BRANCH,
+      }, this.#headers);
+      (await branchChanges(this.#headers)).set(filename, updated);
+    });
   }
 
-  async delete() {
-    return this.#notConnected();
+  async delete(annotationId) {
+    return this.#write(async () => {
+      const filename = annotationFilename({ id: annotationId });
+      const { sha } = await this.#readFile(filename);
+      await writeToSandbox("DELETE", `_annotations/${filename}`, {
+        message: `delete ${filename} via DDNP editor`,
+        sha,
+        branch: SANDBOX_BRANCH,
+      }, this.#headers);
+      (await branchChanges(this.#headers)).set(filename, { removed: true });
+    });
   }
 
-  async #notConnected() {
-    window.alert("Saving to GitHub isn't connected yet; your change was not saved.");
+  /** Current file and blob sha on the sandbox branch. */
+  async #readFile(filename) {
+    const json = await fetchJson(
+      `${API}/contents/_annotations/${filename}?ref=${SANDBOX_BRANCH}`,
+      { ...this.#headers, Accept: "application/vnd.github+json" },
+      "no-store",
+    );
+    return { sha: json.sha, file: parseAnnotationFile(fromBase64(json.content)) };
+  }
+
+  /** One past the highest `order` on this canvas, on main or the branch. */
+  async #nextOrder() {
+    const [orders, changes] = await Promise.all([publishedOrders(), branchChanges(this.#headers)]);
+    let highest = orders.get(this.canvasId) ?? 0;
+    for (const change of changes.values()) {
+      if (!change.removed && change.canvas === this.canvasId) highest = Math.max(highest, change.order);
+    }
+    return highest + 1;
+  }
+
+  /**
+   * Run a write, then return the refreshed page for MAE. MAE ignores
+   * rejected promises, so failures are reported to the user here.
+   */
+  async #write(operation) {
+    try {
+      if (!this.token) throw new Error("Sign in with a GitHub token to save.");
+      await operation();
+    } catch (error) {
+      window.alert(writeErrorMessage(error));
+    }
     return this.all();
+  }
+}
+
+function writeErrorMessage(error) {
+  switch (error.status) {
+    case 401:
+      return "GitHub didn't accept your token. Sign out and sign in again with a valid token.";
+    case 403:
+    case 404:
+      return "Your token can't write to dickens-annotations. Check it has Contents: Read and write access to that repository.";
+    case 409:
+    case 422:
+      return "Someone else changed this annotation since you opened it. Reload the page and try again.";
+    default:
+      return `Not saved: ${error.message}`;
   }
 }
