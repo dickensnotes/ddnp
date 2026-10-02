@@ -174,7 +174,7 @@ describe('GitHubAnnotationAdapter writes', () => {
         return ok({});
       }
       if (url === 'https://dickensnotes.github.io/dickens-annotations/') {
-        return ok({ annotations: [{ filename: PUBLISHED['@id'], order: '13', json: PUBLISHED }] });
+        return ok({ annotations: [{ filename: `https://dickensnotes.github.io/dickens-annotations/annotations/${PUBLISHED['@id']}`, order: 13, json: PUBLISHED }] });
       }
       if (url.endsWith('/annotations/dcwn07-list.json')) return ok({ resources: [PUBLISHED] });
       if (url.includes('/compare/main...mae-poc')) return ok({ files: [] });
@@ -242,6 +242,6 @@ describe('GitHubAnnotationAdapter writes', () => {
     fetch.mockImplementation(async (url, options = {}) =>
       options.method === 'PUT' ? { ok: false, status: 409, json: async () => ({}) } : real(url, options));
     await (await adapter()).update(toMaeAnnotation(original()));
-    expect(window.alert).toHaveBeenCalledWith(expect.stringMatching(/Someone else changed/));
+    expect(window.alert).toHaveBeenCalledWith(expect.stringMatching(/Someone else saved/));
   });
 });

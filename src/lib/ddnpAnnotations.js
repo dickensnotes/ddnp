@@ -242,7 +242,9 @@ export function normalizeHtml(html) {
 /** The bare `<uuid>.json` filename for a MAE annotation. */
 export function annotationFilename(maeAnnotation) {
   const last = String(maeAnnotation.id ?? "").split("/").pop().split("#")[0];
-  if (/^[0-9a-f-]{36}\.json$/i.test(last)) return last;
+  // Existing annotations: the id is already the filename
+  if (/^[^/]+\.json$/i.test(last)) return last;
+  // New ones from MAE: `${canvasId}/annotation/${uuid}`
   if (/^[0-9a-f-]{36}$/i.test(last)) return `${last}.json`;
   return `${crypto.randomUUID()}.json`;
 }
@@ -314,4 +316,46 @@ export function toDdnpAnnotation(
 /** The full `_annotations/<uuid>.json` file: front matter, then 4-space JSON. */
 export function annotationFileText({ canvas, order, annotation }) {
   return `---\ncanvas: "${canvas}"\norder: ${order}\n---\n${JSON.stringify(annotation, null, 4)}`;
+}
+
+/* ------------------------------------------------------------------ */
+/* Ordering: the `order` front matter sets each canvas's reading order */
+/* ------------------------------------------------------------------ */
+
+/**
+ * Move one annotation up (-1) or down (+1) in a canvas's sequence of
+ * `{ filename, order }` entries, already sorted. Returns the `order` values
+ * to write as `[{ filename, from, to }]`; empty if it can't move.
+ *
+ * When every order is a distinct number, the two neighbours swap values so
+ * only two files change. Otherwise (duplicates or missing values, as on a
+ * few canvases today) the whole canvas is renumbered 1…n.
+ */
+export function reorderSequence(sequence, filename, direction) {
+  const from = sequence.findIndex((entry) => entry.filename === filename);
+  const to = from + direction;
+  if (from < 0 || (direction !== -1 && direction !== 1) || to < 0 || to >= sequence.length) return [];
+
+  const orders = sequence.map((entry) => entry.order);
+  const distinct = orders.every(Number.isFinite) && new Set(orders).size === orders.length;
+  if (distinct) {
+    return [
+      { filename: sequence[from].filename, from: orders[from], to: orders[to] },
+      { filename: sequence[to].filename, from: orders[to], to: orders[from] },
+    ];
+  }
+
+  const moved = sequence.slice();
+  [moved[from], moved[to]] = [moved[to], moved[from]];
+  return moved
+    .map((entry, index) => ({ filename: entry.filename, from: entry.order, to: index + 1 }))
+    .filter((change) => change.from !== change.to);
+}
+
+/** Change the `order:` line in an annotation file's front matter only. */
+export function setFileOrder(text, order) {
+  const match = text.match(/^(---\r?\n)([\s\S]*?)(\r?\n---\r?\n)/);
+  if (!match || !/^order:/m.test(match[2])) throw new Error("Annotation file has no order in its front matter");
+  const frontMatter = match[2].replace(/^order:.*$/m, `order: ${order}`);
+  return match[1] + frontMatter + match[3] + text.slice(match[0].length);
 }

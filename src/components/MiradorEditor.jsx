@@ -3,6 +3,7 @@ import mirador from "mirador";
 import annotationPlugins from "mirador-annotation-editor";
 import "mirador-annotation-editor/dist/index.css";
 import GitHubAnnotationAdapter from "../lib/GitHubAnnotationAdapter.js";
+import { withAnnotationOrdering } from "./annotationOrdering";
 
 // Test: Mirador + Mirador Annotation Editor (MAE), reading and saving
 // annotations on the mae-poc branch of dickens-annotations. Without a token
@@ -74,7 +75,7 @@ export default function MiradorEditor(props) {
   };
 
   useEffect(() => {
-    mirador.viewer(config, [...annotationPlugins]);
+    mirador.viewer(config, withAnnotationOrdering([...annotationPlugins]));
   }, []);
 
   return <div id="mirador" />;
