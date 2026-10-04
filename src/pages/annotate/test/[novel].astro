@@ -1,17 +1,21 @@
 ---
-import MiradorFullScreenLayout from "../../layouts/mirador-full-screen-layout.astro";
-import AnnotationEditorTest from "../../components/AnnotationEditorTest";
+import MiradorFullScreenLayout from "../../../layouts/mirador-full-screen-layout.astro";
+import AnnotationEditorTest from "../../../components/AnnotationEditorTest";
+import { NOVELS } from "../../../lib/novels.js";
 
-// Unlisted test page for the Mirador Annotation Editor.
+// Unlisted test pages for the Mirador Annotation Editor, one per novel.
 // Not linked from the nav. Reads and saves annotations on the mae-poc branch
 // of dickens-annotations (with a GitHub token); never the published ones.
-const manifest =
-  "https://dickensnotes.github.io/dickens-annotations/img/derivatives/iiif/davidcopperfieldtranscription/manifest.json";
+export function getStaticPaths() {
+  return NOVELS.map((novel) => ({ params: { novel: novel.slug }, props: { novel } }));
+}
+
+const { novel } = Astro.props;
 ---
 
 <MiradorFullScreenLayout
-  title="Annotation editor test"
-  description="Mirador Annotation Editor test"
+  title={`Annotation editor test: ${novel.title}`}
+  description={`Mirador Annotation Editor test for ${novel.title}`}
 >
-  <AnnotationEditorTest client:only="react" loadedManifest={manifest} />
+  <AnnotationEditorTest client:only="react" novel={novel.slug} loadedManifest={novel.manifest} />
 </MiradorFullScreenLayout>

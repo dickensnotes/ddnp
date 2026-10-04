@@ -1,0 +1,22 @@
+---
+import PageLayout from "../../../layouts/page.astro";
+import { NOVELS } from "../../../lib/novels.js";
+
+// Unlisted: pick a novel to open in the annotation editor test.
+const content = {
+  title: "Annotation editor test",
+  description: "Choose a novel to annotate in the Mirador Annotation Editor test",
+};
+---
+
+<PageLayout content={content}>
+  <p>
+    Choose a novel. Edits you save go to the <strong>mae-poc</strong> test branch of the
+    dickens-annotations repository; they don't change the published annotations or this website.
+  </p>
+  <ul>
+    {NOVELS.map((novel) => (
+      <li><a href={`/annotate/test/${novel.slug}`}>{novel.title}</a></li>
+    ))}
+  </ul>
+</PageLayout>

@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import MiradorEditor from "./MiradorEditor";
 import { ANNOTATIONS_REPO, SANDBOX_BRANCH } from "../lib/GitHubAnnotationAdapter.js";
+import { NOVELS } from "../lib/novels.js";
 
 const STORAGE_KEY = "ddnp-annotation-editor-test";
 const NEW_TOKEN_URL = "https://github.com/settings/personal-access-tokens/new";
@@ -135,7 +136,23 @@ function SignIn({ onSignIn, onBrowse }) {
  * Unlisted test page: sign in with a GitHub token, then annotate in Mirador.
  * Saves go to the sandbox branch only.
  */
-export default function AnnotationEditorTest({ loadedManifest }) {
+/** Switch novels: each has its own page; the sign-in carries over. */
+function NovelPicker({ current }) {
+  return (
+    <label className="flex items-center gap-1">
+      Novel:
+      <select
+        value={current}
+        onChange={(event) => window.location.assign(`/annotate/test/${event.target.value}`)}
+        className="rounded border border-amber-300 bg-white px-1 py-0.5"
+      >
+        {NOVELS.map((novel) => <option key={novel.slug} value={novel.slug}>{novel.title}</option>)}
+      </select>
+    </label>
+  );
+}
+
+export default function AnnotationEditorTest({ novel, loadedManifest }) {
   const [session, setSession] = useState(loadSession);
 
   if (!session) {
@@ -145,7 +162,11 @@ export default function AnnotationEditorTest({ loadedManifest }) {
           saveSession(next);
           setSession(next);
         }}
-        onBrowse={() => setSession({ readOnly: true })}
+        onBrowse={() => {
+          const next = { readOnly: true };
+          saveSession(next); // so switching novels keeps "look around" mode
+          setSession(next);
+        }}
       />
     );
   }
@@ -158,9 +179,12 @@ export default function AnnotationEditorTest({ loadedManifest }) {
             ? "Saving is off. Sign in with a GitHub token to save."
             : <>Test editor: saving to the <strong>{SANDBOX_BRANCH}</strong> test branch as <strong>{session.name}</strong>. The published annotations are not changed.</>}
         </span>
-        <button type="button" onClick={signOut} className="underline">
-          {session.readOnly ? "Sign in" : "Sign out"}
-        </button>
+        <span className="flex items-center gap-4">
+          <NovelPicker current={novel} />
+          <button type="button" onClick={signOut} className="underline">
+            {session.readOnly ? "Sign in" : "Sign out"}
+          </button>
+        </span>
       </div>
       <div className="relative min-h-0 flex-1">
         <MiradorEditor
