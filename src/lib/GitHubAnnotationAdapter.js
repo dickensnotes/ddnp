@@ -403,6 +403,7 @@ export default class GitHubAnnotationAdapter {
       if (!this.token) throw new Error("Sign in with a GitHub token to save.");
       await operation();
     } catch (error) {
+      console.error("Annotation editor: not saved.", error, error.details ?? "");
       window.alert(writeErrorMessage(error));
     }
     return this.all();

@@ -279,7 +279,15 @@ export function toDdnpAnnotation(
   } else {
     const shapes = drawingShapes(maeAnnotation);
     const box = shapesBoundingBox(shapes);
-    if (!box) throw new Error("Draw a shape on the page to show what this note is about.");
+    if (!box) {
+      const error = new Error(
+        "The editor has no shape recorded for this note, even if one shows on the page. "
+        + "Cancel, start the note again, and draw its shape before saving.",
+      );
+      // What MAE handed over, for diagnosing (logged to the console on failure)
+      error.details = { target: maeAnnotation.target, maeTarget: maeAnnotation.maeData?.target };
+      throw error;
+    }
     const originalTarget = Array.isArray(original?.on) ? original.on[0] : original?.on;
     on = [{
       "@type": "oa:SpecificResource",

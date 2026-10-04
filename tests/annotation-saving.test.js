@@ -113,7 +113,7 @@ describe('toDdnpAnnotation: a new annotation', () => {
   it('refuses to save a new note without a shape', () => {
     const mae = newMaeAnnotation();
     mae.maeData.target.drawingState = JSON.stringify({ shapes: [] });
-    expect(() => toDdnpAnnotation(mae, { canvas: CANVAS, manifestId: MANIFEST, user: 'x' })).toThrow(/Draw a shape/);
+    expect(() => toDdnpAnnotation(mae, { canvas: CANVAS, manifestId: MANIFEST, user: 'x' })).toThrow(/no shape recorded/);
   });
 });
 

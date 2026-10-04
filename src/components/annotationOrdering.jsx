@@ -39,7 +39,16 @@ const OrderButton = forwardRef(({ label, shortLabel, path, inactive, onMove }, r
     }}
     onKeyDown={(event) => event.stopPropagation()} // keep the list's arrow-key navigation out
     sx={{
-      textTransform: "none", py: 0, whiteSpace: "nowrap", minWidth: 0,
+      flex: 1, // share the row's full width
+      minWidth: 0,
+      minHeight: 0,
+      py: "1px",
+      lineHeight: 1.4,
+      fontSize: "0.8rem",
+      textTransform: "none",
+      whiteSpace: "nowrap",
+      "& .MuiButton-startIcon": { mr: 0.25 },
+      "& .MuiSvgIcon-root": { fontSize: 18 },
       ...(inactive && { opacity: 0.4, cursor: "default" }),
     }}
   >
@@ -75,7 +84,7 @@ function OrderButtons({ annotationId }) {
       role="group"
       aria-label="Reading order"
       title={canWrite ? undefined : "Sign in to change the order"}
-      style={{ display: "flex", gap: 8, justifyContent: "flex-end", marginTop: 8 }}
+      style={{ display: "flex", gap: 8, width: "100%", marginTop: 6 }}
     >
       <OrderButton
         ref={upRef}
