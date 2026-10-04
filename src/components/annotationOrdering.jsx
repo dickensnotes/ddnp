@@ -1,4 +1,6 @@
-import React, { createContext, forwardRef, useCallback, useContext, useMemo, useState } from "react";
+import React, {
+  createContext, forwardRef, useCallback, useContext, useEffect, useMemo, useRef, useState,
+} from "react";
 import { Button, SvgIcon } from "@mui/material";
 import { canvasAnnotationsPlugin } from "mirador-annotation-editor";
 
@@ -9,40 +11,64 @@ import { canvasAnnotationsPlugin } from "mirador-annotation-editor";
  * plugin can't wrap MAE's list. Instead this replaces MAE's
  * canvasAnnotationsPlugin with a copy that gives MAE's wrapper a
  * TargetComponent adding the buttons to MAE's list items.
+ *
+ * This relies on MAE and Mirador internals; tests/mae-integration.test.js
+ * checks them, so an upgrade that breaks them fails the tests.
  */
 
 const PluginContext = createContext(null); // MAE plugin props: TargetComponent, config, receiveAnnotation
-const OrderContext = createContext(null); // one canvas's list: ids, move, busy, canWrite
+const OrderContext = createContext(null); // one canvas's list: ids, move, busy, canWrite, focus request
 
 const ARROW_UP = "M7 14l5-5 5 5z";
 const ARROW_DOWN = "M7 10l5 5 5-5z";
 
-function OrderButton({ label, shortLabel, path, disabled, onMove }) {
-  return (
-    <Button
-      size="small"
-      variant="outlined"
-      aria-label={label}
-      disabled={disabled}
-      startIcon={<SvgIcon><path d={path} /></SvgIcon>}
-      onClick={(event) => {
-        event.stopPropagation(); // don't select the annotation
-        onMove();
-      }}
-      onKeyDown={(event) => event.stopPropagation()} // keep the list's arrow-key navigation out
-      sx={{ textTransform: "none", py: 0, whiteSpace: "nowrap", minWidth: 0 }}
-    >
-      {shortLabel}
-    </Button>
-  );
-}
+// aria-disabled rather than disabled: browsers drop keyboard focus from a
+// button the moment it becomes disabled, e.g. while a move is saving.
+const OrderButton = forwardRef(({ label, shortLabel, path, inactive, onMove }, ref) => (
+  <Button
+    ref={ref}
+    size="small"
+    variant="outlined"
+    aria-label={label}
+    aria-disabled={inactive || undefined}
+    disableRipple={inactive}
+    startIcon={<SvgIcon><path d={path} /></SvgIcon>}
+    onClick={(event) => {
+      event.stopPropagation(); // don't select the annotation
+      if (!inactive) onMove();
+    }}
+    onKeyDown={(event) => event.stopPropagation()} // keep the list's arrow-key navigation out
+    sx={{
+      textTransform: "none", py: 0, whiteSpace: "nowrap", minWidth: 0,
+      ...(inactive && { opacity: 0.4, cursor: "default" }),
+    }}
+  >
+    {shortLabel}
+  </Button>
+));
+OrderButton.displayName = "OrderButton";
 
 function OrderButtons({ annotationId }) {
   const order = useContext(OrderContext);
-  if (!order) return null;
-  const { ids, move, busy, canWrite } = order;
-  const index = ids.indexOf(annotationId);
-  if (index < 0) return null;
+  const upRef = useRef(null);
+  const downRef = useRef(null);
+  const index = order ? order.ids.indexOf(annotationId) : -1;
+  const isFirst = index === 0;
+  const isLast = order ? index === order.ids.length - 1 : false;
+  const focusRequest = order?.focusRequest;
+
+  // Re-sorting moves this item within the page, which drops focus. Put it
+  // back on the button just used, or the other one if this end is reached.
+  useEffect(() => {
+    if (focusRequest?.annotationId !== annotationId) return;
+    const up = focusRequest.direction === -1;
+    const button = up ? (isFirst ? downRef : upRef) : (isLast ? upRef : downRef);
+    button.current?.focus();
+    order.clearFocusRequest();
+  }, [focusRequest, annotationId, isFirst, isLast, order]);
+
+  if (!order || index < 0) return null;
+  const { move, busy, canWrite } = order;
 
   return (
     <span
@@ -52,23 +78,27 @@ function OrderButtons({ annotationId }) {
       style={{ display: "flex", gap: 8, justifyContent: "flex-end", marginTop: 8 }}
     >
       <OrderButton
+        ref={upRef}
         label="Move up"
         shortLabel="Up"
         path={ARROW_UP}
-        disabled={!canWrite || busy || index === 0}
+        inactive={!canWrite || busy || isFirst}
         onMove={() => move(annotationId, -1)}
       />
       <OrderButton
+        ref={downRef}
         label="Move down"
         shortLabel="Down"
         path={ARROW_DOWN}
-        disabled={!canWrite || busy || index === ids.length - 1}
+        inactive={!canWrite || busy || isLast}
         onMove={() => move(annotationId, 1)}
       />
     </span>
   );
 }
 
+// One wrapped component per MAE list item component: a new component on
+// every render would make React remount every list item each time.
 const listItemCache = new WeakMap();
 
 /**
@@ -98,6 +128,8 @@ const OrderedCanvasAnnotations = forwardRef((targetProps, ref) => {
   const { TargetComponent, config, receiveAnnotation } = useContext(PluginContext);
   const { annotations = [], canvasId, listContainerComponent, selectAnnotation, windowId } = targetProps;
   const [busy, setBusy] = useState(false);
+  const [focusRequest, setFocusRequest] = useState(null);
+  const clearFocusRequest = useCallback(() => setFocusRequest(null), []);
 
   const adapter = useMemo(() => config.annotation.adapter(canvasId), [config, canvasId]);
 
@@ -107,6 +139,7 @@ const OrderedCanvasAnnotations = forwardRef((targetProps, ref) => {
       const page = await adapter.move(annotationId, direction);
       receiveAnnotation(canvasId, adapter.annotationPageId, page);
       selectAnnotation?.(windowId, annotationId); // keep attention on the moved annotation
+      setFocusRequest({ annotationId, direction });
     } finally {
       setBusy(false);
     }
@@ -117,7 +150,9 @@ const OrderedCanvasAnnotations = forwardRef((targetProps, ref) => {
     move,
     busy,
     canWrite: Boolean(adapter.canWrite) && config.annotation.readonly !== true,
-  }), [annotations, move, busy, adapter, config]);
+    focusRequest,
+    clearFocusRequest,
+  }), [annotations, move, busy, adapter, config, focusRequest, clearFocusRequest]);
 
   return (
     <OrderContext.Provider value={order}>

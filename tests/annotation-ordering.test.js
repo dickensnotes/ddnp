@@ -205,8 +205,8 @@ describe('reading order when the published index is unavailable', () => {
     vi.stubGlobal('fetch', vi.fn(async (url) => {
       const ok = (body) => ({ ok: true, status: 200, json: async () => body, text: async () => (typeof body === 'string' ? body : JSON.stringify(body)) });
       if (url.endsWith('/annotations/dcwn07-list.json')) return ok({ resources: ['a.json', 'b.json'].map(anno) });
-      if (url.includes('/compare/main...mae-poc')) return ok({ files: [{ filename: '_annotations/n.json', status: 'added' }] });
-      if (url.includes('/contents/_annotations/n.json')) return ok(annotationFileText({ canvas: CANVAS, order: 1, annotation: anno('n.json') }));
+      if (url.includes('/compare/main...mae-poc')) return ok({ files: [{ filename: '_annotations/n.json', status: 'added', sha: 'blob-n' }] });
+      if (url.endsWith('/git/blobs/blob-n')) return ok(annotationFileText({ canvas: CANVAS, order: 1, annotation: anno('n.json') }));
       return { ok: false, status: 503, json: async () => ({}), text: async () => '' };
     }));
   });
@@ -222,5 +222,75 @@ describe('reading order when the published index is unavailable', () => {
     await new Adapter(CANVAS, { token: 't' }).move('b.json', -1);
     expect(window.alert).toHaveBeenCalledWith(expect.stringMatching(/reading order/));
     expect(fetch.mock.calls.some(([, o]) => o?.method && o.method !== 'GET')).toBe(false);
+  });
+});
+
+describe('moves use the branch as it is now, not as it was at page load', () => {
+  const base = parseAnnotationFile(FILE).annotation;
+  const anno = (id) => ({ ...base, '@id': id });
+  const fileFor = (id, order) => annotationFileText({ canvas: CANVAS, order, annotation: anno(id) });
+  let compareCalls, blobFetches, tree;
+  // On main: a=1, b=2, c=3. After page load, another editor moves c up: c=2, b=3.
+  let otherEditorMoved;
+
+  beforeEach(() => {
+    vi.resetModules();
+    compareCalls = 0; blobFetches = 0; tree = null; otherEditorMoved = false;
+    vi.doMock('../src/lib/quillHtml.js', () => ({ textUnchanged: async () => false }));
+    vi.stubGlobal('window', { alert: vi.fn() });
+    vi.stubGlobal('fetch', vi.fn(async (url, options = {}) => {
+      const ok = (body) => ({ ok: true, status: 200, json: async () => body, text: async () => (typeof body === 'string' ? body : JSON.stringify(body)) });
+      const method = options.method ?? 'GET';
+      const current = otherEditorMoved ? { 'a.json': 1, 'b.json': 3, 'c.json': 2 } : { 'a.json': 1, 'b.json': 2, 'c.json': 3 };
+      if (url.endsWith('/annotations/dcwn07-list.json')) return ok({ resources: ['a.json', 'b.json', 'c.json'].map(anno) });
+      if (url === 'https://dickensnotes.github.io/dickens-annotations/') {
+        return ok({ annotations: [['a.json', 1], ['b.json', 2], ['c.json', 3]].map(([f, order]) => ({ filename: `https://dickensnotes.github.io/dickens-annotations/annotations/${f}`, order, json: anno(f) })) });
+      }
+      if (url.includes('/compare/main...mae-poc')) {
+        compareCalls += 1;
+        return ok({ files: otherEditorMoved ? [
+          { filename: '_annotations/b.json', status: 'modified', sha: 'blob-b3' },
+          { filename: '_annotations/c.json', status: 'modified', sha: 'blob-c2' },
+        ] : [] });
+      }
+      if (url.includes('/git/blobs/')) {
+        blobFetches += 1;
+        return ok(url.endsWith('blob-b3') ? fileFor('b.json', 3) : fileFor('c.json', 2));
+      }
+      if (url.endsWith('/git/ref/heads/mae-poc')) return ok({ object: { sha: 'head2' } });
+      if (url.endsWith('/git/commits/head2')) return ok({ tree: { sha: 'tree0' } });
+      const raw = url.match(/contents\/_annotations\/(\w\.json)\?ref=head2$/);
+      if (raw) return ok(fileFor(raw[1], current[raw[1]]));
+      if (url.endsWith('/git/trees') && method === 'POST') { tree = JSON.parse(options.body).tree; return ok({ sha: 'tree1' }); }
+      if (url.endsWith('/git/commits') && method === 'POST') return ok({ sha: 'commit1' });
+      if (url.endsWith('/git/refs/heads/mae-poc') && method === 'PATCH') return ok({});
+      return { ok: false, status: 404, json: async () => ({}), text: async () => '' };
+    }));
+  });
+
+  it("moves from the current order when another editor reordered after page load", async () => {
+    const { default: Adapter } = await import('../src/lib/GitHubAnnotationAdapter.js');
+    const adapter = new Adapter(CANVAS, { token: 't' });
+    expect((await adapter.all()).items.map((i) => i.id)).toEqual(['a.json', 'b.json', 'c.json']); // page load
+
+    otherEditorMoved = true; // c is now 2nd on the branch
+    const page = await adapter.move('c.json', -1); // so moving it up makes it 1st
+
+    expect(tree.map((t) => [t.path, parseAnnotationFile(t.content).order])).toEqual([
+      ['_annotations/c.json', 1],
+      ['_annotations/a.json', 2],
+    ]);
+    expect(page.items.map((i) => i.id)).toEqual(['c.json', 'a.json', 'b.json']);
+    expect(window.alert.mock.calls).toEqual([]);
+  });
+
+  it('fetches each changed file once, however often the branch is re-read', async () => {
+    otherEditorMoved = true;
+    const { default: Adapter, branchChanges } = await import('../src/lib/GitHubAnnotationAdapter.js');
+    await new Adapter(CANVAS, {}).all();
+    await branchChanges({}, { refresh: true });
+    await branchChanges({}, { refresh: true });
+    expect(compareCalls).toBe(3);
+    expect(blobFetches).toBe(2); // b and c, once each
   });
 });

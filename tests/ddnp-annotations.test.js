@@ -83,16 +83,16 @@ describe('GitHubAnnotationAdapter.all', () => {
     'annotations/dcwn07-list.json': { resources: [anno('a.json'), anno('b.json'), anno('c.json')] },
     'compare/main...mae-poc': {
       files: [
-        { filename: '_annotations/b.json', status: 'modified' },
-        { filename: '_annotations/c.json', status: 'removed' },
-        { filename: '_annotations/d.json', status: 'added' },
-        { filename: '_annotations/e.json', status: 'added' },
-        { filename: 'README.md', status: 'modified' },
+        { filename: '_annotations/b.json', status: 'modified', sha: 'blob-b' },
+        { filename: '_annotations/c.json', status: 'removed', sha: 'blob-c' },
+        { filename: '_annotations/d.json', status: 'added', sha: 'blob-d' },
+        { filename: '_annotations/e.json', status: 'added', sha: 'blob-e' },
+        { filename: 'README.md', status: 'modified', sha: 'blob-readme' },
       ],
     },
-    'contents/_annotations/b.json': file(CANVAS, 2, { ...anno('b.json'), resource: [{ '@type': 'dctypes:Text', chars: 'edited' }] }),
-    'contents/_annotations/d.json': file(CANVAS, 9, anno('d.json')),
-    'contents/_annotations/e.json': file(OTHER_CANVAS, 1, anno('e.json')),
+    'git/blobs/blob-b': file(CANVAS, 2, { ...anno('b.json'), resource: [{ '@type': 'dctypes:Text', chars: 'edited' }] }),
+    'git/blobs/blob-d': file(CANVAS, 9, anno('d.json')),
+    'git/blobs/blob-e': file(OTHER_CANVAS, 1, anno('e.json')),
   };
 
   beforeEach(() => {
@@ -121,7 +121,7 @@ describe('GitHubAnnotationAdapter.all', () => {
   it('never fetches files outside _annotations/', async () => {
     const { default: Adapter } = await import('../src/lib/GitHubAnnotationAdapter.js');
     await new Adapter(CANVAS).all();
-    expect(fetch.mock.calls.some(([url]) => url.includes('README'))).toBe(false);
+    expect(fetch.mock.calls.some(([url]) => url.includes('README') || url.includes('blob-readme'))).toBe(false);
   });
 });
 

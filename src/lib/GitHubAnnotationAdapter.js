@@ -108,12 +108,18 @@ export async function commitToSandbox(buildFiles, message, headers = {}) {
 
 /**
  * Every `_annotations/` file the sandbox branch has added, changed or
- * removed relative to `main`, keyed by filename. One compare call per
- * page load (cached), plus one request per changed file.
+ * removed relative to `main`, keyed by filename: one compare call, plus
+ * one request per changed file not already seen (files are cached by
+ * their blob sha, so unchanged files are never fetched twice).
+ *
+ * Cached for the page; pass `refresh` to re-read the branch, so a write
+ * that depends on the current state sees other editors' commits.
  */
 let branchChangesPromise = null;
+const filesByBlobSha = new Map();
 
-export function branchChanges(headers = {}) {
+export function branchChanges(headers = {}, { refresh = false } = {}) {
+  if (refresh) branchChangesPromise = null;
   branchChangesPromise ??= (async () => {
     const compare = await fetchJson(`${API}/compare/main...${SANDBOX_BRANCH}`, headers, "no-store");
     const files = compare.files.filter((f) => /^_annotations\/[^/]+\.json$/.test(f.filename));
@@ -121,12 +127,15 @@ export function branchChanges(headers = {}) {
       files.map(async (file) => {
         const name = file.filename.split("/").pop();
         if (file.status === "removed") return [name, { removed: true }];
-        const response = await fetch(
-          `${API}/contents/${file.filename}?ref=${SANDBOX_BRANCH}`,
-          { headers: { ...headers, Accept: "application/vnd.github.raw+json" }, cache: "no-store" },
-        );
-        if (!response.ok) throw new Error(`${response.status} fetching ${file.filename}`);
-        return [name, parseAnnotationFile(await response.text())];
+        if (!filesByBlobSha.has(file.sha)) {
+          const response = await fetch(
+            `${API}/git/blobs/${file.sha}`,
+            { headers: { ...headers, Accept: "application/vnd.github.raw+json" }, cache: "no-store" },
+          );
+          if (!response.ok) throw new Error(`${response.status} fetching ${file.filename}`);
+          filesByBlobSha.set(file.sha, parseAnnotationFile(await response.text()));
+        }
+        return [name, filesByBlobSha.get(file.sha)];
       }),
     );
     return new Map(entries);
@@ -270,6 +279,7 @@ export default class GitHubAnnotationAdapter {
   async create(maeAnnotation) {
     return this.#write(async () => {
       const filename = annotationFilename(maeAnnotation);
+      await branchChanges(this.#headers, { refresh: true }); // others' additions count too
       const order = await this.#nextOrder();
       const annotation = toDdnpAnnotation(maeAnnotation, {
         canvas: this.canvasId, manifestId: this.manifestId, user: this.user,
@@ -326,6 +336,8 @@ export default class GitHubAnnotationAdapter {
   async move(annotationId, direction) {
     return this.#write(async () => {
       const filename = annotationFilename({ id: annotationId });
+      // Re-read the branch: another editor may have reordered since page load
+      await branchChanges(this.#headers, { refresh: true });
       const sequence = await this.#sequence(true);
       const changes = reorderSequence(sequence, filename, direction);
       if (changes.length === 0) return;
