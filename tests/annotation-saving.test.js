@@ -199,7 +199,7 @@ describe('GitHubAnnotationAdapter writes', () => {
     expect(write.url).toBe(`${API}/contents/_annotations/89299d80-d745-4205-a37e-8d7aec35acc3.json`);
     expect(write.body.branch).toBe('mae-poc');
     expect(write.body.sha).toBeUndefined();
-    expect(write.body.message).toBe('write 89299d80-d745-4205-a37e-8d7aec35acc3.json via DDNP editor');
+    expect(write.body.message).toBe('Add DCWN07: "MAE spike - a note."\n\nFile: _annotations/89299d80-d745-4205-a37e-8d7aec35acc3.json\n\nSaved with the DDNP annotation editor.');
     expect(write.headers.Authorization).toBe('Bearer t0ken');
 
     const saved = parseAnnotationFile(Buffer.from(write.body.content, 'base64').toString('utf8'));
@@ -243,5 +243,33 @@ describe('GitHubAnnotationAdapter writes', () => {
       options.method === 'PUT' ? { ok: false, status: 409, json: async () => ({}) } : real(url, options));
     await (await adapter()).update(toMaeAnnotation(original()));
     expect(window.alert).toHaveBeenCalledWith(expect.stringMatching(/Someone else saved/));
+  });
+});
+
+describe('commit messages', () => {
+  it('labels an annotation by its citation ID and heading', async () => {
+    const { annotationLabel } = await import('../src/lib/ddnpAnnotations.js');
+    const anno = (chars) => ({ resource: [{ '@type': 'dctypes:Text', chars }] });
+    expect(annotationLabel(anno('<p><em>DC.I.R7</em></p><p><strong>Black whiskers and black dog.</strong></p><p>This note…</p>')))
+      .toBe('DC.I.R7 Black whiskers and black dog.');
+    expect(annotationLabel(anno('<p dir="ltr"><em>LD.XIX-XX.L12</em></p> <p dir="ltr"><strong>Arthur&rsquo;s&nbsp;refusal</strong></p>')))
+      .toBe('LD.XIX-XX.L12 Arthur’s refusal');
+    expect(annotationLabel(anno('<p>TEST ANNOTATION: BARGE</p>'))).toBe('TEST ANNOTATION: BARGE');
+    expect(annotationLabel(anno('<p>' + 'word '.repeat(30) + '</p>'))).toMatch(/^word( word)+…$/);
+    expect(annotationLabel(anno('<p>' + 'word '.repeat(30) + '</p>')).length).toBeLessThanOrEqual(50);
+    expect(annotationLabel(anno(''))).toBe('(no text)');
+  });
+
+  it('says what changed, where, and which file', async () => {
+    const { commitMessage } = await import('../src/lib/ddnpAnnotations.js');
+    const annotation = { resource: [{ '@type': 'dctypes:Text', chars: '<p><em>DC.VII.R8</em></p><p>Littimer.</p>' }] };
+    const canvas = 'https://dickensnotes.github.io/dickens-annotations/canvas/img/derivatives/iiif/davidcopperfieldtranscription/DCWN07.json';
+    expect(commitMessage('edit', { canvas, annotation, filename: 'abc.json' })).toBe(
+      'Edit DCWN07: "DC.VII.R8 Littimer."\n\nFile: _annotations/abc.json\n\nSaved with the DDNP annotation editor.',
+    );
+    expect(commitMessage('down', { canvas, annotation, changes: [{ filename: 'abc.json', from: 2, to: 3 }, { filename: 'def.json', from: 3, to: 2 }] })).toBe(
+      'Move down DCWN07: "DC.VII.R8 Littimer."\n\nReading order:\n  _annotations/abc.json: 2 → 3\n  _annotations/def.json: 3 → 2\n\nSaved with the DDNP annotation editor.',
+    );
+    expect(() => commitMessage('rename', { canvas, annotation })).toThrow(/Unknown/);
   });
 });

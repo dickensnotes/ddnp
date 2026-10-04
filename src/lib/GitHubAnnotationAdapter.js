@@ -2,6 +2,7 @@ import {
   PAGES_BASE,
   annotationFileText,
   annotationFilename,
+  commitMessage,
   listUrlForCanvas,
   parseAnnotationFile,
   reorderSequence,
@@ -286,7 +287,7 @@ export default class GitHubAnnotationAdapter {
       });
       const file = { canvas: this.canvasId, order, annotation: { ...annotation, "@id": filename } };
       await writeToSandbox("PUT", `_annotations/${filename}`, {
-        message: `write ${filename} via DDNP editor`,
+        message: commitMessage("add", { canvas: this.canvasId, annotation: file.annotation, filename }),
         content: toBase64(annotationFileText(file)),
         branch: SANDBOX_BRANCH,
       }, this.#headers);
@@ -307,7 +308,7 @@ export default class GitHubAnnotationAdapter {
       });
       const updated = { ...file, annotation };
       await writeToSandbox("PUT", `_annotations/${filename}`, {
-        message: `write ${filename} via DDNP editor`,
+        message: commitMessage("edit", { canvas: file.canvas, annotation, filename }),
         content: toBase64(annotationFileText(updated)),
         sha,
         branch: SANDBOX_BRANCH,
@@ -319,9 +320,9 @@ export default class GitHubAnnotationAdapter {
   async delete(annotationId) {
     return this.#write(async () => {
       const filename = annotationFilename({ id: annotationId });
-      const { sha } = await this.#readFile(filename);
+      const { sha, file } = await this.#readFile(filename);
       await writeToSandbox("DELETE", `_annotations/${filename}`, {
-        message: `delete ${filename} via DDNP editor`,
+        message: commitMessage("delete", { canvas: file.canvas, annotation: file.annotation, filename }),
         sha,
         branch: SANDBOX_BRANCH,
       }, this.#headers);
@@ -342,13 +343,13 @@ export default class GitHubAnnotationAdapter {
       const changes = reorderSequence(sequence, filename, direction);
       if (changes.length === 0) return;
 
-      const canvasName = this.canvasId.split("/").pop().replace(/\.json$/, "");
+      const moved = sequence.find((entry) => entry.filename === filename);
       await commitToSandbox(
         (head) => Promise.all(changes.map(async (change) => ({
           path: `_annotations/${change.filename}`,
           content: setFileOrder(await this.#readRaw(change.filename, head), change.to),
         }))),
-        `reorder annotations on ${canvasName} via DDNP editor`,
+        commitMessage(direction < 0 ? "up" : "down", { canvas: this.canvasId, annotation: moved.annotation, changes }),
         this.#headers,
       );
 

@@ -367,3 +367,64 @@ export function setFileOrder(text, order) {
   const frontMatter = match[2].replace(/^order:.*$/m, `order: ${order}`);
   return match[1] + frontMatter + match[3] + text.slice(match[0].length);
 }
+
+/* ------------------------------------------------------------------ */
+/* Commit messages                                                     */
+/* ------------------------------------------------------------------ */
+
+const NAMED_ENTITIES = {
+  nbsp: " ", amp: "&", quot: "\"", apos: "'", lt: "<", gt: ">",
+  lsquo: "‘", rsquo: "’", ldquo: "“", rdquo: "”",
+  ndash: "–", mdash: "—", hellip: "…",
+};
+
+function htmlToText(html) {
+  return html
+    .replace(/<[^>]*>/g, "")
+    .replace(/&(#x[0-9a-f]+|#\d+|[a-z]+);/gi, (match, code) => {
+      if (code[0] !== "#") return NAMED_ENTITIES[code.toLowerCase()] ?? match;
+      const point = code[1].toLowerCase() === "x" ? parseInt(code.slice(2), 16) : Number(code.slice(1));
+      return Number.isFinite(point) ? String.fromCodePoint(point) : match;
+    })
+    .replace(/\s+/g, " ")
+    .trim();
+}
+
+// Every annotation's text starts with its citation ID, e.g. DC.I.R7, LD.XIX-XX.L12
+const CITATION_ID = /^[A-Z]{2}\.[A-Za-z0-9.-]+$/;
+
+/** Short label for an annotation: its citation ID and heading, e.g. "DC.VII.R8 Littimer." */
+export function annotationLabel(annotation, maxLength = 50) {
+  const html = [].concat(annotation?.resource ?? [])
+    .filter((resource) => resource["@type"] !== "oa:Tag")
+    .map((resource) => resource.chars ?? "")
+    .join("");
+  const [first = "", second] = html.split(/<\/(?:p|h[1-6]|li|div)>|<br\s*\/?>/i).map(htmlToText).filter(Boolean);
+  const label = (CITATION_ID.test(first) && second ? `${first} ${second}` : first) || "(no text)";
+  return label.length > maxLength ? `${label.slice(0, maxLength - 1).trimEnd()}…` : label;
+}
+
+export const canvasName = (canvasId) => canvasId.split("/").pop().replace(/\.json$/, "");
+
+const VERBS = { add: "Add", edit: "Edit", delete: "Delete", up: "Move up", down: "Move down" };
+
+/**
+ * Commit message for an editor change: a readable subject, then the
+ * file(s) changed, e.g.
+ *
+ *   Edit DCWN01: "DC.I.R7 Black whiskers and black dog."
+ *
+ *   File: _annotations/deebdc04-366d-49ae-b607-54281aabf735.json
+ *
+ *   Saved with the DDNP annotation editor.
+ *
+ * For moves (`up`/`down`), `changes` lists the order values rewritten.
+ */
+export function commitMessage(action, { canvas, annotation, filename, changes = [] }) {
+  if (!VERBS[action]) throw new Error(`Unknown commit action ${action}`);
+  const subject = `${VERBS[action]} ${canvasName(canvas)}: "${annotationLabel(annotation)}"`;
+  const details = changes.length
+    ? ["Reading order:", ...changes.map((c) => `  _annotations/${c.filename}: ${c.from ?? "none"} → ${c.to}`)]
+    : [`File: _annotations/${filename}`];
+  return [subject, "", ...details, "", "Saved with the DDNP annotation editor."].join("\n");
+}
