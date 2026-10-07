@@ -4,7 +4,7 @@ import react from "@astrojs/react";
 import tailwind from "@astrojs/tailwind";
 import mdx from "@astrojs/mdx";
 import icon from "astro-icon";
-import { maeOverlayFix, maeOverlayFixEsbuild } from "./scripts/mae-overlay-fix.mjs";
+import { maePatches, maePatchesEsbuild } from "./scripts/mae-patches.mjs";
 
 // https://astro.build/config
 export default defineConfig({
@@ -19,10 +19,10 @@ export default defineConfig({
     // define: {
     //   global: 'window',
     // }
-    // Annotation editor test: fix MAE's shape positioning (see the script)
-    plugins: [maeOverlayFix()],
+    // Annotation editor test: fixes for bugs in MAE (see the script)
+    plugins: [maePatches()],
     optimizeDeps: {
-      esbuildOptions: { plugins: [maeOverlayFixEsbuild] },
+      esbuildOptions: { plugins: [maePatchesEsbuild] },
     },
   },
 });
