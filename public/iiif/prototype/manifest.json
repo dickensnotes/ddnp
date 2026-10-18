@@ -1,0 +1,116 @@
+{
+  "@context": "http://iiif.io/api/presentation/2/context.json",
+  "@id": "https://www.dickensnotes.com/iiif/prototype/manifest.json",
+  "@type": "sc:Manifest",
+  "label": "Manuscript image prototype",
+  "description": "Prototype for displaying V&A manuscript images in Mirador: a Hard Times note with manuscript and transcription layers, and Dombey and Son Working Note No. 1 (recto and verso), rotated from the V&A images.",
+  "attribution": "Manuscript images © Victoria and Albert Museum, London",
+  "sequences": [
+    {
+      "@type": "sc:Sequence",
+      "canvases": [
+        {
+          "@id": "https://dickensnotes.github.io/dickens-annotations/canvas/prototype/proto-ht-wn-01.json",
+          "@type": "sc:Canvas",
+          "label": "HT WN 01",
+          "width": 2500,
+          "height": 1875,
+          "thumbnail": {
+            "@id": "https://framemark.vam.ac.uk/collections/2012FG2679/full/200,/0/default.jpg",
+            "@type": "dctypes:Image"
+          },
+          "images": [
+            {
+              "@type": "oa:Annotation",
+              "motivation": "sc:painting",
+              "on": "https://dickensnotes.github.io/dickens-annotations/canvas/prototype/proto-ht-wn-01.json",
+              "resource": {
+                "@id": "https://framemark.vam.ac.uk/collections/2012FG2679/full/full/0/default.jpg",
+                "@type": "dctypes:Image",
+                "label": "Manuscript (V&A, Forster MS 163, folio 2 recto)",
+                "format": "image/jpeg",
+                "width": 5440,
+                "height": 4080,
+                "service": {
+                  "@context": "http://iiif.io/api/image/2/context.json",
+                  "@id": "https://framemark.vam.ac.uk/collections/2012FG2679",
+                  "profile": "http://iiif.io/api/image/2/level2.json"
+                }
+              }
+            },
+            {
+              "@type": "oa:Annotation",
+              "motivation": "sc:painting",
+              "on": "https://dickensnotes.github.io/dickens-annotations/canvas/prototype/proto-ht-wn-01.json",
+              "resource": {
+                "@id": "https://dickensnotes.github.io/dickens-annotations/img/derivatives/iiif/HardTimesTranscription/HTWN01/full/full/0/default.jpg",
+                "@type": "dctypes:Image",
+                "label": "Transcription",
+                "format": "image/jpeg",
+                "width": 2700,
+                "height": 2100,
+                "service": {
+                  "@context": "http://iiif.io/api/image/2/context.json",
+                  "@id": "https://dickensnotes.github.io/dickens-annotations/img/derivatives/iiif/HardTimesTranscription/HTWN01",
+                  "profile": "http://iiif.io/api/image/2/level0.json"
+                }
+              }
+            }
+          ]
+        },
+        {
+          "@id": "https://dickensnotes.github.io/dickens-annotations/canvas/prototype/proto-ds-wn-01.json",
+          "@type": "sc:Canvas",
+          "label": "DS WN 01",
+          "width": 2500,
+          "height": 1875,
+          "thumbnail": {
+            "@id": "https://framemark.vam.ac.uk/collections/2011FD0049/full/,200/90/default.jpg",
+            "@type": "dctypes:Image"
+          },
+          "images": [
+            {
+              "@type": "oa:Annotation",
+              "motivation": "sc:painting",
+              "on": "https://dickensnotes.github.io/dickens-annotations/canvas/prototype/proto-ds-wn-01.json",
+              "resource": {
+                "@id": "https://framemark.vam.ac.uk/collections/2011FD0049/full/full/90/default.jpg",
+                "@type": "dctypes:Image",
+                "label": "Manuscript (V&A, Forster MS 160, folio 6 recto, rotated 90° clockwise)",
+                "format": "image/jpeg",
+                "width": 2500,
+                "height": 1875
+              }
+            }
+          ]
+        },
+        {
+          "@id": "https://dickensnotes.github.io/dickens-annotations/canvas/prototype/proto-ds-wn-01-verso.json",
+          "@type": "sc:Canvas",
+          "label": "DS WN 01 verso",
+          "width": 2500,
+          "height": 1875,
+          "thumbnail": {
+            "@id": "https://framemark.vam.ac.uk/collections/2012FE1493/full/,200/270/default.jpg",
+            "@type": "dctypes:Image"
+          },
+          "images": [
+            {
+              "@type": "oa:Annotation",
+              "motivation": "sc:painting",
+              "on": "https://dickensnotes.github.io/dickens-annotations/canvas/prototype/proto-ds-wn-01-verso.json",
+              "resource": {
+                "@id": "https://framemark.vam.ac.uk/collections/2012FE1493/full/full/270/default.jpg",
+                "@type": "dctypes:Image",
+                "label": "Manuscript (V&A, Forster MS 160, folio 6 verso, rotated 270° clockwise)",
+                "format": "image/jpeg",
+                "width": 2500,
+                "height": 1875
+              }
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

@@ -1,0 +1,366 @@
+{
+  "@context": "http://iiif.io/api/presentation/2/context.json",
+  "@id": "https://www.dickensnotes.com/iiif/prototype/hard-cases.json",
+  "@type": "sc:Manifest",
+  "label": "Hard cases: display options",
+  "description": "Display options for the non-standard Dombey and Son images (DS WN 04, 05, 06).",
+  "attribution": "Manuscript images © Victoria and Albert Museum, London",
+  "sequences": [
+    {
+      "@type": "sc:Sequence",
+      "canvases": [
+        {
+          "@id": "https://dickensnotes.github.io/dickens-annotations/canvas/prototype/proto-ds-wn-04-a.json",
+          "@type": "sc:Canvas",
+          "label": "WN 04 · A: whole image",
+          "width": 1875,
+          "height": 2500,
+          "thumbnail": {
+            "@id": "https://framemark.vam.ac.uk/collections/2012FE1488/full/!200,200/90/default.jpg",
+            "@type": "dctypes:Image"
+          },
+          "images": [
+            {
+              "@type": "oa:Annotation",
+              "motivation": "sc:painting",
+              "on": "https://dickensnotes.github.io/dickens-annotations/canvas/prototype/proto-ds-wn-04-a.json",
+              "resource": {
+                "@id": "https://framemark.vam.ac.uk/collections/2012FE1488/full/full/90/default.jpg",
+                "@type": "dctypes:Image",
+                "label": "Manuscript (V&A, Forster MS 160, f. 9r, rotated 90°)",
+                "format": "image/jpeg",
+                "width": 1875,
+                "height": 2500
+              }
+            }
+          ]
+        },
+        {
+          "@id": "https://dickensnotes.github.io/dickens-annotations/canvas/prototype/proto-ds-wn-04-b.json",
+          "@type": "sc:Canvas",
+          "label": "WN 04 · B: two crops (IIIF)",
+          "width": 1875,
+          "height": 2500,
+          "thumbnail": {
+            "@id": "https://framemark.vam.ac.uk/collections/2012FE1488/full/!200,200/90/default.jpg",
+            "@type": "dctypes:Image"
+          },
+          "images": [
+            {
+              "@type": "oa:Annotation",
+              "motivation": "sc:painting",
+              "on": "https://dickensnotes.github.io/dickens-annotations/canvas/prototype/proto-ds-wn-04-b.json#xywh=963,50,900,1400",
+              "resource": {
+                "@id": "https://framemark.vam.ac.uk/collections/2012FE1488/50,12,1400,900/full/90/default.jpg",
+                "@type": "dctypes:Image",
+                "label": "Upper sheet (cropped)",
+                "format": "image/jpeg",
+                "width": 900,
+                "height": 1400
+              }
+            },
+            {
+              "@type": "oa:Annotation",
+              "motivation": "sc:painting",
+              "on": "https://dickensnotes.github.io/dickens-annotations/canvas/prototype/proto-ds-wn-04-b.json#xywh=75,50,900,2315",
+              "resource": {
+                "@id": "https://framemark.vam.ac.uk/collections/2012FE1488/50,900,2315,900/full/90/default.jpg",
+                "@type": "dctypes:Image",
+                "label": "Lower strip (cropped)",
+                "format": "image/jpeg",
+                "width": 900,
+                "height": 2315
+              }
+            }
+          ]
+        },
+        {
+          "@id": "https://dickensnotes.github.io/dickens-annotations/canvas/prototype/proto-ds-wn-04-c.json",
+          "@type": "sc:Canvas",
+          "label": "WN 04 · C: cut-out (not IIIF)",
+          "width": 1875,
+          "height": 2500,
+          "thumbnail": {
+            "@id": "https://framemark.vam.ac.uk/collections/2012FE1488/full/!200,200/90/default.jpg",
+            "@type": "dctypes:Image"
+          },
+          "images": [
+            {
+              "@type": "oa:Annotation",
+              "motivation": "sc:painting",
+              "on": "https://dickensnotes.github.io/dickens-annotations/canvas/prototype/proto-ds-wn-04-c.json",
+              "resource": {
+                "@id": "/iiif/prototype/img/ds-wn-04-cutout.webp",
+                "@type": "dctypes:Image",
+                "label": "Cut out along the paper edge (processed copy of V&A f. 9r)",
+                "format": "image/webp",
+                "width": 1875,
+                "height": 2500
+              }
+            }
+          ]
+        },
+        {
+          "@id": "https://dickensnotes.github.io/dickens-annotations/canvas/prototype/proto-ds-wn-05-a.json",
+          "@type": "sc:Canvas",
+          "label": "WN 05 · A: note (f. 10r)",
+          "width": 2500,
+          "height": 1875,
+          "thumbnail": {
+            "@id": "https://framemark.vam.ac.uk/collections/2012FE1496/full/!200,200/90/default.jpg",
+            "@type": "dctypes:Image"
+          },
+          "images": [
+            {
+              "@type": "oa:Annotation",
+              "motivation": "sc:painting",
+              "on": "https://dickensnotes.github.io/dickens-annotations/canvas/prototype/proto-ds-wn-05-a.json",
+              "resource": {
+                "@id": "https://framemark.vam.ac.uk/collections/2012FE1496/full/full/90/default.jpg",
+                "@type": "dctypes:Image",
+                "label": "Manuscript (V&A, Forster MS 160, f. 10r, rotated 90°)",
+                "format": "image/jpeg",
+                "width": 2500,
+                "height": 1875
+              }
+            }
+          ]
+        },
+        {
+          "@id": "https://dickensnotes.github.io/dickens-annotations/canvas/prototype/proto-ds-wn-05-b.json",
+          "@type": "sc:Canvas",
+          "label": "WN 05 · B: whole verso photo",
+          "width": 1830,
+          "height": 2500,
+          "thumbnail": {
+            "@id": "https://framemark.vam.ac.uk/collections/2026PR3250/full/!200,200/90/default.jpg",
+            "@type": "dctypes:Image"
+          },
+          "images": [
+            {
+              "@type": "oa:Annotation",
+              "motivation": "sc:painting",
+              "on": "https://dickensnotes.github.io/dickens-annotations/canvas/prototype/proto-ds-wn-05-b.json",
+              "resource": {
+                "@id": "https://framemark.vam.ac.uk/collections/2026PR3250/full/full/90/default.jpg",
+                "@type": "dctypes:Image",
+                "label": "Manuscript (V&A, Forster MS 160, f. 10v, rotated 90°)",
+                "format": "image/jpeg",
+                "width": 1830,
+                "height": 2500
+              }
+            }
+          ]
+        },
+        {
+          "@id": "https://dickensnotes.github.io/dickens-annotations/canvas/prototype/proto-ds-wn-05-c.json",
+          "@type": "sc:Canvas",
+          "label": "WN 05 · C: underside only",
+          "width": 890,
+          "height": 1225,
+          "thumbnail": {
+            "@id": "https://framemark.vam.ac.uk/collections/2026PR3250/62,850,1225,890/!200,200/90/default.jpg",
+            "@type": "dctypes:Image"
+          },
+          "images": [
+            {
+              "@type": "oa:Annotation",
+              "motivation": "sc:painting",
+              "on": "https://dickensnotes.github.io/dickens-annotations/canvas/prototype/proto-ds-wn-05-c.json",
+              "resource": {
+                "@id": "https://framemark.vam.ac.uk/collections/2026PR3250/62,850,1225,890/full/90/default.jpg",
+                "@type": "dctypes:Image",
+                "label": "Half-sheet underside (V&A f. 10v, cropped, rotated 90°)",
+                "format": "image/jpeg",
+                "width": 890,
+                "height": 1225
+              }
+            }
+          ]
+        },
+        {
+          "@id": "https://dickensnotes.github.io/dickens-annotations/canvas/prototype/proto-ds-wn-05-d.json",
+          "@type": "sc:Canvas",
+          "label": "WN 05 · D: note + underside",
+          "width": 3450,
+          "height": 1875,
+          "thumbnail": {
+            "@id": "https://framemark.vam.ac.uk/collections/2012FE1496/full/!200,200/90/default.jpg",
+            "@type": "dctypes:Image"
+          },
+          "images": [
+            {
+              "@type": "oa:Annotation",
+              "motivation": "sc:painting",
+              "on": "https://dickensnotes.github.io/dickens-annotations/canvas/prototype/proto-ds-wn-05-d.json#xywh=0,0,2500,1875",
+              "resource": {
+                "@id": "https://framemark.vam.ac.uk/collections/2012FE1496/full/full/90/default.jpg",
+                "@type": "dctypes:Image",
+                "label": "Manuscript (V&A, Forster MS 160, f. 10r, rotated 90°)",
+                "format": "image/jpeg",
+                "width": 2500,
+                "height": 1875
+              }
+            },
+            {
+              "@type": "oa:Annotation",
+              "motivation": "sc:painting",
+              "on": "https://dickensnotes.github.io/dickens-annotations/canvas/prototype/proto-ds-wn-05-d.json#xywh=2560,325,890,1225",
+              "resource": {
+                "@id": "https://framemark.vam.ac.uk/collections/2026PR3250/62,850,1225,890/full/90/default.jpg",
+                "@type": "dctypes:Image",
+                "label": "Half-sheet underside (V&A f. 10v, cropped, rotated 90°)",
+                "format": "image/jpeg",
+                "width": 890,
+                "height": 1225
+              }
+            }
+          ]
+        },
+        {
+          "@id": "https://dickensnotes.github.io/dickens-annotations/canvas/prototype/proto-ds-wn-06-a.json",
+          "@type": "sc:Canvas",
+          "label": "WN 06 · A: whole image",
+          "width": 1553,
+          "height": 2500,
+          "thumbnail": {
+            "@id": "https://framemark.vam.ac.uk/collections/2012FE1494/full/!200,200/90/default.jpg",
+            "@type": "dctypes:Image"
+          },
+          "images": [
+            {
+              "@type": "oa:Annotation",
+              "motivation": "sc:painting",
+              "on": "https://dickensnotes.github.io/dickens-annotations/canvas/prototype/proto-ds-wn-06-a.json",
+              "resource": {
+                "@id": "https://framemark.vam.ac.uk/collections/2012FE1494/full/full/90/default.jpg",
+                "@type": "dctypes:Image",
+                "label": "Manuscript (V&A, Forster MS 160, f. 11r, rotated 90°)",
+                "format": "image/jpeg",
+                "width": 1553,
+                "height": 2500
+              }
+            }
+          ]
+        },
+        {
+          "@id": "https://dickensnotes.github.io/dickens-annotations/canvas/prototype/proto-ds-wn-06-b.json",
+          "@type": "sc:Canvas",
+          "label": "WN 06 · B: note only",
+          "width": 1530,
+          "height": 1240,
+          "thumbnail": {
+            "@id": "https://framemark.vam.ac.uk/collections/2012FE1494/10,10,1240,1530/!200,200/90/default.jpg",
+            "@type": "dctypes:Image"
+          },
+          "images": [
+            {
+              "@type": "oa:Annotation",
+              "motivation": "sc:painting",
+              "on": "https://dickensnotes.github.io/dickens-annotations/canvas/prototype/proto-ds-wn-06-b.json",
+              "resource": {
+                "@id": "https://framemark.vam.ac.uk/collections/2012FE1494/10,10,1240,1530/full/90/default.jpg",
+                "@type": "dctypes:Image",
+                "label": "Manuscript (V&A, Forster MS 160, f. 11r, region 10,10,1240,1530, rotated 90°)",
+                "format": "image/jpeg",
+                "width": 1530,
+                "height": 1240
+              }
+            }
+          ]
+        },
+        {
+          "@id": "https://dickensnotes.github.io/dickens-annotations/canvas/prototype/proto-ds-wn-06-c.json",
+          "@type": "sc:Canvas",
+          "label": "WN 06 · C: half-sheet front + back",
+          "width": 1680,
+          "height": 1235,
+          "thumbnail": {
+            "@id": "https://framemark.vam.ac.uk/collections/2012FE1494/1225,0,1235,830/!200,200/90/default.jpg",
+            "@type": "dctypes:Image"
+          },
+          "images": [
+            {
+              "@type": "oa:Annotation",
+              "motivation": "sc:painting",
+              "on": "https://dickensnotes.github.io/dickens-annotations/canvas/prototype/proto-ds-wn-06-c.json#xywh=0,0,830,1235",
+              "resource": {
+                "@id": "https://framemark.vam.ac.uk/collections/2012FE1494/1225,0,1235,830/full/90/default.jpg",
+                "@type": "dctypes:Image",
+                "label": "Half-sheet front (V&A f. 11r, cropped, rotated 90°)",
+                "format": "image/jpeg",
+                "width": 830,
+                "height": 1235
+              }
+            },
+            {
+              "@type": "oa:Annotation",
+              "motivation": "sc:painting",
+              "on": "https://dickensnotes.github.io/dickens-annotations/canvas/prototype/proto-ds-wn-06-c.json#xywh=870,0,810,1225",
+              "resource": {
+                "@id": "https://framemark.vam.ac.uk/collections/2012FE1489/20,160,1225,810/full/270/default.jpg",
+                "@type": "dctypes:Image",
+                "label": "Half-sheet back (V&A f. 11v, cropped, rotated 270°)",
+                "format": "image/jpeg",
+                "width": 810,
+                "height": 1225
+              }
+            }
+          ]
+        },
+        {
+          "@id": "https://dickensnotes.github.io/dickens-annotations/canvas/prototype/proto-ds-wn-06-d.json",
+          "@type": "sc:Canvas",
+          "label": "WN 06 · D: turn the half-sheet over (layers)",
+          "width": 1553,
+          "height": 2500,
+          "thumbnail": {
+            "@id": "https://framemark.vam.ac.uk/collections/2012FE1494/full/!200,200/90/default.jpg",
+            "@type": "dctypes:Image"
+          },
+          "images": [
+            {
+              "@type": "oa:Annotation",
+              "motivation": "sc:painting",
+              "on": "https://dickensnotes.github.io/dickens-annotations/canvas/prototype/proto-ds-wn-06-d.json",
+              "resource": {
+                "@id": "https://framemark.vam.ac.uk/collections/2012FE1494/full/full/90/default.jpg",
+                "@type": "dctypes:Image",
+                "label": "Manuscript (V&A, Forster MS 160, f. 11r, rotated 90°)",
+                "format": "image/jpeg",
+                "width": 1553,
+                "height": 2500
+              }
+            },
+            {
+              "@type": "oa:Annotation",
+              "motivation": "sc:painting",
+              "on": "https://dickensnotes.github.io/dickens-annotations/canvas/prototype/proto-ds-wn-06-d.json#xywh=723,1225,830,1235",
+              "resource": {
+                "@id": "https://framemark.vam.ac.uk/collections/2012FE1489/20,160,1225,810/full/270/default.jpg",
+                "@type": "dctypes:Image",
+                "label": "Half-sheet back (V&A f. 11v, cropped, rotated 270°)",
+                "format": "image/jpeg",
+                "width": 810,
+                "height": 1225
+              }
+            },
+            {
+              "@type": "oa:Annotation",
+              "motivation": "sc:painting",
+              "on": "https://dickensnotes.github.io/dickens-annotations/canvas/prototype/proto-ds-wn-06-d.json#xywh=723,1225,830,1235",
+              "resource": {
+                "@id": "https://framemark.vam.ac.uk/collections/2012FE1494/1225,0,1235,830/full/90/default.jpg",
+                "@type": "dctypes:Image",
+                "label": "Half-sheet front (V&A f. 11r, cropped, rotated 90°)",
+                "format": "image/jpeg",
+                "width": 830,
+                "height": 1235
+              }
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

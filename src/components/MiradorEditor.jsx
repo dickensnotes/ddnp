@@ -24,13 +24,15 @@ function withoutAnnotationLists(url, action) {
 export default function MiradorEditor(props) {
   const urlParams = new URLSearchParams(window.location.search);
   const canvas = urlParams.get("canvas");
+  // Manifests served by this site are given site-relative
+  const manifestId = new URL(props.loadedManifest, window.location.href).href;
 
   const config = {
     id: "mirador",
     annotation: {
       adapter: (canvasId) =>
         new GitHubAnnotationAdapter(canvasId, {
-          manifestId: props.loadedManifest,
+          manifestId,
           token: props.token,
           user: props.user,
         }),
@@ -68,7 +70,7 @@ export default function MiradorEditor(props) {
     },
     windows: [
       {
-        loadedManifest: `${props.loadedManifest}`,
+        loadedManifest: manifestId,
         canvasId: canvas,
       },
     ],

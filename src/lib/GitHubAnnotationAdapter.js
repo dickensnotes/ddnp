@@ -57,8 +57,25 @@ export async function writeToSandbox(method, path, body, headers = {}) {
 
 async function fetchJson(url, headers, cache = "default") {
   const response = await fetch(url, { headers, cache });
-  if (!response.ok) throw new Error(`${response.status} fetching ${url}`);
+  if (!response.ok) {
+    const error = new Error(`${response.status} fetching ${url}`);
+    error.status = response.status;
+    throw error;
+  }
   return response.json();
+}
+
+/**
+ * The canvas's published annotation list. A canvas nobody has annotated
+ * yet (any page of a new edition) has no list, so a 404 means "none".
+ */
+export async function fetchPublishedList(canvasId) {
+  try {
+    return await fetchJson(listUrlForCanvas(canvasId));
+  } catch (error) {
+    if (error.status === 404) return { resources: [] };
+    throw error;
+  }
 }
 
 /**
@@ -229,7 +246,7 @@ export default class GitHubAnnotationAdapter {
    */
   async #sequence(withOrders = false) {
     const [published, changes] = await Promise.all([
-      fetchJson(listUrlForCanvas(this.canvasId)),
+      fetchPublishedList(this.canvasId),
       branchChanges(this.#headers),
     ]);
 
