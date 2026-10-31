@@ -1,7 +1,18 @@
 import glob
 
-import re, json, yaml, requests, os
+import re, json, yaml, requests, os, sys
+from collections import Counter
 from bs4 import BeautifulSoup
+
+# Editions on the live site, by the folder name in their canvas URLs. Annotations
+# on any other canvas (an edition not launched yet) stay out of search until
+# the edition is added here.
+EDITIONS = {
+	'bleakhousetranscriptions': {'url': "/notes/bleak-house/mirador", 'label': 'Bleak House'},
+	'davidcopperfieldtranscription': {'url': "/notes/david-copperfield/mirador", 'label': 'David Copperfield'},
+	'HardTimesTranscription': {'url': "/notes/hard-times/mirador", 'label': 'Hard Times'},
+	'littledorrittranscription': {'url': "/notes/little-dorrit/mirador", 'label': 'Little Dorrit'},
+}
 
 
 def encodedecode(chars):
@@ -59,35 +70,36 @@ def get_search(anno):
 	annodata_data['searchfields']['content'] = " ".join(annodata_data['searchfields']['content'])
 	annodata_data['searchfields']['tags'] = " ".join(annodata_data['facets']['tags'])
 	return annodata_data
-def main():
-	url = "https://dickensnotes.github.io/dickens-annotations"
-	response = requests.get(url)
-	data = response.json()['annotations']
-	allsearchfields = []
-	regex = r"stroke-width=\\\"(.*?)\\\""
-	for items in data:
+def index_documents(annotations):
+	docs = {}
+	skipped = Counter()
+	for items in annotations:
 		if '-list.json' not in items['filename']:
 			jsoncontent = items['json']
-			searchfields = get_search(jsoncontent)
 			canvas =jsoncontent['on'][0]['full']
 			canvasname = canvas.split('/iiif/')[-1].split('/')[0]
-			name = {'bleakhousetranscriptions': {'url': "/notes/bleak-house/mirador", 'label': 'Bleak House'},
-			'davidcopperfieldtranscription': {'url': "/notes/david-copperfield/mirador", 'label': 'David Copperfield'},
-			'HardTimesTranscription': {'url': "/notes/hard-times/mirador", 'label': 'Hard Times'},
-			'littledorrittranscription': {'url': "/notes/little-dorrit/mirador", 'label': 'Little Dorrit'},
-			}
-			getinfo = name[canvasname]
+			getinfo = EDITIONS.get(canvasname)
+			if getinfo is None:
+				skipped[canvasname] += 1
+				continue
+			searchfields = get_search(jsoncontent)
 			url = getinfo['url']
 			contenttype = "Annotations: {}".format(getinfo['label'])
 			url += '?canvas={}'.format(canvas)
 			url += '&annotationid={}'.format(jsoncontent['@id'])
 			searchfields['searchfields']['url'] = url
 			searchfields['searchfields']['type'] = contenttype
-			allsearchfields.append(searchfields)
+			docs[searchfields['basename']] = searchfields['searchfields']
+	# stdout is the index, so this goes to stderr (it shows in the build log)
+	for canvasname, count in sorted(skipped.items()):
+		print("Search index: skipped {} annotation(s) on {}, not in EDITIONS".format(count, canvasname), file=sys.stderr)
+	return docs
 
-	docs = {}
-	for item in allsearchfields:
-		docs[item['basename']] = item['searchfields']
-	print(json.dumps(docs))
+def main():
+	url = "https://dickensnotes.github.io/dickens-annotations"
+	response = requests.get(url)
+	data = response.json()['annotations']
+	print(json.dumps(index_documents(data)))
 
-main()
+if __name__ == '__main__':
+	main()
