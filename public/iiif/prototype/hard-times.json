@@ -1,0 +1,279 @@
+{
+  "@context": "http://iiif.io/api/presentation/2/context.json",
+  "@id": "https://www.dickensnotes.com/iiif/prototype/hard-times.json",
+  "@type": "sc:Manifest",
+  "label": "Hard Times: V&A images",
+  "description": "Hard Times Working Notes on the V&A manuscript photographs, with the realigned transcriptions as a layer. Use the Layers panel to fade between them.",
+  "attribution": "Manuscript images © Victoria and Albert Museum, London",
+  "sequences": [
+    {
+      "@type": "sc:Sequence",
+      "canvases": [
+        {
+          "@id": "https://dickensnotes.github.io/dickens-annotations/canvas/prototype/ht-vam-mems.json",
+          "@type": "sc:Canvas",
+          "label": "HT General Mems",
+          "width": 2500,
+          "height": 1875,
+          "thumbnail": {
+            "@id": "https://framemark.vam.ac.uk/collections/2012FG2678/full/200,/0/default.jpg",
+            "@type": "dctypes:Image"
+          },
+          "images": [
+            {
+              "@type": "oa:Annotation",
+              "motivation": "sc:painting",
+              "on": "https://dickensnotes.github.io/dickens-annotations/canvas/prototype/ht-vam-mems.json",
+              "resource": {
+                "@id": "https://framemark.vam.ac.uk/collections/2012FG2678/full/full/0/default.jpg",
+                "@type": "dctypes:Image",
+                "label": "Manuscript (V&A, Forster MS 163, f. 1r)",
+                "format": "image/jpeg",
+                "width": 5440,
+                "height": 4080,
+                "service": {
+                  "@context": "http://iiif.io/api/image/2/context.json",
+                  "@id": "https://framemark.vam.ac.uk/collections/2012FG2678",
+                  "profile": "http://iiif.io/api/image/2/level1.json"
+                }
+              }
+            },
+            {
+              "@type": "oa:Annotation",
+              "motivation": "sc:painting",
+              "on": "https://dickensnotes.github.io/dickens-annotations/canvas/prototype/ht-vam-mems.json",
+              "resource": {
+                "@id": "/iiif/prototype/img/hard-times/ht-mems.jpg",
+                "@type": "dctypes:Image",
+                "label": "Transcription",
+                "format": "image/jpeg",
+                "width": 2500,
+                "height": 1875
+              }
+            }
+          ]
+        },
+        {
+          "@id": "https://dickensnotes.github.io/dickens-annotations/canvas/prototype/ht-vam-wn-01.json",
+          "@type": "sc:Canvas",
+          "label": "HT WN 01 (No. I)",
+          "width": 2500,
+          "height": 1875,
+          "thumbnail": {
+            "@id": "https://framemark.vam.ac.uk/collections/2012FG2679/full/200,/0/default.jpg",
+            "@type": "dctypes:Image"
+          },
+          "images": [
+            {
+              "@type": "oa:Annotation",
+              "motivation": "sc:painting",
+              "on": "https://dickensnotes.github.io/dickens-annotations/canvas/prototype/ht-vam-wn-01.json",
+              "resource": {
+                "@id": "https://framemark.vam.ac.uk/collections/2012FG2679/full/full/0/default.jpg",
+                "@type": "dctypes:Image",
+                "label": "Manuscript (V&A, Forster MS 163, f. 2r)",
+                "format": "image/jpeg",
+                "width": 5440,
+                "height": 4080,
+                "service": {
+                  "@context": "http://iiif.io/api/image/2/context.json",
+                  "@id": "https://framemark.vam.ac.uk/collections/2012FG2679",
+                  "profile": "http://iiif.io/api/image/2/level1.json"
+                }
+              }
+            },
+            {
+              "@type": "oa:Annotation",
+              "motivation": "sc:painting",
+              "on": "https://dickensnotes.github.io/dickens-annotations/canvas/prototype/ht-vam-wn-01.json",
+              "resource": {
+                "@id": "/iiif/prototype/img/hard-times/ht-wn-01.jpg",
+                "@type": "dctypes:Image",
+                "label": "Transcription",
+                "format": "image/jpeg",
+                "width": 2500,
+                "height": 1875
+              }
+            }
+          ]
+        },
+        {
+          "@id": "https://dickensnotes.github.io/dickens-annotations/canvas/prototype/ht-vam-wn-02.json",
+          "@type": "sc:Canvas",
+          "label": "HT WN 02 (No. II)",
+          "width": 2500,
+          "height": 1875,
+          "thumbnail": {
+            "@id": "https://framemark.vam.ac.uk/collections/2012FG2680/full/200,/0/default.jpg",
+            "@type": "dctypes:Image"
+          },
+          "images": [
+            {
+              "@type": "oa:Annotation",
+              "motivation": "sc:painting",
+              "on": "https://dickensnotes.github.io/dickens-annotations/canvas/prototype/ht-vam-wn-02.json",
+              "resource": {
+                "@id": "https://framemark.vam.ac.uk/collections/2012FG2680/full/full/0/default.jpg",
+                "@type": "dctypes:Image",
+                "label": "Manuscript (V&A, Forster MS 163, f. 3r)",
+                "format": "image/jpeg",
+                "width": 5440,
+                "height": 4080,
+                "service": {
+                  "@context": "http://iiif.io/api/image/2/context.json",
+                  "@id": "https://framemark.vam.ac.uk/collections/2012FG2680",
+                  "profile": "http://iiif.io/api/image/2/level1.json"
+                }
+              }
+            },
+            {
+              "@type": "oa:Annotation",
+              "motivation": "sc:painting",
+              "on": "https://dickensnotes.github.io/dickens-annotations/canvas/prototype/ht-vam-wn-02.json",
+              "resource": {
+                "@id": "/iiif/prototype/img/hard-times/ht-wn-02.jpg",
+                "@type": "dctypes:Image",
+                "label": "Transcription",
+                "format": "image/jpeg",
+                "width": 2500,
+                "height": 1875
+              }
+            }
+          ]
+        },
+        {
+          "@id": "https://dickensnotes.github.io/dickens-annotations/canvas/prototype/ht-vam-wn-03.json",
+          "@type": "sc:Canvas",
+          "label": "HT WN 03 (No. III)",
+          "width": 2500,
+          "height": 1875,
+          "thumbnail": {
+            "@id": "https://framemark.vam.ac.uk/collections/2012FG2694/full/200,/0/default.jpg",
+            "@type": "dctypes:Image"
+          },
+          "images": [
+            {
+              "@type": "oa:Annotation",
+              "motivation": "sc:painting",
+              "on": "https://dickensnotes.github.io/dickens-annotations/canvas/prototype/ht-vam-wn-03.json",
+              "resource": {
+                "@id": "https://framemark.vam.ac.uk/collections/2012FG2694/full/full/0/default.jpg",
+                "@type": "dctypes:Image",
+                "label": "Manuscript (V&A, Forster MS 163, f. 6r)",
+                "format": "image/jpeg",
+                "width": 5440,
+                "height": 4080,
+                "service": {
+                  "@context": "http://iiif.io/api/image/2/context.json",
+                  "@id": "https://framemark.vam.ac.uk/collections/2012FG2694",
+                  "profile": "http://iiif.io/api/image/2/level1.json"
+                }
+              }
+            },
+            {
+              "@type": "oa:Annotation",
+              "motivation": "sc:painting",
+              "on": "https://dickensnotes.github.io/dickens-annotations/canvas/prototype/ht-vam-wn-03.json",
+              "resource": {
+                "@id": "/iiif/prototype/img/hard-times/ht-wn-03.jpg",
+                "@type": "dctypes:Image",
+                "label": "Transcription",
+                "format": "image/jpeg",
+                "width": 2500,
+                "height": 1875
+              }
+            }
+          ]
+        },
+        {
+          "@id": "https://dickensnotes.github.io/dickens-annotations/canvas/prototype/ht-vam-wn-04.json",
+          "@type": "sc:Canvas",
+          "label": "HT WN 04 (No. IV)",
+          "width": 2500,
+          "height": 1875,
+          "thumbnail": {
+            "@id": "https://framemark.vam.ac.uk/collections/2012FG2685/full/200,/0/default.jpg",
+            "@type": "dctypes:Image"
+          },
+          "images": [
+            {
+              "@type": "oa:Annotation",
+              "motivation": "sc:painting",
+              "on": "https://dickensnotes.github.io/dickens-annotations/canvas/prototype/ht-vam-wn-04.json",
+              "resource": {
+                "@id": "https://framemark.vam.ac.uk/collections/2012FG2685/full/full/0/default.jpg",
+                "@type": "dctypes:Image",
+                "label": "Manuscript (V&A, Forster MS 163, f. 7r)",
+                "format": "image/jpeg",
+                "width": 5440,
+                "height": 4080,
+                "service": {
+                  "@context": "http://iiif.io/api/image/2/context.json",
+                  "@id": "https://framemark.vam.ac.uk/collections/2012FG2685",
+                  "profile": "http://iiif.io/api/image/2/level1.json"
+                }
+              }
+            },
+            {
+              "@type": "oa:Annotation",
+              "motivation": "sc:painting",
+              "on": "https://dickensnotes.github.io/dickens-annotations/canvas/prototype/ht-vam-wn-04.json",
+              "resource": {
+                "@id": "/iiif/prototype/img/hard-times/ht-wn-04.jpg",
+                "@type": "dctypes:Image",
+                "label": "Transcription",
+                "format": "image/jpeg",
+                "width": 2500,
+                "height": 1875
+              }
+            }
+          ]
+        },
+        {
+          "@id": "https://dickensnotes.github.io/dickens-annotations/canvas/prototype/ht-vam-wn-05.json",
+          "@type": "sc:Canvas",
+          "label": "HT WN 05 (Nos. V-VI)",
+          "width": 2500,
+          "height": 1875,
+          "thumbnail": {
+            "@id": "https://framemark.vam.ac.uk/collections/2012FG2684/full/200,/0/default.jpg",
+            "@type": "dctypes:Image"
+          },
+          "images": [
+            {
+              "@type": "oa:Annotation",
+              "motivation": "sc:painting",
+              "on": "https://dickensnotes.github.io/dickens-annotations/canvas/prototype/ht-vam-wn-05.json",
+              "resource": {
+                "@id": "https://framemark.vam.ac.uk/collections/2012FG2684/full/full/0/default.jpg",
+                "@type": "dctypes:Image",
+                "label": "Manuscript (V&A, Forster MS 163, f. 8r)",
+                "format": "image/jpeg",
+                "width": 5440,
+                "height": 4080,
+                "service": {
+                  "@context": "http://iiif.io/api/image/2/context.json",
+                  "@id": "https://framemark.vam.ac.uk/collections/2012FG2684",
+                  "profile": "http://iiif.io/api/image/2/level1.json"
+                }
+              }
+            },
+            {
+              "@type": "oa:Annotation",
+              "motivation": "sc:painting",
+              "on": "https://dickensnotes.github.io/dickens-annotations/canvas/prototype/ht-vam-wn-05.json",
+              "resource": {
+                "@id": "/iiif/prototype/img/hard-times/ht-wn-05.jpg",
+                "@type": "dctypes:Image",
+                "label": "Transcription",
+                "format": "image/jpeg",
+                "width": 2500,
+                "height": 1875
+              }
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}
